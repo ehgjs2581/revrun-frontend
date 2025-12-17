@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,11 +16,15 @@ const supabase = createClient(
 // 미들웨어
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/report", express.static(path.join(__dirname, "public", "report")));
+app.use("/admin", express.static(path.join(__dirname, "public", "admin")));
 
 // 테스트 라우트
-app.get('/', (req, res) => {
-  res.json({ message: 'REVRUN API Server' });
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "report", "login.html"));
 });
+
 
 // 고객 목록 조회
 app.get('/api/customers', async (req, res) => {
