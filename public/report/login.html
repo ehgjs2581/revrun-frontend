@@ -4,9 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 로그인</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <!-- (선택) 구글폰트는 일단 빼도 됨. 필요하면 나중에 복구 -->
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap"> -->
+
+  <script src="/assets/app.js" defer></script>
+<link rel="stylesheet" href="/assets/style.css">
+
+
   <style>
     * {
       margin: 0;
@@ -192,11 +199,18 @@
       color: #888;
     }
 
+    .error-text {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #dc2626;
+      text-align: center;
+      min-height: 18px;
+    }
+
     @media (max-width: 480px) {
       .login-card {
         padding: 32px 24px;
       }
-
       .brand-name {
         font-size: 28px;
       }
@@ -225,13 +239,14 @@
         <div class="brand-sub">광고 성과 분석 시스템</div>
       </div>
 
-      <form id="loginForm">
+      <form id="loginForm" autocomplete="on">
         <div class="form-group">
           <label class="form-label" for="username">아이디</label>
-          <input 
-            type="text" 
-            id="username" 
-            class="form-input" 
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-input"
             placeholder="아이디를 입력하세요"
             required
           />
@@ -239,10 +254,11 @@
 
         <div class="form-group">
           <label class="form-label" for="password">비밀번호</label>
-          <input 
-            type="password" 
-            id="password" 
-            class="form-input" 
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
             placeholder="비밀번호를 입력하세요"
             required
           />
@@ -253,12 +269,11 @@
           <label for="remember">로그인 상태 유지</label>
         </div>
 
-        <button type="submit" class="btn-login">로그인</button>
+        <button type="submit" class="btn-login" id="loginBtn">로그인</button>
+        <div class="error-text" id="loginError"></div>
       </form>
 
-      <div class="divider">
-        <span>또는</span>
-      </div>
+      <div class="divider"><span>또는</span></div>
 
       <div class="help-links">
         <a href="#" class="help-link">아이디 찾기</a>
@@ -267,24 +282,62 @@
       </div>
     </div>
 
-    <div class="footer-text">
-      © 2025 REVRUN. All rights reserved.
-    </div>
+    <div class="footer-text">© 2025 REVRUN. All rights reserved.</div>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // ✅ 실제 로그인: /api/login 으로 POST
+    const form = document.getElementById('loginForm');
+    const errBox = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const username = document.getElementById('username').value;
+      errBox.textContent = '';
+
+      const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
-      // 간단한 데모용 로그인 (실제로는 서버 검증 필요)
-      if (username && password) {
-        // 로그인 성공 시 대시보드로 이동
+      if (!username || !password) {
+        errBox.textContent = '아이디와 비밀번호를 입력해주세요.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '로그인 중...';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          errBox.textContent = data?.message || `로그인 실패 (${res.status})`;
+          return;
+        }
+
+        // ✅ 토큰 저장(백엔드 응답 키에 맞춰 2개 다 대비)
+        const token = data?.token || data?.accessToken;
+        if (token) {
+          localStorage.setItem('revrun_token', token);
+        }
+
+        // ✅ 로그인 상태 유지 체크 시(선택)
+        const remember = document.getElementById('remember').checked;
+        localStorage.setItem('revrun_remember', remember ? '1' : '0');
+
+        // ✅ 대시보드 이동 (현재 구조 기준)
         window.location.href = '/report/dashboard.html';
-      } else {
-        alert('아이디와 비밀번호를 입력해주세요.');
+      } catch (err) {
+        errBox.textContent = '서버 연결 실패. 잠시 후 다시 시도해주세요.';
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '로그인';
       }
     });
   </script>
