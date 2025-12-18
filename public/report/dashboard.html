@@ -3,229 +3,61 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>REVRUN | 광고 리포트</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/style.css" />
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <title>REVRUN | 대시보드</title>
+  <style>
+    body { margin:0; background:#0b0f19; color:#fff; font-family:system-ui; }
+    .wrap { max-width:900px; margin:60px auto; padding:24px; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .card { background:#121a2a; padding:20px; border-radius:16px; margin-top:20px; border:1px solid #1d2740; }
+    button { padding:10px 14px; border-radius:10px; border:none; background:#ff4f6d; color:#fff; font-weight:700; cursor:pointer; }
+    .muted { opacity:.8; }
+  </style>
 </head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1 style="margin:0;">대시보드</h1>
+      <button id="logoutBtn">로그아웃</button>
+    </div>
 
-<body class="bg-ivory">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand mini">
-        <div class="brand-mark" aria-hidden="true">
-          <!-- RV Monogram (SVG) -->
-          <svg viewBox="0 0 64 64" width="34" height="34">
-            <defs>
-              <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#1a1a1a"/>
-                <stop offset="1" stop-color="#2d2d2d"/>
-              </linearGradient>
-            </defs>
-            <circle cx="32" cy="32" r="30" fill="none" stroke="url(#g2)" stroke-width="2.2"/>
-            <path d="M18 43V18h12.2c7.2 0 11.2 3.5 11.2 9.2 0 4-2 7-5.7 8.3L44 43h-6.6l-7.1-6.7h-6.1V43H18zm6.2-11.9h6.1c3.8 0 5.7-1.5 5.7-4.2s-1.9-4.1-5.7-4.1h-6.1v8.3z" fill="#1a1a1a"/>
-            <path d="M43 18h6.6l-9.8 25H33l-9.7-25H30l6.4 18.3L43 18z" fill="#1a1a1a"/>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <div class="brand-name">REVRUN</div>
-          <div class="brand-sub">광고 성과 분석</div>
-        </div>
-      </div>
+    <div class="card">
+      <div id="userLine" style="font-size:18px; font-weight:800;">불러오는 중...</div>
+      <div id="userDetail" class="muted" style="margin-top:8px;"></div>
+    </div>
 
-      <div class="topbar-meta">
-        <div class="subcopy">
-          우리 가게 광고가 얼마나 잘 되고 있는지 한눈에 확인하세요<br/>
-          <span class="muted">데이터는 1분마다 자동으로 업데이트됩니다</span>
-        </div>
-
-        <div class="right-tools">
-          <div class="pill">
-            <span class="dot"></span>
-            <span id="refreshLabel">자동 업데이트: 60초</span>
-          </div>
-          <button class="btn btn-light" id="manualBtn">지금 새로고침</button>
-        </div>
+    <div class="card">
+      <div style="font-weight:800;">현재 상태</div>
+      <div class="muted" style="margin-top:8px; line-height:1.6;">
+        DB 없이 로그인만 되는 버전이다.<br/>
+        다음은 “고객별 리포트 더미데이터 분기”로 간다.
       </div>
     </div>
-  </header>
+  </div>
 
-  <main class="container">
-    <section class="grid-main">
-      <!-- LEFT: 광고 성과 -->
-      <div class="panel">
-        <div class="panel-head">
-          <h2>📊 광고 효과</h2>
-          <div class="muted small">이번 달 기준</div>
-        </div>
+<script>
+const $ = (id) => document.getElementById(id);
 
-        <div class="kpi-grid">
-          <div class="card kpi">
-            <div class="kpi-top">
-              <div class="kpi-ico">👥</div>
-              <div class="kpi-delta up" id="kpiReachDelta">▲ 0명</div>
-            </div>
-            <div class="kpi-title">광고 본 사람</div>
-            <div class="kpi-value" id="kpiReach">0명</div>
-            <div class="kpi-desc">우리 가게 광고를 본 손님 수</div>
-          </div>
+async function loadMe() {
+  const res = await fetch("/api/me", { credentials: "include" });
 
-          <div class="card kpi">
-            <div class="kpi-top">
-              <div class="kpi-ico">👆</div>
-              <div class="kpi-delta up" id="kpiReactDelta">▲ 0명</div>
-            </div>
-            <div class="kpi-title">클릭한 사람</div>
-            <div class="kpi-value" id="kpiReact">0명</div>
-            <div class="kpi-desc">광고를 누르거나 좋아요한 손님</div>
-          </div>
+  if (!res.ok) {
+    location.href = "/report/login.html";
+    return;
+  }
 
-          <div class="card kpi">
-            <div class="kpi-top">
-              <div class="kpi-ico">📢</div>
-              <div class="kpi-mini" id="kpiImprMini">0회 / 0회</div>
-            </div>
-            <div class="kpi-title">광고 노출 횟수</div>
-            <div class="kpi-value">
-              <span id="kpiImpr">0</span><span class="unit">회</span>
-            </div>
-            <div class="progress">
-              <div class="bar" id="imprBar" style="width:0%"></div>
-            </div>
-            <div class="kpi-desc">목표 대비 진행률</div>
-          </div>
+  const data = await res.json();
+  const u = data.user;
 
-          <div class="card kpi">
-            <div class="kpi-top">
-              <div class="kpi-ico">⚖️</div>
-              <div class="kpi-mini">광고 본 사람 기준</div>
-            </div>
+  $("userLine").textContent = `${u.name}님 로그인됨`;
+  $("userDetail").textContent = `계정: ${u.username} / 권한: ${u.role}`;
+}
 
-            <div class="kpi-title">남녀 비율</div>
+$("logoutBtn").addEventListener("click", async () => {
+  await fetch("/api/logout", { method: "POST", credentials: "include" });
+  location.href = "/report/login.html";
+});
 
-            <div class="gender-wrap">
-              <div class="gender-row">
-                <span class="gender-label left">남성</span>
-                <span class="gender-label right">여성</span>
-              </div>
-
-              <div class="gender-bar" role="img" aria-label="남녀 비율">
-                <div class="g-male" id="maleBar" style="width:50%">
-                  <span class="g-text" id="maleText">남성 50%</span>
-                </div>
-                <div class="g-female" id="femaleBar" style="width:50%">
-                  <span class="g-text" id="femaleText">여성 50%</span>
-                </div>
-              </div>
-
-              <div class="muted small" id="genderNote">
-                대략적인 비율이며, 기간에 따라 달라질 수 있습니다
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card wide">
-          <div class="card-head">
-            <div class="card-title">📈 나이대별 비율</div>
-            <div class="muted small">광고 본 사람 기준</div>
-          </div>
-          <div class="age-list" id="ageList"></div>
-        </div>
-
-        <div class="panel-head" style="margin-top:14px;">
-          <h2>🏘️ 우리 동네 분석</h2>
-          <div class="muted small">가장 많이 나온 정보</div>
-        </div>
-
-        <div class="card market">
-          <div class="tabs" id="marketTabs">
-            <button class="tab active" data-tab="resident">거주상권</button>
-            <button class="tab" data-tab="work">회사상권</button>
-            <button class="tab" data-tab="mz">MZ상권</button>
-            <button class="tab" data-tab="new">신생상권</button>
-            <button class="tab" data-tab="station">역세권</button>
-            <button class="tab" data-tab="delivery">배달상권</button>
-            <button class="tab" data-tab="growth">성장상권</button>
-          </div>
-
-          <div class="market-grid">
-            <div class="mini-card">
-              <div class="mini-title">손님 성별</div>
-              <div class="mini-pill" id="flowGender">남성 0% · 여성 0%</div>
-            </div>
-
-            <div class="mini-card">
-              <div class="mini-title">손님 나이대</div>
-              <div class="mini-list" id="flowAge"></div>
-            </div>
-
-            <div class="mini-card">
-              <div class="mini-title">손님 많은 요일</div>
-              <div class="mini-list" id="flowDow"></div>
-            </div>
-
-            <div class="mini-card">
-              <div class="mini-title">손님 많은 시간</div>
-              <div class="peak" id="flowPeak">
-                <div class="peak-badge">피크타임</div>
-                <div class="peak-row">
-                  <span id="peakTime">-</span>
-                  <b id="peakPct">-</b>
-                </div>
-                <div class="peak-sub muted small" id="peakSub">-</div>
-              </div>
-              <div class="mini-list" id="flowHour"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: 미리보기 + 차트 -->
-      <div class="panel">
-        <div class="panel-head">
-          <h2>📱 광고 미리보기</h2>
-          <div class="muted small">클릭하면 인스타그램에서 볼 수 있어요</div>
-        </div>
-
-        <div class="card preview">
-          <a id="previewLink" class="preview-btn" href="#" target="_blank" rel="noopener">
-            <span class="ig">📷</span>
-            <span>인스타그램에서 광고 보기</span>
-            <span class="ext">↗</span>
-          </a>
-          <div class="muted small">링크가 없으면 버튼이 비활성화됩니다</div>
-        </div>
-
-        <div class="panel-head" style="margin-top:14px;">
-          <h2>🕐 손님 많은 요일/시간</h2>
-          <div class="muted small">사람들이 가장 많이 반응한 시간대</div>
-        </div>
-
-        <div class="card">
-          <div class="chart-box">
-            <canvas id="dowChart" height="140"></canvas>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="chart-box">
-            <canvas id="hourChart" height="140"></canvas>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <footer class="foot">
-      <span class="muted small">© REVRUN · 데이터는 자동으로 업데이트됩니다</span>
-    </footer>
-  </main>
-
-<script src="/assets/app.js" defer></script>
+loadMe();
+</script>
 </body>
 </html>

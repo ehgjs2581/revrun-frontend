@@ -1,84 +1,100 @@
+const express = require("express");
+const session = require("express-session");
 const path = require("path");
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { createClient } = require('@supabase/supabase-js');
-
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// Supabase 클라이언트
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
+// =========================
+// 기본 설정
+// =========================
+app.set("trust proxy", 1); // Railway/Cloudflare 환경 안전빵
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// =========================
+// 세션 설정
+// =========================
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "revrun-secret-change-me",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 6, // 6시간
+    },
+  })
 );
 
-// 미들웨어
-app.use(cors());
-app.use(express.json());
+// =========================
+// 정적 파일 (public 폴더 제공)
+// =========================
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/report", express.static(path.join(__dirname, "public", "report")));
-app.use("/admin", express.static(path.join(__dirname, "public", "admin")));
 
-// 테스트 라우트
+// =========================
+// DB 없이 임시 계정 (B 방식)
+// =========================
+const USERS = [
+  { username: "admin", password: process.env.ADMIN_PW || "admin1234", name: "관리자", role: "admin" },
+  { username: "client1", password: "1234", name: "김도헌", role: "client" },
+  { username: "client2", password: "1234", name: "문세음", role: "client" },
+];
+
+// =========================
+// API: 로그인
+// =========================
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+
+  const user = USERS.find(
+    (u) => u.username === username && u.password === password
+  );
+
+  if (!user) {
+    return res.status(401).json({
+      ok: false,
+      message: "아이디 또는 비밀번호가 일치하지 않습니다.",
+    });
+  }
+
+  req.session.user = {
+    username: user.username,
+    name: user.name,
+    role: user.role,
+  };
+
+  return res.json({ ok: true });
+});
+
+// =========================
+// API: 내 정보(세션 확인)
+// =========================
+app.get("/api/me", (req, res) => {
+  if (!req.session.user) return res.status(401).json({ ok: false });
+  return res.json({ ok: true, user: req.session.user });
+});
+
+// =========================
+// API: 로그아웃
+// =========================
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie("connect.sid");
+    return res.json({ ok: true });
+  });
+});
+
+// =========================
+// 기본 접속 -> report/login.html
+// =========================
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "report", "login.html"));
+  return res.redirect("/report/login.html");
 });
 
-
-// 고객 목록 조회
-app.get('/api/customers', async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from('customers')
-      .select('*');
-    
-    if (error) throw error;
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// 고객 추가
-app.post('/api/customers', async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from('customers')
-      .insert([req.body])
-      .select();
-    
-    if (error) throw error;
-    res.json(data[0]);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// 로그인
-app.post('/api/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    
-    const { data, error } = await supabase
-      .from('customers')
-      .select('*')
-      .eq('username', username)
-      .eq('password', password)
-      .single();
-    
-    if (error || !data) {
-      return res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
-    }
-    
-    res.json({ success: true, customer: data });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// 서버 시작
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("✅ Server running on port:", PORT);
 });
