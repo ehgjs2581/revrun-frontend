@@ -5,103 +5,72 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 로그인</title>
   <style>
-    body {
-      margin: 0;
-      background: #0b0f19;
-      color: #fff;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    }
-    .box {
-      max-width: 420px;
-      margin: 100px auto;
-      background: #121a2a;
-      padding: 24px;
-      border-radius: 16px;
-    }
-    h1 {
-      margin: 0 0 16px;
-      font-size: 22px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: 1px solid #2a3550;
-      background: #0b0f19;
-      color: #fff;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #4f7cff;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .msg {
-      margin-top: 12px;
-      color: #ffb4b4;
-      min-height: 20px;
-    }
+    body{font-family:system-ui;margin:0;background:#0b0f14;color:#e8eef6}
+    .wrap{max-width:420px;margin:10vh auto;padding:24px}
+    .card{background:#111826;border:1px solid #223046;border-radius:14px;padding:18px}
+    h1{font-size:20px;margin:0 0 14px}
+    label{display:block;font-size:12px;opacity:.8;margin:10px 0 6px}
+    input{width:100%;padding:12px;border-radius:10px;border:1px solid #2a3b55;background:#0b1220;color:#e8eef6}
+    button{width:100%;margin-top:14px;padding:12px;border-radius:10px;border:0;background:#4c7dff;color:#fff;font-weight:700;cursor:pointer}
+    pre{white-space:pre-wrap;background:#05070b;border:1px solid #223046;border-radius:12px;padding:10px;margin-top:14px;color:#9bf59b}
+    .hint{font-size:12px;opacity:.7;margin-top:10px}
+    a{color:#9fb8ff}
   </style>
 </head>
-
 <body>
-  <div class="box">
-    <h1>REVRUN 로그인</h1>
+  <div class="wrap">
+    <div class="card">
+      <h1>REVRUN 로그인</h1>
 
-    <input id="username" placeholder="아이디 (admin / client1 / client2)" />
-    <input id="password" type="password" placeholder="비밀번호" />
+      <label>아이디</label>
+      <input id="username" placeholder="admin / client1 / client2" autocomplete="username" />
 
-    <button id="loginBtn">로그인</button>
-    <div class="msg" id="msg"></div>
+      <label>비밀번호</label>
+      <input id="password" type="password" placeholder="dnflwlq132" autocomplete="current-password" />
+
+      <button id="loginBtn">로그인</button>
+
+      <pre id="out"></pre>
+      <div class="hint">
+        로그인 후: <a href="/report/dashboard.html">고객 대시보드</a> /
+        <a href="/admin/dashboard.html">관리자</a>
+      </div>
+    </div>
   </div>
 
-  <!-- ✅ 스크립트는 body 맨 마지막 + 문법 깨끗 -->
   <script>
-    const $ = (id) => document.getElementById(id);
+    async function api(path, opts={}) {
+      const res = await fetch(path, {
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        ...opts
+      });
+      return res.json();
+    }
 
-    $("loginBtn").addEventListener("click", login);
-    $("password").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") login();
+    async function goAfterLogin(user){
+      if (user?.role === "admin") location.href = "/admin/dashboard.html";
+      else location.href = "/report/dashboard.html";
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const out = document.getElementById("out");
+      out.textContent = "";
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const r = await api("/api/login", { method:"POST", body: JSON.stringify({ username, password }) });
+      out.textContent = JSON.stringify(r, null, 2);
+
+      if (r.ok) goAfterLogin(r.user);
     });
 
-    async function login() {
-      const username = $("username").value.trim();
-      const password = $("password").value;
-      $("msg").textContent = "";
-
-      if (!username || !password) {
-        $("msg").textContent = "아이디랑 비번부터 입력해라 형";
-        return;
-      }
-
-      try {
-        const res = await fetch("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ username, password }),
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok || !data.ok) {
-          $("msg").textContent = data.message || "로그인 실패";
-          return;
-        }
-
-        // 서버에서 내려준 redirect 경로로 이동
-        location.href = data.redirect;
-      } catch (err) {
-        $("msg").textContent = "서버 연결 실패";
-      }
-    }
+    // 이미 로그인 돼있으면 자동 이동
+    (async () => {
+      const me = await api("/api/me");
+      if (me?.user) goAfterLogin(me.user);
+    })();
   </script>
 </body>
 </html>
