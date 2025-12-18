@@ -2,45 +2,41 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <title>REVRUN | 관리자 대시보드</title>
+  <title>REVRUN | 관리자</title>
   <style>
-    body { margin:0; background:#111; color:#fff; font-family:system-ui; }
-    .wrap { max-width:900px; margin:60px auto; padding:24px; }
-    .card { background:#1c1c1c; padding:20px; border-radius:14px; margin-top:20px; }
-    button { padding:10px 14px; border:none; border-radius:8px; background:#ff4f6d; color:#fff; font-weight:700; }
+    body { background:#0b0f19; color:#fff; font-family:system-ui; }
+    .wrap { max-width:900px; margin:60px auto; }
+    button { padding:10px 14px; margin:6px; border-radius:8px; border:none; background:#4f7cff; color:#fff; }
+    .card { background:#121a2a; padding:20px; border-radius:14px; margin-top:20px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>관리자 대시보드</h1>
+<div class="wrap">
+  <h1>관리자 대시보드</h1>
 
-    <div class="card">
-      <div id="adminInfo">불러오는 중...</div>
-    </div>
-
-    <div class="card">
-      <button onclick="logout()">로그아웃</button>
-    </div>
+  <div>
+    <button onclick="load('client1')">김도헌</button>
+    <button onclick="load('client2')">문세음</button>
   </div>
 
+  <div class="card" id="report">고객 선택</div>
+</div>
+
 <script>
-async function loadMe() {
-  const res = await fetch("/api/me", { credentials: "include" });
-  if (!res.ok) {
-    location.href = "/report/login.html";
-    return;
-  }
+async function load(user) {
+  const res = await fetch(`/api/admin/report?user=${user}`, { credentials:"include" });
   const data = await res.json();
-  document.getElementById("adminInfo").textContent =
-    `${data.user.name} (admin) 로그인됨`;
-}
+  if (!data.ok) return;
 
-async function logout() {
-  await fetch("/api/logout", { method: "POST", credentials: "include" });
-  location.href = "/report/login.html";
+  const r = data.report;
+  document.getElementById("report").innerHTML = `
+    <h3>${r.clientName}</h3>
+    <div>${r.period}</div>
+    <ul>
+      ${r.kpis.map(k => `<li>${k.label}: ${k.value}</li>`).join("")}
+    </ul>
+  `;
 }
-
-loadMe();
 </script>
 </body>
 </html>
