@@ -8,8 +8,7 @@ const PORT = process.env.PORT || 8080;
 // =========================
 // 기본 설정
 // =========================
-app.set("trust proxy", 1); // Railway/Cloudflare 환경 안전빵
-
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -18,34 +17,49 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "revrun-secret-change-me",
+    secret: process.env.SESSION_SECRET || "revrun-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 6, // 6시간
+      maxAge: 1000 * 60 * 60 * 6,
     },
   })
 );
 
 // =========================
-// 정적 파일 (public 폴더 제공)
+// 정적 파일 제공
 // =========================
 app.use(express.static(path.join(__dirname, "public")));
 
 // =========================
-// DB 없이 임시 계정 (B 방식)
+// 임시 계정 (DB 전)
 // =========================
 const USERS = [
-  { username: "admin", password: process.env.ADMIN_PW || "admin1234", name: "관리자", role: "admin" },
+  { username: "admin", password: "admin1234", name: "관리자", role: "admin" },
   { username: "client1", password: "1234", name: "김도헌", role: "client" },
   { username: "client2", password: "1234", name: "문세음", role: "client" },
 ];
 
 // =========================
-// API: 로그인
+// 🔐 로그인 가드 (핵심)
+// =========================
+app.use("/report", (req, res, next) => {
+  // 로그인 페이지는 예외
+  if (req.path === "/login.html") return next();
+
+  // 세션 없으면 로그인 페이지로
+  if (!req.session.user) {
+    return res.redirect("/report/login.html");
+  }
+
+  next();
+});
+
+// =========================
+// 로그인 API
 // =========================
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
@@ -71,7 +85,7 @@ app.post("/api/login", (req, res) => {
 });
 
 // =========================
-// API: 내 정보(세션 확인)
+// 로그인 유저 정보
 // =========================
 app.get("/api/me", (req, res) => {
   if (!req.session.user) return res.status(401).json({ ok: false });
@@ -79,20 +93,20 @@ app.get("/api/me", (req, res) => {
 });
 
 // =========================
-// API: 로그아웃
+// 로그아웃
 // =========================
 app.post("/api/logout", (req, res) => {
   req.session.destroy(() => {
     res.clearCookie("connect.sid");
-    return res.json({ ok: true });
+    res.redirect("/report/login.html");
   });
 });
 
 // =========================
-// 기본 접속 -> report/login.html
+// 기본 접속
 // =========================
 app.get("/", (req, res) => {
-  return res.redirect("/report/login.html");
+  res.redirect("/report/login.html");
 });
 
 app.listen(PORT, () => {
