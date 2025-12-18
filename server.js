@@ -38,10 +38,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // 계정
 // =========================
 const USERS = [
+ const USERS = [
   { username: "admin", password: "admin1234", name: "관리자", role: "admin" },
-  { username: "client1", password: "1234", name: "김도헌", role: "client" },
-  { username: "client2", password: "1234", name: "문세음", role: "client" },
+
+  // ✅ 기존 1234 삭제하고 강하게
+  { username: "client1", password: "Client1!2025", name: "김도헌", role: "client" },
+  { username: "client2", password: "Client2!2025", name: "문세음", role: "client" },
 ];
+
 
 // =========================
 // 더미 리포트
