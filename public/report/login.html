@@ -11,8 +11,6 @@
     input { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #2a3550; background:#0b0f19; color:#fff; }
     button { width:100%; padding:12px; margin-top:12px; border-radius:10px; border:none; background:#4f7cff; color:#fff; font-weight:700; cursor:pointer; }
     .msg { margin-top:12px; color:#ffb4b4; min-height:20px; }
-    .hint { margin-top:12px; font-size:12px; opacity:.8; line-height:1.4; }
-    code { background:#0b0f19; padding:2px 6px; border-radius:6px; }
   </style>
 </head>
 <body>
@@ -22,46 +20,57 @@
     <input id="username" placeholder="아이디 (admin / client1 / client2)" />
     <input id="password" type="password" placeholder="비밀번호" />
 
-    <button id="btn">로그인</button>
-    <div class="msg" id="msg"></div>
+    <!-- ✅ 버튼에 id만 주고 -->
+    <button id="loginBtn">로그인</button>
 
-    <div class="hint">
-      테스트 계정<br/>
-      - <code>admin / admin1234</code> (또는 환경변수 <code>ADMIN_PW</code>)<br/>
-      - <code>client1 / 1234</code><br/>
-      - <code>client2 / 1234</code>
-    </div>
+    <div class="msg" id="msg"></div>
   </div>
 
 <script>
-  <script>
+const $ = (id) => document.getElementById(id);
+
+// ✅ 버튼 클릭 이벤트를 JS에서 확실히 연결
+$("loginBtn").addEventListener("click", login);
+
+// 엔터키 로그인도 지원
+$("password").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") login();
+});
+
 async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("msg");
+  const username = $("username").value.trim();
+  const password = $("password").value;
+  $("msg").textContent = "";
 
-  msg.textContent = "";
-
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ username, password }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok || !data.ok) {
-    msg.textContent = data.message || "로그인 실패";
+  if (!username || !password) {
+    $("msg").textContent = "아이디랑 비번부터 입력해라 형";
     return;
   }
 
-  // 🔀 서버에서 내려준 경로로 이동
-  location.href = data.redirect;
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data.ok) {
+      $("msg").textContent = data.message || "로그인 실패";
+      return;
+    }
+
+    // ✅ role에 따라 서버가 내려준 경로로 이동
+    location.href = data.redirect;
+  } catch (err) {
+    $("msg").textContent = "서버 연결 실패";
+  }
 }
 </script>
-
-const $ = (id) => document.getElementById(id);
+</body>
+</html>
 
 
 
