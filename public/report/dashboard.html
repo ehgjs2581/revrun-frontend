@@ -4,23 +4,37 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 리포트 대시보드</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
   <style>
     body { margin:0; background:#0b0f19; color:#fff; font-family:system-ui; }
     .wrap { max-width:980px; margin:60px auto; padding:24px; }
     .top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-    .badge { font-size:12px; opacity:.8; background:#121a2a; border:1px solid #1d2740; padding:6px 10px; border-radius:999px; }
+    .badge { font-size:12px; opacity:.85; background:#121a2a; border:1px solid #1d2740; padding:6px 10px; border-radius:999px; }
     .card { background:#121a2a; border:1px solid #1d2740; padding:20px; border-radius:16px; margin-top:18px; }
     .grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:12px; margin-top:14px; }
     .kpi { background:#0b0f19; border:1px solid #1d2740; padding:14px; border-radius:14px; }
-    .kpi .label { font-size:12px; opacity:.8; }
-    .kpi .value { margin-top:6px; font-size:18px; font-weight:800; }
+    .kpi .label { font-size:12px; opacity:.85; }
+    .kpi .value { margin-top:6px; font-size:18px; font-weight:900; }
     .list { margin:10px 0 0; padding-left:18px; line-height:1.7; opacity:.95; }
-    button { padding:10px 14px; border-radius:10px; border:none; background:#ff4f6d; color:#fff; font-weight:800; cursor:pointer; }
+
+    .charts { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:14px; }
+    .chartBox { background:#0b0f19; border:1px solid #1d2740; padding:14px; border-radius:14px; min-height:260px; }
+    .chartTitle { font-weight:900; margin-bottom:10px; opacity:.95; }
+
+    button { padding:10px 14px; border-radius:10px; border:none; background:#ff4f6d; color:#fff; font-weight:900; cursor:pointer; }
     .muted { opacity:.8; }
-    @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .charts { grid-template-columns: 1fr; }
+    }
     @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="top">
@@ -44,6 +58,21 @@
       </div>
 
       <div class="grid" id="kpiGrid"></div>
+
+      <div class="charts">
+        <div class="chartBox">
+          <div class="chartTitle">KPI 요약 (Bar)</div>
+          <canvas id="barChart"></canvas>
+        </div>
+        <div class="chartBox">
+          <div class="chartTitle">지표 비중 느낌 (Doughnut)</div>
+          <canvas id="donutChart"></canvas>
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px; font-size:12px;">
+        * 차트는 KPI 문자열을 숫자로 파싱해서 표시함 (₩, %, 건 등 자동 제거)
+      </div>
     </div>
 
     <div class="card">
@@ -59,6 +88,9 @@
 
 <script>
 const $ = (id) => document.getElementById(id);
+
+let barChartInstance = null;
+let donutChartInstance = null;
 
 function renderList(el, items) {
   el.innerHTML = "";
@@ -83,6 +115,80 @@ function renderKpis(kpis) {
   });
 }
 
+// "₩120,000" / "18건" / "3.2%" 같은 문자열에서 숫자만 뽑기
+function parseNumber(v) {
+  if (v == null) return 0;
+  const s = String(v).replace(/[^\d.]/g, ""); // 숫자/점만
+  if (!s) return 0;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function buildCharts(kpis) {
+  const labels = (kpis || []).map(k => k.label);
+  const rawValues = (kpis || []).map(k => k.value);
+  const values = rawValues.map(parseNumber);
+
+  // 기존 차트 destroy
+  if (barChartInstance) barChartInstance.destroy();
+  if (donutChartInstance) donutChartInstance.destroy();
+
+  // Bar Chart
+  const barCtx = $("barChart").getContext("2d");
+  barChartInstance = new Chart(barCtx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "KPI",
+        data: values
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${labels[ctx.dataIndex]}: ${rawValues[ctx.dataIndex]}`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: "#cfd6e6" }, grid: { color: "rgba(255,255,255,0.06)" } },
+        y: { ticks: { color: "#cfd6e6" }, grid: { color: "rgba(255,255,255,0.06)" } }
+      }
+    }
+  });
+
+  // Doughnut Chart (값이 전부 0이면 표시가 이상하니 fallback)
+  const donutValues = values.every(v => v === 0) ? labels.map(() => 1) : values;
+
+  const donutCtx = $("donutChart").getContext("2d");
+  donutChartInstance = new Chart(donutCtx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [{
+        data: donutValues
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "#cfd6e6" }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.label}: ${rawValues[ctx.dataIndex]}`
+          }
+        }
+      }
+    }
+  });
+}
+
 async function loadMe() {
   const res = await fetch("/api/me", { credentials: "include" });
   if (!res.ok) {
@@ -101,16 +207,19 @@ async function loadReport() {
     location.href = "/report/login.html";
     return;
   }
+
   const data = await res.json();
   const r = data.report;
 
   $("clientName").textContent = r.clientName || "-";
   $("period").textContent = r.period || "-";
-  $("subtitle").textContent = "DB 없이 더미 데이터로 동작 중 (B단계)";
+  $("subtitle").textContent = "DB 기반 리포트 표시 중";
 
   renderKpis(r.kpis);
   renderList($("highlights"), r.highlights);
   renderList($("actions"), r.actions);
+
+  buildCharts(r.kpis || []);
 }
 
 $("logoutBtn").addEventListener("click", async () => {
