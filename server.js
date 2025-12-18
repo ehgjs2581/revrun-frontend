@@ -119,18 +119,39 @@ app.get("/api/health", (req, res) => res.json({ ok: true }));
 app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body || {};
-    if (!username || !password) return res.status(400).json({ ok: false, error: "username,password required" });
+    if (!username || !password) {
+      return res.status(400).json({ ok: false, error: "username,password required" });
+    }
 
     const { data: user, error } = await supabase
       .from("users")
       .select("id, username, name, role, password")
       .eq("username", username)
-      .single();
+      .maybeSingle();
 
-    if (error || !user) return res.status(401).json({ ok: false, error: "INVALID_CREDENTIALS" });
+    if (error) {
+      return res.status(500).json({
+        ok: false,
+        error: "SUPABASE_SELECT_ERROR",
+        detail: error.message,
+      });
+    }
 
-    // 지금은 plaintext 가정 (나중에 bcrypt로 교체)
-    if (user.password !== password) return res.status(401).json({ ok: false, error: "INVALID_CREDENTIALS" });
+    if (!user) {
+      return res.status(401).json({ ok: false, error: "USER_NOT_FOUND" });
+    }
+
+    if (user.password == null) {
+      return res.status(500).json({
+        ok: false,
+        error: "PASSWORD_FIELD_MISSING_OR_NULL",
+        detail: "users.password is null/undefined (check column name or data)",
+      });
+    }
+
+    if (String(user.password) !== String(password)) {
+      return res.status(401).json({ ok: false, error: "WRONG_PASSWORD" });
+    }
 
     req.session.user = {
       id: user.id,
@@ -141,21 +162,10 @@ app.post("/api/login", async (req, res) => {
 
     return res.json({ ok: true, user: req.session.user });
   } catch (e) {
-    return res.status(500).json({ ok: false, error: String(e?.message || e) });
+    return res.status(500).json({ ok: false, error: "SERVER_ERROR", detail: String(e?.message || e) });
   }
 });
 
-app.get("/api/me", (req, res) => {
-  if (!req.session?.user) return res.json({ ok: true, user: null });
-  return res.json({ ok: true, user: req.session.user });
-});
-
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.clearCookie("revrun.sid");
-    return res.json({ ok: true });
-  });
-});
 
 // ====== ADMIN APIs ======
 app.get("/api/admin/clients", requireAdmin, async (req, res) => {
