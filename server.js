@@ -148,6 +148,39 @@ function requireAdmin(req, res, next) {
 
 // ====== health ======
 app.get("/api/health", (req, res) => res.json({ ok: true }));
+app.get("/api/diag/supabase", async (req, res) => {
+  const url = (process.env.SUPABASE_URL || "").trim();
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
+
+  const maskedKey = key ? key.slice(0, 6) + "..." + key.slice(-6) : "";
+  const okUrl = !!url && url.startsWith("https://") && url.includes(".supabase.co");
+  const okKey = !!key && key.length > 30;
+
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 5000);
+
+    const r = await fetch(url.replace(/\/$/, "") + "/rest/v1/", {
+      method: "HEAD",
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: controller.signal,
+    });
+
+    clearTimeout(t);
+
+    return res.json({
+      ok: true,
+      env: { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: maskedKey, okUrl, okKey },
+      fetch_test: { status: r.status, statusText: r.statusText },
+    });
+  } catch (e) {
+    return res.json({
+      ok: false,
+      env: { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: maskedKey, okUrl, okKey },
+      fetch_error: String(e?.message || e),
+    });
+  }
+});
 
 // ====== auth ======
 app.post("/api/login", async (req, res) => {
