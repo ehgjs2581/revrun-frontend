@@ -5,21 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 로그인</title>
 
-  <!-- (선택) 구글폰트는 일단 빼도 됨. 필요하면 나중에 복구 -->
-  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap"> -->
-
-  <script src="/assets/app.js" defer></script>
-<link rel="stylesheet" href="/assets/style.css">
-
+  <link rel="stylesheet" href="/assets/style.css">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -32,10 +21,7 @@
       color: #1a1a1a;
     }
 
-    .login-container {
-      width: 100%;
-      max-width: 440px;
-    }
+    .login-container { width: 100%; max-width: 440px; }
 
     .login-card {
       background: white;
@@ -45,40 +31,18 @@
       border: 1px solid #e5e5e5;
     }
 
-    .brand {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .brand-mark {
-      display: inline-flex;
-      margin-bottom: 16px;
-    }
-
+    .brand { text-align: center; margin-bottom: 40px; }
+    .brand-mark { display: inline-flex; margin-bottom: 16px; }
     .brand-name {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: #1a1a1a;
-      margin-bottom: 8px;
+      font-size: 32px; font-weight: 700; letter-spacing: -0.03em;
+      color: #1a1a1a; margin-bottom: 8px;
     }
+    .brand-sub { font-size: 15px; color: #888; font-weight: 500; }
 
-    .brand-sub {
-      font-size: 15px;
-      color: #888;
-      font-weight: 500;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
+    .form-group { margin-bottom: 20px; }
     .form-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #4a4a4a;
-      margin-bottom: 8px;
+      display: block; font-size: 14px; font-weight: 600;
+      color: #4a4a4a; margin-bottom: 8px;
     }
 
     .form-input {
@@ -99,9 +63,7 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     }
 
-    .form-input::placeholder {
-      color: #aaa;
-    }
+    .form-input::placeholder { color: #aaa; }
 
     .btn-login {
       width: 100%;
@@ -124,9 +86,7 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
 
-    .btn-login:active {
-      transform: translateY(0);
-    }
+    .btn-login:active { transform: translateY(0); }
 
     .remember-row {
       display: flex;
@@ -136,35 +96,21 @@
     }
 
     .remember-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
+      width: 18px; height: 18px; cursor: pointer;
       accent-color: #1a1a1a;
     }
 
     .remember-row label {
-      font-size: 14px;
-      color: #4a4a4a;
-      cursor: pointer;
-      user-select: none;
+      font-size: 14px; color: #4a4a4a;
+      cursor: pointer; user-select: none;
     }
 
-    .divider {
-      margin: 32px 0;
-      text-align: center;
-      position: relative;
-    }
-
+    .divider { margin: 32px 0; text-align: center; position: relative; }
     .divider::before {
       content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      width: 100%;
-      height: 1px;
-      background: #e5e5e5;
+      position: absolute; left: 0; top: 50%;
+      width: 100%; height: 1px; background: #e5e5e5;
     }
-
     .divider span {
       position: relative;
       background: white;
@@ -187,10 +133,7 @@
       transition: color 0.2s ease;
     }
 
-    .help-link:hover {
-      color: #1a1a1a;
-      text-decoration: underline;
-    }
+    .help-link:hover { color: #1a1a1a; text-decoration: underline; }
 
     .footer-text {
       text-align: center;
@@ -205,15 +148,12 @@
       color: #dc2626;
       text-align: center;
       min-height: 18px;
+      white-space: pre-line;
     }
 
     @media (max-width: 480px) {
-      .login-card {
-        padding: 32px 24px;
-      }
-      .brand-name {
-        font-size: 28px;
-      }
+      .login-card { padding: 32px 24px; }
+      .brand-name { font-size: 28px; }
     }
   </style>
 </head>
@@ -286,59 +226,65 @@
   </div>
 
   <script>
-    // ✅ 실제 로그인: /api/login 으로 POST
-    const form = document.getElementById('loginForm');
-    const errBox = document.getElementById('loginError');
-    const btn = document.getElementById('loginBtn');
+    // ✅ 고객 로그인: /api/login 으로 POST
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('loginForm');
+      const errBox = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errBox.textContent = '';
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (!username || !password) {
-        errBox.textContent = '아이디와 비밀번호를 입력해주세요.';
+      if (!form) {
+        console.error('loginForm not found');
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = '로그인 중...';
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errBox.textContent = '';
 
-      try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-        });
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
 
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          errBox.textContent = data?.message || `로그인 실패 (${res.status})`;
+        if (!username || !password) {
+          errBox.textContent = '아이디와 비밀번호를 입력해주세요.';
           return;
         }
 
-        // ✅ 토큰 저장(백엔드 응답 키에 맞춰 2개 다 대비)
-        const token = data?.token || data?.accessToken;
-        if (token) {
-          localStorage.setItem('revrun_token', token);
+        btn.disabled = true;
+        const prevText = btn.textContent;
+        btn.textContent = '로그인 중...';
+
+        try {
+          const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            // ✅ 우리 서버는 { error: "..." } 형태로 내려줌
+            errBox.textContent = data?.error || data?.message || `로그인 실패 (${res.status})`;
+            return;
+          }
+
+          // ✅ 서버 응답: { success: true, customer: {...} }
+          if (data?.customer) {
+            localStorage.setItem('revrun_customer', JSON.stringify(data.customer));
+          }
+
+          const remember = document.getElementById('remember').checked;
+          localStorage.setItem('revrun_remember', remember ? '1' : '0');
+
+          window.location.href = '/report/dashboard.html';
+        } catch (err) {
+          console.error(err);
+          errBox.textContent = '서버 연결 실패. 잠시 후 다시 시도해주세요.';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = prevText;
         }
-
-        // ✅ 로그인 상태 유지 체크 시(선택)
-        const remember = document.getElementById('remember').checked;
-        localStorage.setItem('revrun_remember', remember ? '1' : '0');
-
-        // ✅ 대시보드 이동 (현재 구조 기준)
-        window.location.href = '/report/dashboard.html';
-      } catch (err) {
-        errBox.textContent = '서버 연결 실패. 잠시 후 다시 시도해주세요.';
-        console.error(err);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '로그인';
-      }
+      });
     });
   </script>
 </body>
