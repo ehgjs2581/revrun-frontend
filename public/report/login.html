@@ -34,39 +34,38 @@
   </div>
 
 <script>
-const $ = (id) => document.getElementById(id);
-
-$("btn").addEventListener("click", login);
-
+  <script>
 async function login() {
-  const username = $("username").value.trim();
-  const password = $("password").value;
-  $("msg").textContent = "";
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-  if (!username || !password) {
-    $("msg").textContent = "아이디/비번부터 써라 형…";
+  msg.textContent = "";
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ username, password }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok || !data.ok) {
+    msg.textContent = data.message || "로그인 실패";
     return;
   }
 
-  try {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username, password }),
-    });
+  // 🔀 서버에서 내려준 경로로 이동
+  location.href = data.redirect;
+}
+</script>
 
-    const data = await res.json().catch(() => ({}));
+const $ = (id) => document.getElementById(id);
 
-    if (!res.ok || !data.ok) {
-      $("msg").textContent = data.message || "로그인 실패";
-      return;
-    }
 
-    location.href = "/report/dashboard.html";
-  } catch (e) {
-    $("msg").textContent = "서버 연결이 안 됨. 배포/주소 확인 ㄱ";
-  }
+
+
 }
 </script>
 </body>

@@ -35,7 +35,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 // =========================
-// 임시 계정 (DB 전)
+// 임시 계정
 // =========================
 const USERS = [
   { username: "admin", password: "admin1234", name: "관리자", role: "admin" },
@@ -44,17 +44,21 @@ const USERS = [
 ];
 
 // =========================
-// 🔐 로그인 가드 (핵심)
+// 🔐 report 접근 가드 (로그인 필수)
 // =========================
 app.use("/report", (req, res, next) => {
-  // 로그인 페이지는 예외
   if (req.path === "/login.html") return next();
+  if (!req.session.user) return res.redirect("/report/login.html");
+  next();
+});
 
-  // 세션 없으면 로그인 페이지로
-  if (!req.session.user) {
+// =========================
+// 🔐 admin 접근 가드 (admin만)
+// =========================
+app.use("/admin", (req, res, next) => {
+  if (!req.session.user || req.session.user.role !== "admin") {
     return res.redirect("/report/login.html");
   }
-
   next();
 });
 
@@ -81,7 +85,13 @@ app.post("/api/login", (req, res) => {
     role: user.role,
   };
 
-  return res.json({ ok: true });
+  // 🔀 role 기준 리다이렉트 경로 내려줌
+  const redirect =
+    user.role === "admin"
+      ? "/admin/dashboard.html"
+      : "/report/dashboard.html";
+
+  return res.json({ ok: true, redirect });
 });
 
 // =========================
