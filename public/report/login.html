@@ -261,6 +261,10 @@
           });
 
           const data = await res.json().catch(() => ({}));
+          if (data.ok) {
+  location.href = "/report/dashboard.html";
+}
+
 
           if (!res.ok) {
             // ✅ 우리 서버는 { error: "..." } 형태로 내려줌
