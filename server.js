@@ -53,7 +53,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 console.log("Supabase client initialized");
 
-// ====== (optional) seed users ======
+ ====== (optional) seed users ======
 async function seedUsers() {
   const seeds = [
     { username: "admin", password: "dnflwlq132", name: "관리자", role: "admin" },
@@ -344,3 +344,4 @@ app.get("/", (req, res) => res.redirect("/report/login.html"));
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);
 });
+export default app;
