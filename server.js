@@ -1,4 +1,3 @@
-import dns from "node:dns/promises";
 import express from "express";
 import session from "express-session";
 import path from "path";
@@ -15,7 +14,6 @@ const __dirname = path.dirname(__filename);
 // ====== middleware ======
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
-
 app.set("trust proxy", 1);
 
 app.use(
@@ -26,16 +24,16 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // 프록시(Cloudflare/Railway) 꼬임 방지용. 안정화 후 true로 올려도 됨
+      secure: false,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 12, // 12h
+      maxAge: 1000 * 60 * 60 * 12,
     },
   })
 );
 
-// ====== build/version (배포 확인용) ======
-const BUILD_ID = process.env.RAILWAY_GIT_COMMIT_SHA
-  ? `railway:${process.env.RAILWAY_GIT_COMMIT_SHA}`
+// ====== build/version ======
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA
+  ? `vercel:${process.env.VERCEL_GIT_COMMIT_SHA}`
   : `local:${new Date().toISOString()}`;
 
 app.get("/api/version", (req, res) => {
@@ -46,120 +44,12 @@ app.get("/api/version", (req, res) => {
 const SUPABASE_URL = (process.env.SUPABASE_URL || "").trim();
 const SUPABASE_SERVICE_ROLE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error("Missing env: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY");
-}
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-console.log("Supabase client initialized");
-
- ====== (optional) seed users ======
-async function seedUsers() {
-  const seeds = [
-    { username: "admin", password: "dnflwlq132", name: "관리자", role: "admin" },
-    { username: "client1", password: "dnflwlq132", name: "고객1", role: "client" },
-    { username: "client2", password: "dnflwlq132", name: "고객2", role: "client" },
-  ];
-
-  for (const u of seeds) {
-    const { data: exist, error: selErr } = await supabase
-      .from("users")
-      .select("id, username")
-      .eq("username", u.username)
-      .maybeSingle();
-
-    if (selErr) {
-      console.error("[seedUsers] select error:", selErr.message);
-      continue;
-    }
-
-    if (!exist) {
-      const { error: insErr } = await supabase.from("users").insert([u]);
-      if (insErr) console.error("[seedUsers] insert error:", insErr.message);
-      else console.log(`[seedUsers] inserted: ${u.username}`);
-    } else {
-      const { error: updErr } = await supabase
-        .from("users")
-        .update({ password: u.password, name: u.name, role: u.role })
-        .eq("username", u.username);
-
-      if (updErr) console.error("[seedUsers] update error:", updErr.message);
-      else console.log(`[seedUsers] updated: ${u.username}`);
-    }
-  }
-}
-
-// ⚠️ Supabase 네트워크 문제 해결 전에는 주석 유지 추천
-// seedUsers().catch((e) => console.error("[seedUsers] fatal:", e));
-
-// ====== health ======
-app.get("/api/health", (req, res) => res.json({ ok: true }));
-
-// ====== supabase diagnostics (dns + error code) ======
-app.get("/api/diag/supabase", async (req, res) => {
-  const url = (process.env.SUPABASE_URL || "").trim();
-  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
-
-  const maskedKey = key ? key.slice(0, 6) + "..." + key.slice(-6) : "";
-  const okUrl = !!url && url.startsWith("https://") && url.includes(".supabase.co");
-  const okKey = !!key && key.length > 30;
-
-  const host = (() => {
-    try {
-      return new URL(url).host;
-    } catch {
-      return "";
-    }
-  })();
-
-  // DNS 먼저
-  let dnsInfo = null;
-  try {
-    if (host) {
-      const addrs = await dns.lookup(host, { all: true });
-      dnsInfo = { host, addrs };
-    } else {
-      dnsInfo = { host, error: "INVALID_URL" };
-    }
-  } catch (e) {
-    dnsInfo = { host, error: e?.code || e?.message || String(e) };
-  }
-
-  // fetch 테스트
-  try {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 6000);
-
-    const r = await fetch(url.replace(/\/$/, "") + "/rest/v1/", {
-      method: "GET",
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
-      signal: controller.signal,
-    });
-
-    clearTimeout(t);
-
-    const text = await r.text();
-
-    return res.json({
-      ok: true,
-      env: { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: maskedKey, okUrl, okKey },
-      dns: dnsInfo,
-      fetch_test: { status: r.status, statusText: r.statusText, body_sample: text.slice(0, 120) },
-    });
-  } catch (e) {
-    return res.json({
-      ok: false,
-      env: { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: maskedKey, okUrl, okKey },
-      dns: dnsInfo,
-      fetch_error: { message: e?.message || String(e), code: e?.code, name: e?.name },
-    });
-  }
-});
 
 // ====== static ======
 app.use(express.static(path.join(__dirname, "public")));
 
-// ====== page access guards (HTML용: redirect OK) ======
+// ====== page guards ======
 app.use("/report", (req, res, next) => {
   if (req.path === "/login.html") return next();
   if (!req.session.user) return res.redirect("/report/login.html");
@@ -173,11 +63,12 @@ app.use("/admin", (req, res, next) => {
   next();
 });
 
-// ====== API guards (API용: redirect 금지 / JSON) ======
+// ====== API guards ======
 function requireAuth(req, res, next) {
   if (!req.session?.user) return res.status(401).json({ ok: false, error: "UNAUTHORIZED" });
   next();
 }
+
 function requireAdmin(req, res, next) {
   if (!req.session?.user) return res.status(401).json({ ok: false, error: "UNAUTHORIZED" });
   if (req.session.user.role !== "admin") return res.status(403).json({ ok: false, error: "FORBIDDEN" });
@@ -188,7 +79,9 @@ function requireAdmin(req, res, next) {
 app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body || {};
-    if (!username || !password) return res.status(400).json({ ok: false, error: "username,password required" });
+    if (!username || !password) {
+      return res.status(400).json({ ok: false, error: "username,password required" });
+    }
 
     const { data: user, error } = await supabase
       .from("users")
@@ -196,18 +89,15 @@ app.post("/api/login", async (req, res) => {
       .eq("username", username)
       .maybeSingle();
 
-    if (error) return res.status(500).json({ ok: false, error: "SUPABASE_SELECT_ERROR", detail: error.message });
-    if (!user) return res.status(401).json({ ok: false, error: "USER_NOT_FOUND" });
-
-    if (user.password == null) {
-      return res.status(500).json({
-        ok: false,
-        error: "PASSWORD_FIELD_MISSING_OR_NULL",
-        detail: "users.password is null/undefined (check column name or data)",
-      });
+    if (error) {
+      return res.status(500).json({ ok: false, error: "SUPABASE_ERROR", detail: error.message });
     }
-
-    if (String(user.password) !== String(password)) return res.status(401).json({ ok: false, error: "WRONG_PASSWORD" });
+    if (!user) {
+      return res.status(401).json({ ok: false, error: "USER_NOT_FOUND" });
+    }
+    if (String(user.password) !== String(password)) {
+      return res.status(401).json({ ok: false, error: "WRONG_PASSWORD" });
+    }
 
     req.session.user = { id: user.id, username: user.username, name: user.name, role: user.role };
     return res.json({ ok: true, user: req.session.user });
@@ -242,7 +132,9 @@ app.get("/api/admin/clients", requireAdmin, async (req, res) => {
 
 app.post("/api/admin/report", requireAdmin, async (req, res) => {
   const { user_id, period, payload } = req.body || {};
-  if (!user_id || !payload) return res.status(400).json({ ok: false, error: "user_id,payload required" });
+  if (!user_id || !payload) {
+    return res.status(400).json({ ok: false, error: "user_id,payload required" });
+  }
 
   const { data, error } = await supabase
     .from("reports")
@@ -269,7 +161,7 @@ app.get("/api/admin/reports", requireAdmin, async (req, res) => {
   return res.json({ ok: true, reports: data || [] });
 });
 
-// ====== CLIENT REPORT API ======
+// ====== CLIENT REPORT ======
 app.get("/api/report", requireAuth, async (req, res) => {
   const { username, role, name } = req.session.user;
 
@@ -320,7 +212,7 @@ app.get("/api/report", requireAuth, async (req, res) => {
         clientName: user.name || name,
         period: "최근 7일",
         kpis: [],
-        highlights: ["아직 등록된 리포트가 없습니다. 관리자에게 요청하세요."],
+        highlights: ["아직 등록된 리포트가 없습니다."],
         actions: [],
       },
     });
@@ -337,15 +229,8 @@ app.get("/api/report", requireAuth, async (req, res) => {
   });
 });
 
-// ====== fallback routes ======
+// ====== fallback ======
 app.get("/", (req, res) => res.redirect("/report/login.html"));
 
-// ====== start ======
-// Vercel Serverless용: listen 조건부
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port: ${PORT}`);
-  });
-}
-
+// ====== Vercel serverless ======
 export default app;
