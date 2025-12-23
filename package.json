@@ -1,6 +1,7 @@
 {
   "name": "revrun-front",
   "version": "1.0.0",
+  "type": "module",
   "description": "REVRUN 광고 성과 리포트 시스템",
   "scripts": {
     "dev": "vercel dev",
