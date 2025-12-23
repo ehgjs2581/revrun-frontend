@@ -1,0 +1,20 @@
+[33m3919b46[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfix-index[m[33m, [m[1;31morigin/fix-index[m[33m)[m trigger vercel redeploy
+[33md02a300[m force overwrite index
+[33mc195673[m add marker
+[33m15ca8b8[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m fix: remove shell commands from index.html
+[33m719c2c4[m add public folder and index.html
+[33m4a42b7d[m chore: remove node config for static deploy
+[33mbe2dea8[m chore: remove server from frontend repo
+[33m5cb60d2[m chore: remove vercel.json to deploy as static
+[33m09bb1b9[m chore: add index redirect
+[33m221b37c[m feat: Initial commit - REVRUN frontend
+[33md07d09e[m Add admin report creation form
+[33m1b3b948[m Add diag API
+[33m8110371[m Fix syntax error for Vercel
+[33m2a96899[m Fix Vercel serverless
+[33mef4fdde[m Add Vercel config and enable seedUsers
+[33m9c47187[m fix: full server js version and supabase diag
+[33ma766677[m chore: add /api/diag/supabase endpoint
+[33m443d643[m chore: add supabase connectivity diag endpoint
+[33mae35b0f[m fix: debug login errors (user not found / wrong password / schema)
+[33m81ddca7[m fix: auto seed users for login (admin/client1/client2)

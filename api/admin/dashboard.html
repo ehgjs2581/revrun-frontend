@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>REVRUN | 관리자</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #faf8f5;
+      --light-cream: #f5f3ef;
+      --warm-beige: #e8e3db;
+      --medium-brown: #8b7355;
+      --dark-brown: #5d4a3a;
+      --deep-brown: #3a2f23;
+      --accent-green: #5d8a66;
+      --accent-blue: #4a7ba7;
+    }
+
+    body {
+      font-family: 'Manrope', -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--deep-brown);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 72px 56px 100px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 80px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--warm-beige);
+      animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .logo-symbol {
+      width: 90px;
+      height: 64px;
+    }
+
+    .logo-symbol svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .wordmark {
+      font-family: 'Cormorant', serif;
+      font-size: 36px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--deep-brown);
+    }
+
+    .tagline {
+      font-family: 'Manrope', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--medium-brown);
+    }
+
+    .divider {
+      width: 1px;
+      height: 48px;
+      background: var(--warm-beige);
+    }
+
+    .page-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--dark-brown);
+      line-height: 1.3;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .admin-badge {
+      padding: 6px 14px;
+      background: var(--accent-blue);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-brown);
+      letter-spacing: 0.01em;
+    }
+
+    .btn-logout {
+      padding: 12px 28px;
+      border: 1px solid var(--deep-brown);
+      background: transparent;
+      color: var(--deep-brown);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .btn-logout:hover {
+      background: var(--deep-brown);
+      color: var(--cream);
+    }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border: 1px solid var(--warm-beige);
+      padding: 48px;
+      margin-bottom: 60px;
+      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-section {
+      margin-bottom: 40px;
+    }
+
+    .form-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    /* Form Elements */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .form-select,
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1px solid var(--warm-beige);
+      background: var(--light-cream);
+      color: var(--deep-brown);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Manrope', sans-serif;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+
+    .form-select:focus,
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--dark-brown);
+      background: white;
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* KPI Items */
+    .kpi-items {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .btn-remove {
+      padding: 14px 20px;
+      border: 1px solid var(--warm-beige);
+      background: white;
+      color: var(--medium-brown);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .btn-remove:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .btn-add {
+      padding: 12px 24px;
+      border: 1px solid var(--dark-brown);
+      background: transparent;
+      color: var(--dark-brown);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Manrope', sans-serif;
+      display: inline-block;
+    }
+
+    .btn-add:hover {
+      background: var(--light-cream);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      background: var(--deep-brown);
+      color: var(--cream);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Manrope', sans-serif;
+      margin-top: 32px;
+    }
+
+    .btn-submit:hover {
+      background: var(--dark-brown);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(58, 47, 35, 0.2);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Success/Error Messages */
+    .message {
+      padding: 16px 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(93, 138, 102, 0.1);
+      border: 1px solid rgba(93, 138, 102, 0.3);
+      color: var(--accent-green);
+      display: block;
+    }
+
+    .message.error {
+      background: rgba(185, 28, 28, 0.06);
+      border: 1px solid rgba(185, 28, 28, 0.15);
+      color: #991b1b;
+      display: block;
+    }
+
+    /* History Section */
+    .history-section {
+      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+    }
+
+    .history-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    .history-list {
+      background: white;
+      border: 1px solid var(--warm-beige);
+      padding: 32px;
+    }
+
+    .history-item {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .history-period {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark-brown);
+    }
+
+    .history-date {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--medium-brown);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--medium-brown);
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 44px 24px 72px;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 36px;
+        margin-bottom: 56px;
+      }
+
+      .logo-container {
+        gap: 20px;
+      }
+
+      .wordmark {
+        font-size: 28px;
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+
+      .form-card {
+        padding: 32px 28px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="header">
+      <div class="brand">
+        <div class="logo-container">
+          <div class="logo-symbol">
+            <svg viewBox="0 0 90 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#5d4a3a;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#3a2f23;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="vGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#8b7355;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#5d4a3a;stop-opacity:1" />
+                </linearGradient>
+                <filter id="letterShadow">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+                  <feOffset dx="0" dy="2" result="offsetblur"/>
+                  <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.25"/>
+                  </feComponentTransfer>
+                  <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <g filter="url(#letterShadow)" transform="translate(30, 0)">
+                <path d="M2 12 L14 12 L24 52 L12 52 Z" fill="url(#vGrad)"/>
+                <path d="M26 12 L38 12 L28 52 L16 52 Z" fill="url(#vGrad)"/>
+                <path d="M2 12 L14 12 L14 16 L6 16 Z" fill="#8b7355" opacity="0.3"/>
+              </g>
+              <g filter="url(#letterShadow)">
+                <path d="M6 12 L6 52 L16 52 L16 36 L24 36 L32 52 L44 52 L34 34 C39 32 42 28 42 20 C42 10 36 12 26 12 Z M16 22 L26 22 C30 22 32 23 32 26 C32 29 30 30 26 30 L16 30 Z" fill="url(#rGrad)"/>
+                <path d="M16 22 L26 22 C28 22 29 22.5 29 23.5 L16 23.5 Z" fill="#8b7355" opacity="0.35"/>
+              </g>
+              <line x1="6" y1="56" x2="78" y2="56" stroke="#e8e3db" stroke-width="1.5" opacity="0.4"/>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <div class="wordmark">REVRUN</div>
+            <div class="tagline">ADVERTISING ANALYTICS</div>
+          </div>
+          <div class="divider"></div>
+          <h1 class="page-title">관리자</h1>
+        </div>
+        <div class="meta-row">
+          <span class="admin-badge">Admin</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="user-name" id="userName"></span>
+        <button class="btn-logout" id="logoutBtn">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 리포트 작성 폼 -->
+    <div class="form-card">
+      <form id="reportForm">
+        
+        <div class="form-section">
+          <h2 class="section-title">기본 정보</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="clientSelect">고객 선택</label>
+              <select id="clientSelect" class="form-select" required>
+                <option value="">고객을 선택하세요</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="periodSelect">기간</label>
+              <select id="periodSelect" class="form-select" required>
+                <option value="최근 7일">최근 7일</option>
+                <option value="최근 14일">최근 14일</option>
+                <option value="최근 30일">최근 30일</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">핵심 지표</h2>
+          <div id="kpiItems" class="kpi-items">
+            <div class="kpi-item">
+              <div class="form-group">
+                <label class="form-label">항목명</label>
+                <input type="text" class="form-input kpi-label" placeholder="예: 광고 수익" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">값</label>
+                <input type="text" class="form-input kpi-value" placeholder="예: 21,134원" required>
+              </div>
+              <button type="button" class="btn-remove" onclick="removeKpi(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" class="btn-add" onclick="addKpi()">+ 지표 추가</button>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">잘된 점</h2>
+          <div class="form-group">
+            <label class="form-label" for="highlights">한 줄씩 입력</label>
+            <textarea id="highlights" class="form-textarea" placeholder="예:&#10;클릭률이 전월 대비 15% 증가했습니다&#10;신규 고객 유입이 200% 증가했습니다"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">개선할 점</h2>
+          <div class="form-group">
+            <label class="form-label" for="actions">한 줄씩 입력</label>
+            <textarea id="actions" class="form-textarea" placeholder="예:&#10;타겟 연령대 광고 비중을 늘려야 합니다&#10;키워드 최적화가 필요합니다"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">리포트 저장</button>
+        <div id="message" class="message"></div>
+      </form>
+    </div>
+
+    <!-- 작성 내역 -->
+    <div class="history-section">
+      <h2 class="history-title">작성 내역</h2>
+      <div class="history-list" id="historyList">
+        <div class="empty-state">작성된 리포트가 없습니다</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        ...opts
+      });
+      return res.json();
+    }
+
+    function addKpi() {
+      const container = document.getElementById('kpiItems');
+      const item = document.createElement('div');
+      item.className = 'kpi-item';
+      item.innerHTML = `
+        <div class="form-group">
+          <label class="form-label">항목명</label>
+          <input type="text" class="form-input kpi-label" placeholder="예: 광고 수익" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">값</label>
+          <input type="text" class="form-input kpi-value" placeholder="예: 21,134원" required>
+        </div>
+        <button type="button" class="btn-remove" onclick="removeKpi(this)">삭제</button>
+      `;
+      container.appendChild(item);
+    }
+
+    function removeKpi(btn) {
+      const items = document.querySelectorAll('.kpi-item');
+      if (items.length > 1) {
+        btn.closest('.kpi-item').remove();
+      }
+    }
+
+    async function loadClients() {
+      const data = await api('/api/admin/clients');
+      const select = document.getElementById('clientSelect');
+      
+      if (data.ok && data.clients) {
+        data.clients.forEach(client => {
+          const option = document.createElement('option');
+          option.value = client.user_id;
+          option.textContent = client.username;
+          select.appendChild(option);
+        });
+      }
+    }
+
+    async function loadHistory() {
+      const clientId = document.getElementById('clientSelect').value;
+      if (!clientId) return;
+
+      const data = await api(`/api/admin/reports?user_id=${clientId}`);
+      const list = document.getElementById('historyList');
+
+      if (data.ok && data.reports && data.reports.length > 0) {
+        list.innerHTML = data.reports.map(r => {
+          const date = new Date(r.created_at).toLocaleDateString('ko-KR');
+          return `
+            <div class="history-item">
+              <div class="history-meta">
+                <span class="history-period">${r.payload.period || '기간 미지정'}</span>
+                <span class="history-date">${date}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        list.innerHTML = '<div class="empty-state">작성된 리포트가 없습니다</div>';
+      }
+    }
+
+    document.getElementById('clientSelect').addEventListener('change', loadHistory);
+
+    document.getElementById('reportForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const clientId = document.getElementById('clientSelect').value;
+      const period = document.getElementById('periodSelect').value;
+
+      const kpiItems = document.querySelectorAll('.kpi-item');
+      const kpis = Array.from(kpiItems).map(item => ({
+        label: item.querySelector('.kpi-label').value,
+        value: item.querySelector('.kpi-value').value
+      }));
+
+      const highlights = document.getElementById('highlights').value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const actions = document.getElementById('actions').value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const submitBtn = document.getElementById('submitBtn');
+      const message = document.getElementById('message');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '저장 중...';
+      message.className = 'message';
+
+      try {
+        const res = await api('/api/admin/report', {
+          method: 'POST',
+          body: JSON.stringify({
+            user_id: clientId,
+            period: period,
+            payload: { kpis, highlights, actions }
+          })
+        });
+
+        if (res.ok) {
+          message.className = 'message success';
+          message.textContent = '리포트가 저장되었습니다!';
+          document.getElementById('reportForm').reset();
+          loadHistory();
+        } else {
+          message.className = 'message error';
+          message.textContent = res.error || '저장에 실패했습니다.';
+        }
+      } catch (err) {
+        message.className = 'message error';
+        message.textContent = '연결 오류가 발생했습니다.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '리포트 저장';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await api('/api/logout', { method: 'POST' });
+      location.href = '/report/login.html';
+    });
+
+    async function boot() {
+      const me = await api('/api/me');
+      if (!me?.user || me.user.role !== 'admin') {
+        location.href = '/report/login.html';
+        return;
+      }
+      document.getElementById('userName').textContent = me.user.username;
+      await loadClients();
+    }
+
+    boot();
+  </script>
+</body>
+</html>
