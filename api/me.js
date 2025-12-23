@@ -41,8 +41,8 @@ export default async function handler(req, res) {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('user_id, username, role')
-      .eq('user_id', userId)
+      .select('id, username, role')
+      .eq('id', userId)
       .single();
 
     if (error || !user) {
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       user: {
-        user_id: user.user_id,
+        user_id: user.id,
         username: user.username,
         role: user.role
       }
