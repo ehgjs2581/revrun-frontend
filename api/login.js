@@ -13,6 +13,14 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://revrun.co.kr");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+// ✅ 디버그: 브라우저에서 GET으로 확인 가능하게
+if (req.method === "GET" && req.query?.debug === "1") {
+  return res.status(200).json({
+    ok: true,
+    supabaseUrl: process.env.SUPABASE_URL,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+  });
+}
 
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST")
