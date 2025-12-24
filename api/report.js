@@ -17,7 +17,6 @@ function parseCookies(cookieHeader) {
 }
 
 export default async function handler(req, res) {
-  // CORS 설정
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', 'https://revrun.co.kr');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -39,7 +38,6 @@ export default async function handler(req, res) {
       return res.status(401).json({ ok: false, error: 'Not authenticated' });
     }
 
-    // 최신 리포트 가져오기
     const { data: report, error } = await supabase
       .from('reports')
       .select('*')
@@ -51,22 +49,24 @@ export default async function handler(req, res) {
     if (error || !report) {
       return res.status(404).json({ 
         ok: false, 
-        error: 'No report found',
-        message: '아직 작성된 리포트가 없습니다.' 
+        error: 'No report found'
       });
     }
 
-    // payload에서 데이터 추출
-    const payload = report.payload || {};
+    const { data: user } = await supabase
+      .from('users')
+      .select('name')
+      .eq('id', userId)
+      .single();
 
     return res.status(200).json({
       ok: true,
       report: {
-        clientName: report.payload.clientName || '고객',
+        clientName: user?.name || '고객',
         period: report.period || '최근 7일',
-        kpis: payload.kpis || [],
-        highlights: payload.highlights || [],
-        actions: payload.actions || [],
+        kpis: report.kpis || [],
+        highlights: report.highlights || [],
+        actions: report.actions || [],
         _meta: {
           created_at: report.created_at
         }
@@ -76,6 +76,4 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Report error:', err);
     return res.status(500).json({ ok: false, error: 'Server error' });
-  }
-}
 }
