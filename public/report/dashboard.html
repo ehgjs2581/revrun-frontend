@@ -4,16 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 광고 성과 리포트</title>
-  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --cream: #faf8f5;
@@ -23,143 +18,86 @@
       --dark-brown: #5d4a3a;
       --deep-brown: #3a2f23;
       --accent-green: #5d8a66;
+      --accent-blue: #5a7a9a;
+      --accent-pink: #c4a4a4;
     }
 
     body {
       font-family: 'Manrope', -apple-system, sans-serif;
       background: var(--cream);
       color: var(--deep-brown);
-      line-height: 1.7;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
-      max-width: 1360px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 72px 56px 100px;
+      padding: 48px 32px 80px;
     }
 
     /* Header */
     .header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 80px;
-      padding-bottom: 40px;
+      align-items: center;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
       border-bottom: 1px solid var(--warm-beige);
-      animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .brand {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-
-    .logo-symbol {
-      width: 90px;
-      height: 64px;
-    }
-
-    .logo-symbol svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .wordmark {
-      font-family: 'Cormorant', serif;
-      font-size: 36px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--deep-brown);
-    }
-
-    .tagline {
-      font-family: 'Manrope', sans-serif;
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--medium-brown);
-    }
-
-    .divider {
-      width: 1px;
-      height: 48px;
-      background: var(--warm-beige);
-    }
-
-    .page-title {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--dark-brown);
-      line-height: 1.3;
-    }
-
-    .meta-row {
       display: flex;
       align-items: center;
       gap: 20px;
     }
 
-    .period {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--dark-brown);
-      letter-spacing: 0.01em;
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: var(--deep-brown);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--cream);
     }
 
-    .date {
+    .brand-info h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--deep-brown);
+      margin-bottom: 2px;
+    }
+
+    .brand-info span {
       font-size: 13px;
-      font-weight: 500;
       color: var(--medium-brown);
     }
 
-    .header-actions {
+    .user-area {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
     }
 
     .user-name {
       font-size: 14px;
       font-weight: 600;
       color: var(--dark-brown);
-      letter-spacing: 0.01em;
     }
 
     .btn-logout {
-      padding: 12px 28px;
+      padding: 10px 24px;
       border: 1px solid var(--deep-brown);
       background: transparent;
       color: var(--deep-brown);
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 13px;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      font-family: 'Manrope', sans-serif;
+      transition: all 0.3s ease;
     }
 
     .btn-logout:hover {
@@ -167,128 +105,142 @@
       color: var(--cream);
     }
 
-    /* Main Grid - 2 Columns */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-bottom: 60px;
+    /* Title */
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--deep-brown);
+      margin-bottom: 8px;
+    }
+
+    .page-meta {
+      font-size: 14px;
+      color: var(--medium-brown);
     }
 
     /* Card */
     .card {
       background: white;
       border: 1px solid var(--warm-beige);
-      padding: 40px;
-      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card:nth-child(1) { animation-delay: 0.1s; }
-    .card:nth-child(2) { animation-delay: 0.2s; }
-
-    .card-header {
-      margin-bottom: 32px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--warm-beige);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
     }
 
     .card-title {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      color: var(--dark-brown);
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Big Number Display */
-    .big-metric {
-      text-align: center;
-      padding: 48px 0;
+      color: var(--deep-brown);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--warm-beige);
-      margin-bottom: 36px;
     }
 
-    .big-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--medium-brown);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-bottom: 16px;
+    /* 2 Column Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
 
-    .big-value {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 56px;
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* Stat Box */
+    .stat-box {
+      background: var(--light-cream);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--dark-brown);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 20px;
       font-weight: 800;
       color: var(--deep-brown);
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
     }
 
-    .big-change {
-      font-size: 14px;
-      font-weight: 600;
+    .stat-value.green {
       color: var(--accent-green);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
     }
 
-    /* Progress Bar */
-    .progress-section {
-      margin-bottom: 32px;
+    /* Big Metric */
+    .big-metric-box {
+      background: var(--light-cream);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
     }
 
-    .progress-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--dark-brown);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 16px;
+    .big-number {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--deep-brown);
+      margin-bottom: 8px;
     }
 
-    .progress-bar-wrapper {
+    .big-sub {
+      font-size: 14px;
+      color: var(--medium-brown);
+    }
+
+    .progress-simple {
+      height: 8px;
       background: var(--warm-beige);
-      height: 48px;
-      position: relative;
+      border-radius: 4px;
+      margin-top: 16px;
       overflow: hidden;
-      display: flex;
     }
 
-    .progress-segment {
+    .progress-fill {
       height: 100%;
+      background: var(--accent-green);
+      border-radius: 4px;
+    }
+
+    /* Gender Bar */
+    .gender-bar {
+      display: flex;
+      height: 40px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .gender-male {
+      background: var(--dark-brown);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
       color: white;
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .progress-male {
-      background: var(--dark-brown);
+    .gender-female {
+      background: var(--accent-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .progress-female {
-      background: var(--medium-brown);
-    }
-
-    /* Age Chart */
-    .age-chart {
-      margin-bottom: 32px;
-    }
-
+    /* Age Bars */
     .age-row {
       display: flex;
       align-items: center;
@@ -299,309 +251,403 @@
     .age-label {
       width: 60px;
       font-size: 13px;
-      font-weight: 600;
       color: var(--dark-brown);
+      font-weight: 500;
     }
 
     .age-bar-bg {
       flex: 1;
-      height: 32px;
+      height: 24px;
       background: var(--warm-beige);
-      position: relative;
+      border-radius: 6px;
       overflow: hidden;
     }
 
     .age-bar-fill {
       height: 100%;
-      background: var(--dark-brown);
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--medium-brown);
+      border-radius: 6px;
+      transition: width 0.6s ease;
     }
 
     .age-percent {
-      width: 50px;
+      width: 45px;
       text-align: right;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--deep-brown);
     }
 
-    /* Stats List */
-    .stats-list {
-      list-style: none;
-    }
-
-    .stat-item {
+    /* Naver Section */
+    .naver-box {
+      background: var(--light-cream);
+      border-radius: 12px;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--warm-beige);
     }
 
-    .stat-item:last-child {
-      border-bottom: none;
-    }
-
-    .stat-label {
-      font-size: 14px;
+    .naver-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--dark-brown);
     }
 
-    .stat-value {
-      font-family: 'Cabinet Grotesk', sans-serif;
+    .naver-icon {
+      width: 24px;
+      height: 24px;
+      background: #03c75a;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .naver-value {
       font-size: 18px;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      border: 1px solid var(--warm-beige);
+      background: transparent;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--medium-brown);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: var(--deep-brown);
+      color: white;
+      border-color: var(--deep-brown);
+    }
+
+    .tab:hover:not(.active) {
+      border-color: var(--dark-brown);
+      color: var(--dark-brown);
+    }
+
+    /* Time Section */
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .time-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    .time-label {
+      font-size: 14px;
+      color: var(--dark-brown);
+    }
+
+    .time-value {
+      font-size: 14px;
       font-weight: 700;
       color: var(--deep-brown);
     }
 
-    /* Full Width Sections */
-    .section {
-      margin-bottom: 60px;
-      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    .peak-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--accent-green);
+      color: white;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
     }
 
-    .section:nth-child(3) { animation-delay: 0.3s; }
-    .section:nth-child(4) { animation-delay: 0.4s; }
-
-    .section-header {
-      margin-bottom: 32px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--warm-beige);
+    /* Instagram Link */
+    .insta-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      background: var(--deep-brown);
+      border-radius: 12px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
 
-    .section-title {
-      font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
+    .insta-link:hover {
+      background: var(--dark-brown);
+    }
+
+    /* Insights */
+    .insight-list {
+      list-style: none;
+    }
+
+    .insight-item {
+      padding: 16px 0 16px 20px;
+      border-left: 2px solid var(--warm-beige);
+      margin-bottom: 12px;
+      font-size: 15px;
       color: var(--dark-brown);
-      letter-spacing: -0.01em;
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+
+    .insight-item:hover {
+      border-left-color: var(--deep-brown);
+      padding-left: 24px;
     }
 
     /* Chart */
     .chart-box {
-      background: white;
-      border: 1px solid var(--warm-beige);
-      padding: 48px 40px;
-      height: 400px;
-    }
-
-    /* Insights List */
-    .insights {
-      background: white;
-      border: 1px solid var(--warm-beige);
-      padding: 40px;
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .insight {
-      padding: 24px 0 24px 40px;
-      border-left: 2px solid var(--warm-beige);
-      color: var(--dark-brown);
-      font-size: 15px;
-      line-height: 1.85;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-
-    .insight::before {
-      content: '';
-      position: absolute;
-      left: -2px;
-      top: 0;
-      width: 2px;
-      height: 0;
-      background: var(--deep-brown);
-      transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .insight:hover {
-      padding-left: 48px;
-      color: var(--deep-brown);
-    }
-
-    .insight:hover::before {
-      height: 100%;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 80px 40px;
-      color: var(--medium-brown);
-      font-size: 13px;
-      font-style: italic;
+      background: var(--light-cream);
+      border-radius: 12px;
+      padding: 24px;
+      height: 300px;
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
     @media (max-width: 768px) {
-      .container {
-        padding: 44px 24px 72px;
-      }
-
-      .header {
-        flex-direction: column;
-        gap: 36px;
-        margin-bottom: 56px;
-      }
-
-      .logo-container {
-        gap: 20px;
-      }
-
-      .wordmark {
-        font-size: 28px;
-      }
-
-      .page-title {
-        font-size: 24px;
-      }
-
-      .big-value {
-        font-size: 44px;
-      }
-
-      .card {
-        padding: 32px 28px;
-      }
-
-      .section {
-        margin-bottom: 48px;
-      }
+      .container { padding: 24px 16px 60px; }
+      .header { flex-direction: column; gap: 20px; text-align: center; }
+      .page-title { font-size: 22px; }
+      .big-number { font-size: 32px; }
+      .time-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     
-    <div class="header">
+    <!-- Header -->
+    <header class="header">
       <div class="brand">
-        <div class="logo-container">
-          <div class="logo-symbol">
-            <svg viewBox="0 0 90 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#5d4a3a;stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:#3a2f23;stop-opacity:1" />
-                </linearGradient>
-                <linearGradient id="vGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#8b7355;stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:#5d4a3a;stop-opacity:1" />
-                </linearGradient>
-                <filter id="letterShadow">
-                  <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
-                  <feOffset dx="0" dy="2" result="offsetblur"/>
-                  <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.25"/>
-                  </feComponentTransfer>
-                  <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-              <g filter="url(#letterShadow)" transform="translate(30, 0)">
-                <path d="M2 12 L14 12 L24 52 L12 52 Z" fill="url(#vGrad)"/>
-                <path d="M26 12 L38 12 L28 52 L16 52 Z" fill="url(#vGrad)"/>
-                <path d="M2 12 L14 12 L14 16 L6 16 Z" fill="#8b7355" opacity="0.3"/>
-              </g>
-              <g filter="url(#letterShadow)">
-                <path d="M6 12 L6 52 L16 52 L16 36 L24 36 L32 52 L44 52 L34 34 C39 32 42 28 42 20 C42 10 36 12 26 12 Z M16 22 L26 22 C30 22 32 23 32 26 C32 29 30 30 26 30 L16 30 Z" fill="url(#rGrad)"/>
-                <path d="M16 22 L26 22 C28 22 29 22.5 29 23.5 L16 23.5 Z" fill="#8b7355" opacity="0.35"/>
-              </g>
-              <line x1="6" y1="56" x2="78" y2="56" stroke="#e8e3db" stroke-width="1.5" opacity="0.4"/>
-            </svg>
-          </div>
-          <div class="logo-text">
-            <div class="wordmark">REVRUN</div>
-            <div class="tagline">ADVERTISING ANALYTICS</div>
-          </div>
-          <div class="divider"></div>
-          <h1 class="page-title" id="clientName">성과 리포트</h1>
-        </div>
-        <div class="meta-row">
-          <span class="period" id="period">최근 7일</span>
-          <span class="date" id="date"></span>
+        <div class="logo">RV</div>
+        <div class="brand-info">
+          <h1>REVRUN</h1>
+          <span>광고 성과 리포트</span>
         </div>
       </div>
-      <div class="header-actions">
-        <span class="user-name" id="userName"></span>
+      <div class="user-area">
+        <span class="user-name" id="userName">-</span>
         <button class="btn-logout" id="logoutBtn">로그아웃</button>
       </div>
+    </header>
+
+    <!-- Page Title -->
+    <div class="page-header">
+      <h2 class="page-title" id="clientName">성과 리포트</h2>
+      <p class="page-meta" id="period">최근 7일 기준</p>
     </div>
 
-    <!-- 2열 그리드 -->
-    <div class="main-grid">
+    <!-- 광고 효과 -->
+    <div class="card">
+      <h3 class="card-title">광고 효과</h3>
       
-      <!-- 왼쪽: 광고 수익 -->
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">📊 광고 수익</h2>
+      <div class="grid-2" style="margin-bottom: 20px;">
+        <div class="stat-box">
+          <span class="stat-label">광고를 본 사람</span>
+          <span class="stat-value green" id="reach">-</span>
         </div>
-
-        <div class="big-metric">
-          <div class="big-label">총 수익</div>
-          <div class="big-value" id="mainMetric">-</div>
-          <div class="big-change">▲ 전월 대비 증가</div>
-        </div>
-
-        <ul class="stats-list" id="leftStats"></ul>
-      </div>
-
-      <!-- 오른쪽: 고객 분석 -->
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">🎯 고객 분석</h2>
-        </div>
-
-        <div class="progress-section">
-          <div class="progress-label">남녀 비율</div>
-          <div class="progress-bar-wrapper" id="genderBar">
-            <div class="progress-segment progress-male" style="width: 50%">남성 50%</div>
-            <div class="progress-segment progress-female" style="width: 50%">여성 50%</div>
+        <div class="big-metric-box">
+          <div class="big-number" id="impressions">-</div>
+          <div class="big-sub">총 노출 / 목표 30,000회</div>
+          <div class="progress-simple">
+            <div class="progress-fill" id="impressionBar" style="width: 70%;"></div>
           </div>
         </div>
+      </div>
 
-        <div class="age-chart">
-          <div class="progress-label">연령대별</div>
-          <div id="ageChart"></div>
+      <div class="grid-2">
+        <div class="stat-box">
+          <span class="stat-label">반응한 사람</span>
+          <span class="stat-value green" id="engagement">-</span>
+        </div>
+        <div>
+          <div class="stat-label" style="margin-bottom: 8px;">성별 비율</div>
+          <div class="gender-bar">
+            <div class="gender-male" id="maleBar" style="width: 76%;">남성 76%</div>
+            <div class="gender-female" id="femaleBar" style="width: 24%;">여성 24%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 연령대 -->
+    <div class="card">
+      <h3 class="card-title">연령대별 반응</h3>
+      <div id="ageChart">
+        <div class="age-row">
+          <span class="age-label">18-24세</span>
+          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 4%;"></div></div>
+          <span class="age-percent">4%</span>
+        </div>
+        <div class="age-row">
+          <span class="age-label">25-34세</span>
+          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 55%;"></div></div>
+          <span class="age-percent">55%</span>
+        </div>
+        <div class="age-row">
+          <span class="age-label">35-44세</span>
+          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 30%;"></div></div>
+          <span class="age-percent">30%</span>
+        </div>
+        <div class="age-row">
+          <span class="age-label">45-54세</span>
+          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 11%;"></div></div>
+          <span class="age-percent">11%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 네이버 플레이스 -->
+    <div class="card">
+      <h3 class="card-title">네이버 플레이스</h3>
+      <div class="naver-box">
+        <div class="naver-label">
+          <span class="naver-icon">N</span>
+          <span>최근 방문자 수</span>
+        </div>
+        <span class="naver-value" id="naverVisit">▲ 267명</span>
+      </div>
+    </div>
+
+    <!-- 상권 분석 -->
+    <div class="card">
+      <h3 class="card-title">상권 분석</h3>
+      
+      <div class="tabs">
+        <button class="tab active">회식상권</button>
+        <button class="tab">MZ상권</button>
+        <button class="tab">신생상권</button>
+        <button class="tab">역주행상권</button>
+        <button class="tab">배달상권</button>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 24px;">
+        <div>
+          <div class="stat-label" style="margin-bottom: 8px;">유동인구 성별</div>
+          <div class="gender-bar">
+            <div class="gender-male" style="width: 57%;">남성 57%</div>
+            <div class="gender-female" style="width: 43%;">여성 43%</div>
+          </div>
+        </div>
+        <div>
+          <div class="stat-label" style="margin-bottom: 12px;">유동인구 연령대</div>
+          <div class="age-row">
+            <span class="age-label">20대</span>
+            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 8%;"></div></div>
+            <span class="age-percent">8%</span>
+          </div>
+          <div class="age-row">
+            <span class="age-label">30대</span>
+            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 13%;"></div></div>
+            <span class="age-percent">13%</span>
+          </div>
+          <div class="age-row">
+            <span class="age-label">40대</span>
+            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 23%;"></div></div>
+            <span class="age-percent">23%</span>
+          </div>
+          <div class="age-row">
+            <span class="age-label">50대</span>
+            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 25%;"></div></div>
+            <span class="age-percent">25%</span>
+          </div>
         </div>
       </div>
 
+      <div class="time-grid">
+        <div>
+          <div class="stat-label" style="margin-bottom: 12px;">붐비는 요일</div>
+          <div class="time-item">
+            <span class="time-label">평일 (월~금)</span>
+            <span class="time-value">15%</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">주말 (토~일)</span>
+            <span class="time-value">10%</span>
+          </div>
+        </div>
+        <div>
+          <div class="stat-label" style="margin-bottom: 12px;">붐비는 시간</div>
+          <div style="margin-bottom: 8px;">
+            <span class="peak-badge">피크타임</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">18:00 - 23:00</span>
+            <span class="time-value">28.8%</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">14:00 - 18:00</span>
+            <span class="time-value">25.4%</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">09:00 - 12:00</span>
+            <span class="time-value">14.1%</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 전체 너비: 그래프 -->
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">📈 일별 추이</h2>
-      </div>
+    <!-- 일별 추이 -->
+    <div class="card">
+      <h3 class="card-title">일별 추이</h3>
       <div class="chart-box">
-        <canvas id="kpiChart"></canvas>
+        <canvas id="trendChart"></canvas>
       </div>
     </div>
 
-    <!-- 전체 너비: 잘된 점 -->
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">✅ 잘된 점</h2>
-      </div>
-      <ul class="insights" id="highlights"></ul>
+    <!-- 잘된 점 -->
+    <div class="card">
+      <h3 class="card-title">잘된 점</h3>
+      <ul class="insight-list" id="highlights">
+        <li class="insight-item">로딩중...</li>
+      </ul>
     </div>
 
-    <!-- 전체 너비: 개선할 점 -->
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">💡 개선할 점</h2>
-      </div>
-      <ul class="insights" id="actions"></ul>
+    <!-- 개선할 점 -->
+    <div class="card">
+      <h3 class="card-title">개선할 점</h3>
+      <ul class="insight-list" id="actions">
+        <li class="insight-item">로딩중...</li>
+      </ul>
+    </div>
+
+    <!-- 광고 미리보기 -->
+    <div class="card">
+      <h3 class="card-title">광고 미리보기</h3>
+      <a href="#" class="insta-link" id="instaLink">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        인스타그램에서 광고 보기
+      </a>
     </div>
 
   </div>
@@ -616,121 +662,48 @@
       return res.json();
     }
 
-    function renderMainMetric(kpis) {
-      const mainEl = document.getElementById('mainMetric');
-      if (kpis && kpis.length > 0) {
-        mainEl.textContent = kpis[0].value || '-';
-      }
-    }
-
-    function renderLeftStats(kpis) {
-      const statsEl = document.getElementById('leftStats');
-      if (!kpis || kpis.length <= 1) return;
-      
-      const stats = kpis.slice(1, 5);
-      statsEl.innerHTML = stats.map(k => `
-        <li class="stat-item">
-          <span class="stat-label">${k.label || '-'}</span>
-          <span class="stat-value">${k.value || '-'}</span>
-        </li>
-      `).join('');
-    }
-
-    function renderGenderBar() {
-      const male = 76;
-      const female = 24;
-      
-      document.getElementById('genderBar').innerHTML = `
-        <div class="progress-segment progress-male" style="width: ${male}%">남성 ${male}%</div>
-        <div class="progress-segment progress-female" style="width: ${female}%">여성 ${female}%</div>
-      `;
-    }
-
-    function renderAgeChart() {
-      const ages = [
-        { label: '18-24세', percent: 4 },
-        { label: '25-34세', percent: 55 },
-        { label: '35-44세', percent: 30 },
-        { label: '45-54세', percent: 11 }
-      ];
-
-      const html = ages.map(age => `
-        <div class="age-row">
-          <div class="age-label">${age.label}</div>
-          <div class="age-bar-bg">
-            <div class="age-bar-fill" style="width: ${age.percent}%"></div>
-          </div>
-          <div class="age-percent">${age.percent}%</div>
-        </div>
-      `).join('');
-
-      document.getElementById('ageChart').innerHTML = html;
-    }
-
     function renderList(id, items) {
       const el = document.getElementById(id);
       if (!items || items.length === 0) {
-        el.innerHTML = '<div class="empty">데이터가 없습니다</div>';
+        el.innerHTML = '<li class="insight-item">데이터가 없습니다</li>';
         return;
       }
-      el.innerHTML = items.map(item => `<li class="insight">${item}</li>`).join('');
+      el.innerHTML = items.map(item => `<li class="insight-item">${item}</li>`).join('');
     }
 
     let chart;
-    function renderChart(kpis) {
-      const ctx = document.getElementById("kpiChart");
+    function renderChart() {
+      const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
-
-      const labels = (kpis || []).map(k => k.label);
-      const values = (kpis || []).map(k => {
-        const num = String(k.value).replace(/[^0-9.]/g, '');
-        return parseFloat(num) || 0;
-      });
 
       chart = new Chart(ctx, {
         type: "line",
         data: {
-          labels,
+          labels: ['월', '화', '수', '목', '금', '토', '일'],
           datasets: [{
-            label: "",
-            data: values,
-            borderColor: "#3a2f23",
-            backgroundColor: "transparent",
+            label: "노출",
+            data: [2800, 3200, 2900, 3500, 4100, 3800, 3200],
+            borderColor: "#5d4a3a",
+            backgroundColor: "rgba(93, 74, 58, 0.1)",
+            fill: true,
             borderWidth: 2,
-            tension: 0.35,
+            tension: 0.4,
             pointRadius: 0,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: "#3a2f23",
-            pointHoverBorderColor: "#faf8f5",
-            pointHoverBorderWidth: 3,
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-          },
+          plugins: { legend: { display: false } },
           scales: {
             y: {
               beginAtZero: true,
-              grid: {
-                color: "#e8e3db",
-                drawBorder: false,
-              },
-              ticks: { 
-                color: "#8b7355",
-                font: { family: 'Manrope', weight: '600', size: 11 },
-                padding: 10
-              }
+              grid: { color: "#e8e3db" },
+              ticks: { color: "#8b7355", font: { size: 11 } }
             },
             x: {
               grid: { display: false },
-              ticks: { 
-                color: "#8b7355",
-                font: { family: 'Manrope', weight: '600', size: 11 },
-                padding: 10
-              }
+              ticks: { color: "#8b7355", font: { size: 11 } }
             }
           }
         }
@@ -752,23 +725,28 @@
       }
 
       const r = data.report || {};
-      document.getElementById("clientName").textContent = r.clientName || '고객 리포트';
-      document.getElementById("period").textContent = r.period || '최근 7일';
-      
-      if (r._meta?.created_at) {
-        const d = new Date(r._meta.created_at);
-        document.getElementById("date").textContent = 
-          `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 업데이트`;
+      document.getElementById("clientName").textContent = (r.clientName || '고객') + '님의 리포트';
+      document.getElementById("period").textContent = (r.period || '최근 7일') + ' 기준';
+
+      // KPI 매핑
+      if (r.kpis && r.kpis.length > 0) {
+        document.getElementById("reach").textContent = '▲ ' + (r.kpis[0]?.value || '-');
+        document.getElementById("impressions").textContent = r.kpis[1]?.value || '-';
+        document.getElementById("engagement").textContent = '▲ ' + (r.kpis[2]?.value || '-');
       }
 
-      renderMainMetric(r.kpis || []);
-      renderLeftStats(r.kpis || []);
-      renderGenderBar();
-      renderAgeChart();
-      renderChart(r.kpis || []);
       renderList("highlights", r.highlights || []);
       renderList("actions", r.actions || []);
+      renderChart();
     }
+
+    // Tab 클릭
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
 
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       await api("/api/logout", { method: "POST" });
