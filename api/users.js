@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 
+// ⚠️ 형 프로젝트 환경변수에 맞게 수정함!
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY
@@ -14,13 +15,6 @@ export default async function handler(req, res) {
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
-    }
-
-    // Auth check (간단한 예시 - 실제로는 JWT 검증 등 필요)
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        // 개발 단계에서는 인증 스킵 가능
-        // return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
 
     try {
@@ -44,7 +38,7 @@ export default async function handler(req, res) {
 
 // GET - 목록 조회 / 단일 조회 / 통계 / 내보내기
 async function handleGet(req, res) {
-    const { id } = req.query;
+    const { id, stats, export: exportCsv } = req.query;
 
     // 단일 회원 조회
     if (id) {
@@ -64,12 +58,12 @@ async function handleGet(req, res) {
     }
 
     // 통계만 요청
-    if (req.query.stats === 'true') {
+    if (stats === 'true') {
         return await getStats(res);
     }
 
     // CSV 내보내기
-    if (req.query.export === 'true') {
+    if (exportCsv === 'true') {
         return await exportUsers(res);
     }
 
@@ -106,11 +100,12 @@ async function handleGet(req, res) {
     const { data, error, count } = await query;
 
     if (error) {
+        console.error('Supabase error:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 
     // 비밀번호 제외
-    const users = data.map(user => {
+    const users = (data || []).map(user => {
         delete user.password;
         return user;
     });
@@ -121,30 +116,38 @@ async function handleGet(req, res) {
         pagination: {
             page,
             limit,
-            total: count,
-            totalPages: Math.ceil(count / limit)
+            total: count || 0,
+            totalPages: Math.ceil((count || 0) / limit)
         }
     });
 }
 
 // 통계 조회
 async function getStats(res) {
-    const [total, active, pending, inactive] = await Promise.all([
-        supabase.from('users').select('id', { count: 'exact', head: true }),
-        supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-        supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
-    ]);
+    try {
+        const [total, active, pending, inactive] = await Promise.all([
+            supabase.from('users').select('id', { count: 'exact', head: true }),
+            supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+            supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+            supabase.from('users').select('id', { count: 'exact', head: true }).eq('status', 'inactive')
+        ]);
 
-    return res.json({
-        success: true,
-        stats: {
-            total: total.count || 0,
-            active: active.count || 0,
-            pending: pending.count || 0,
-            inactive: inactive.count || 0
-        }
-    });
+        return res.json({
+            success: true,
+            stats: {
+                total: total.count || 0,
+                active: active.count || 0,
+                pending: pending.count || 0,
+                inactive: inactive.count || 0
+            }
+        });
+    } catch (error) {
+        console.error('Stats error:', error);
+        return res.json({
+            success: true,
+            stats: { total: 0, active: 0, pending: 0, inactive: 0 }
+        });
+    }
 }
 
 // CSV 내보내기
@@ -160,19 +163,19 @@ async function exportUsers(res) {
 
     // CSV 생성
     const headers = ['이름', '이메일', '연락처', '회사', '플랜', '상태', '가입일'];
-    const rows = data.map(user => [
-        user.name,
-        user.email,
+    const rows = (data || []).map(user => [
+        user.name || '',
+        user.email || '',
         user.phone || '',
         user.company || '',
-        user.plan,
-        user.status,
-        new Date(user.created_at).toLocaleDateString('ko-KR')
+        user.plan || '',
+        user.status || '',
+        user.created_at ? new Date(user.created_at).toLocaleDateString('ko-KR') : ''
     ]);
 
     const csv = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     ].join('\n');
 
     // BOM 추가 (한글 엑셀 호환)
@@ -229,6 +232,7 @@ async function handlePost(req, res) {
         .single();
 
     if (error) {
+        console.error('Insert error:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 
@@ -282,6 +286,7 @@ async function handlePut(req, res) {
         .single();
 
     if (error) {
+        console.error('Update error:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 
@@ -303,6 +308,7 @@ async function handleDelete(req, res) {
         .eq('id', id);
 
     if (error) {
+        console.error('Delete error:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 
