@@ -397,7 +397,10 @@ return null;
 
 // Helper Functions
 
-async function getAccessToken(req) {
+    async function getAccessToken(req) {
+    // 0. 환경변수에서 먼저 가져오기
+    if (process.env.META_ACCESS_TOKEN) return process.env.META_ACCESS_TOKEN;
+
     // 1. Header에서 가져오기
     const authHeader = req.headers['x-meta-token'];
     if (authHeader) return authHeader;
