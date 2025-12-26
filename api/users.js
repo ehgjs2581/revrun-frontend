@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 // ⚠️ 형 프로젝트 환경변수에 맞게 수정함!
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
+    process.env.SUPABASE_SERVICE_KEY
 );
 
 export default async function handler(req, res) {
@@ -188,7 +188,7 @@ async function exportUsers(res) {
 
 // POST - 회원 생성
 async function handlePost(req, res) {
-    const { name, email, password, phone, company, plan, status } = req.body;
+    const { name, email, password, phone, company, plan, status, meta_account_id } = req.body;
 
     // 필수 필드 검증
     if (!name || !email || !password) {
@@ -226,6 +226,7 @@ async function handlePost(req, res) {
             company: company || null,
             plan: plan || 'basic',
             status: status || 'pending',
+            meta_account_id: meta_account_id || null,
             created_at: new Date().toISOString()
         })
         .select()
@@ -248,7 +249,7 @@ async function handlePut(req, res) {
         return res.status(400).json({ success: false, error: 'User ID required' });
     }
 
-    const { name, email, phone, company, plan, status } = req.body;
+    const { name, email, phone, company, plan, status, meta_account_id } = req.body;
 
     // 이메일 변경 시 중복 체크
     if (email) {
@@ -277,6 +278,7 @@ async function handlePut(req, res) {
     if (company !== undefined) updateData.company = company || null;
     if (plan) updateData.plan = plan;
     if (status) updateData.status = status;
+    if (meta_account_id !== undefined) updateData.meta_account_id = meta_account_id || null;
 
     const { data, error } = await supabase
         .from('users')

@@ -930,6 +930,10 @@
                         <label class="form-label">연락처</label>
                         <input type="tel" class="form-input" name="phone" placeholder="010-0000-0000">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Meta 광고계정 ID</label>
+                        <input type="text" class="form-input" name="meta_account_id" placeholder="예: 543464623056642">
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">플랜</label>
@@ -990,6 +994,10 @@
                     <div class="form-group">
                         <label class="form-label">연락처</label>
                         <input type="tel" class="form-input" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Meta 광고계정 ID</label>
+                        <input type="text" class="form-input" name="meta_account_id" placeholder="예: 543464623056642">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -1236,6 +1244,7 @@
                     form.querySelector('[name="company"]').value = user.company || '';
                     form.querySelector('[name="email"]').value = user.email || '';
                     form.querySelector('[name="phone"]').value = user.phone || '';
+                    form.querySelector('[name="meta_account_id"]').value = user.meta_account_id || '';
                     form.querySelector('[name="plan"]').value = user.plan || 'basic';
                     form.querySelector('[name="status"]').value = user.status || 'pending';
                     openModal('editUserModal');
