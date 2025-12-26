@@ -18,10 +18,22 @@ function parseCookies(cookieHeader) {
   return cookies;
 }
 
-async function getMetaInsights(campaignId) {
-  if (!campaignId || !META_ACCESS_TOKEN) {
+async function getCampaignName(campaignId) {
+  if (!campaignId || !META_ACCESS_TOKEN) return null;
+
+  try {
+    const url = `https://graph.facebook.com/v18.0/${campaignId}?fields=name&access_token=${META_ACCESS_TOKEN}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.name || null;
+  } catch (err) {
+    console.error('Campaign name error:', err);
     return null;
   }
+}
+
+async function getMetaInsights(campaignId) {
+  if (!campaignId || !META_ACCESS_TOKEN) return null;
 
   try {
     const url = `https://graph.facebook.com/v18.0/${campaignId}/insights?fields=impressions,reach,spend,actions&access_token=${META_ACCESS_TOKEN}`;
@@ -50,6 +62,19 @@ function getActionValue(actions, type) {
   if (!actions) return '0';
   const action = actions.find(a => a.action_type === type);
   return action ? action.value : '0';
+}
+
+// 캠페인명에서 업체명 추출 (예: "원드베이크샵 리얼" -> "원드베이크샵")
+function extractBusinessName(campaignName) {
+  if (!campaignName) return '고객';
+  // 첫 번째 단어만 추출 (공백 기준)
+  const firstWord = campaignName.split(' ')[0];
+  // 날짜 패턴 제거 (예: 20251219)
+  if (/^\d{8}/.test(firstWord)) {
+    const parts = campaignName.split(' ');
+    return parts[1] || '고객';
+  }
+  return firstWord;
 }
 
 export default async function handler(req, res) {
@@ -85,15 +110,18 @@ export default async function handler(req, res) {
       return res.status(404).json({ ok: false, error: 'User not found' });
     }
 
+    // 캠페인명 가져오기
+    const campaignName = await getCampaignName(user.campaign_id);
+    const businessName = user.name || extractBusinessName(campaignName) || '고객';
+
     // Meta API에서 데이터 가져오기
     const metaData = await getMetaInsights(user.campaign_id);
 
     if (!metaData) {
-      // Meta 데이터 없으면 기본값
       return res.status(200).json({
         ok: true,
         report: {
-          clientName: user.name || '고객',
+          clientName: businessName,
           period: '최근 30일',
           reach: '0',
           impressions: '0',
@@ -133,22 +161,22 @@ export default async function handler(req, res) {
     }
 
     // 개선점 자동 생성
-    const actions = [];
+    const actionItems = [];
     const ctr = (Number(getActionValue(metaData.actions, 'link_click')) / Number(metaData.impressions) * 100);
     if (ctr < 1) {
-      actions.push('클릭률 개선을 위해 광고 소재 변경을 고려해보세요.');
+      actionItems.push('클릭률 개선을 위해 광고 소재 변경을 고려해보세요.');
     }
     if (Number(getActionValue(metaData.actions, 'landing_page_view')) < Number(getActionValue(metaData.actions, 'link_click')) * 0.5) {
-      actions.push('랜딩페이지 로딩 속도를 확인해보세요.');
+      actionItems.push('랜딩페이지 로딩 속도를 확인해보세요.');
     }
-    if (actions.length === 0) {
-      actions.push('현재 광고 성과가 양호합니다. 유지하세요!');
+    if (actionItems.length === 0) {
+      actionItems.push('현재 광고 성과가 양호합니다. 유지하세요!');
     }
 
     return res.status(200).json({
       ok: true,
       report: {
-        clientName: user.name || '고객',
+        clientName: businessName,
         period: `${metaData.date_start} ~ ${metaData.date_stop}`,
         reach: reach,
         impressions: impressions,
@@ -158,7 +186,7 @@ export default async function handler(req, res) {
         linkClicks: linkClicks,
         landingPageViews: landingPageViews,
         highlights: highlights,
-        actions: actions
+        actions: actionItems
       }
     });
 

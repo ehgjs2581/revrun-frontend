@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REVRUN | 고객 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #faf8f5;
+      --warm-beige: #e8e3db;
+      --medium-brown: #8b7355;
+      --dark-brown: #5d4a3a;
+      --deep-brown: #3a2f23;
+      --accent-red: #c45c5c;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--cream);
+      color: var(--deep-brown);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: var(--deep-brown);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--cream);
+    }
+
+    .brand h1 { font-size: 20px; }
+    .brand span { font-size: 13px; color: var(--medium-brown); }
+
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a {
+      padding: 10px 20px;
+      border: 1px solid var(--warm-beige);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--dark-brown);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .nav-links a:hover {
+      background: var(--deep-brown);
+      color: var(--cream);
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--warm-beige);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark-brown);
+    }
+
+    input {
+      padding: 12px 16px;
+      border: 1px solid var(--warm-beige);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--dark-brown);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--deep-brown);
+      color: var(--cream);
+    }
+
+    .btn-danger {
+      background: var(--accent-red);
+      color: white;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--warm-beige);
+    }
+
+    th {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--medium-brown);
+    }
+
+    .actions { display: flex; gap: 8px; }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .message.success { background: #e8f5e9; color: #2e7d32; }
+    .message.error { background: #ffebee; color: #c62828; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 24px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">RV</div>
+        <div>
+          <h1>REVRUN</h1>
+          <span>고객 관리</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="/admin/dashboard.html">대시보드</a>
+        <a href="#" id="logoutBtn">로그아웃</a>
+      </div>
+    </header>
+
+    <div class="message" id="message"></div>
+
+    <div class="card">
+      <h2 class="card-title">새 고객 추가</h2>
+      <form id="addForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>아이디 (로그인용)</label>
+            <input type="text" id="username" placeholder="예: bakery123" required>
+          </div>
+          <div class="form-group">
+            <label>비밀번호</label>
+            <input type="text" id="password" placeholder="예: 1234" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>업체명</label>
+            <input type="text" id="name" placeholder="예: 원드베이크샵" required>
+          </div>
+          <div class="form-group">
+            <label>캠페인 ID (Meta)</label>
+            <input type="text" id="campaignId" placeholder="예: 120237218182010724">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">고객 추가</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">고객 목록</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>아이디</th>
+            <th>업체명</th>
+            <th>캠페인 ID</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="userList">
+          <tr><td colspan="4">로딩중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h3 class="modal-title">고객 정보 수정</h3>
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>아이디</label>
+          <input type="text" id="editUsername" readonly style="background:#f5f5f5;">
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>비밀번호 (변경시 입력)</label>
+          <input type="text" id="editPassword" placeholder="변경하려면 입력">
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>업체명</label>
+          <input type="text" id="editName" required>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>캠페인 ID</label>
+          <input type="text" id="editCampaignId">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">취소</button>
+          <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        ...opts
+      });
+      return res.json();
+    }
+
+    function showMessage(text, type) {
+      const el = document.getElementById('message');
+      el.textContent = text;
+      el.className = 'message ' + type;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    async function loadUsers() {
+      const data = await api('/api/admin/users');
+      const tbody = document.getElementById('userList');
+
+      if (!data.ok || !data.users) {
+        tbody.innerHTML = '<tr><td colspan="4">불러오기 실패</td></tr>';
+        return;
+      }
+
+      const clients = data.users.filter(u => u.role === 'client');
+      if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">등록된 고객이 없습니다.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = clients.map(u => `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.name || '-'}</td>
+          <td style="font-size:12px;">${u.campaign_id || '-'}</td>
+          <td class="actions">
+            <button class="btn btn-small" onclick="openEdit('${u.id}', '${u.username}', '${u.name || ''}', '${u.campaign_id || ''}')">수정</button>
+            <button class="btn btn-small btn-danger" onclick="deleteUser('${u.id}', '${u.username}')">삭제</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = await api('/api/admin/users', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value,
+          name: document.getElementById('name').value,
+          campaign_id: document.getElementById('campaignId').value
+        })
+      });
+
+      if (data.ok) {
+        showMessage('고객이 추가되었습니다.', 'success');
+        document.getElementById('addForm').reset();
+        loadUsers();
+      } else {
+        showMessage(data.error || '추가 실패', 'error');
+      }
+    });
+
+    function openEdit(id, username, name, campaignId) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editUsername').value = username;
+      document.getElementById('editName').value = name;
+      document.getElementById('editCampaignId').value = campaignId;
+      document.getElementById('editPassword').value = '';
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const body = {
+        id: document.getElementById('editId').value,
+        name: document.getElementById('editName').value,
+        campaign_id: document.getElementById('editCampaignId').value
+      };
+
+      const pw = document.getElementById('editPassword').value;
+      if (pw) body.password = pw;
+
+      const data = await api('/api/admin/users', {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+
+      if (data.ok) {
+        showMessage('수정되었습니다.', 'success');
+        closeModal();
+        loadUsers();
+      } else {
+        showMessage(data.error || '수정 실패', 'error');
+      }
+    });
+
+    async function deleteUser(id, username) {
+      if (!confirm(`"${username}" 고객을 삭제하시겠습니까?`)) return;
+
+      const data = await api('/api/admin/users', {
+        method: 'DELETE',
+        body: JSON.stringify({ id })
+      });
+
+      if (data.ok) {
+        showMessage('삭제되었습니다.', 'success');
+        loadUsers();
+      } else {
+        showMessage(data.error || '삭제 실패', 'error');
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await api('/api/logout', { method: 'POST' });
+      location.href = '/admin/login.html';
+    });
+
+    loadUsers();
+  </script>
+</body>
+</html>
