@@ -167,6 +167,12 @@
       font-weight: 500;
     }
 
+    .stat-sub {
+      font-size: 11px;
+      color: var(--medium-brown);
+      margin-top: 4px;
+    }
+
     .stat-value {
       font-size: 20px;
       font-weight: 800;
@@ -462,7 +468,7 @@
     <!-- Page Title -->
     <div class="page-header">
       <h2 class="page-title" id="clientName">성과 리포트</h2>
-      <p class="page-meta" id="period">최근 7일 기준</p>
+      <p class="page-meta" id="period">최근 30일 기준</p>
     </div>
 
     <!-- 광고 효과 -->
@@ -478,14 +484,17 @@
           <div class="big-number" id="impressions">-</div>
           <div class="big-sub">총 노출 / 목표 30,000회</div>
           <div class="progress-simple">
-            <div class="progress-fill" id="impressionBar" style="width: 70%;"></div>
+            <div class="progress-fill" id="impressionBar" style="width: 0%;"></div>
           </div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="stat-box">
-          <span class="stat-label">반응한 사람</span>
+          <div>
+            <span class="stat-label">반응한 사람</span>
+            <div class="stat-sub">(좋아요, 댓글, 네이버플레이스 방문)</div>
+          </div>
           <span class="stat-value green" id="engagement">-</span>
         </div>
         <div>
@@ -627,7 +636,7 @@
     <div class="card">
       <h3 class="card-title">잘된 점</h3>
       <ul class="insight-list" id="highlights">
-        <li class="insight-item">로딩중...</li>
+        <li class="insight-item">데이터를 불러오는 중...</li>
       </ul>
     </div>
 
@@ -635,7 +644,7 @@
     <div class="card">
       <h3 class="card-title">개선할 점</h3>
       <ul class="insight-list" id="actions">
-        <li class="insight-item">로딩중...</li>
+        <li class="insight-item">데이터를 불러오는 중...</li>
       </ul>
     </div>
 
@@ -662,6 +671,11 @@
       return res.json();
     }
 
+    function formatNumber(num) {
+      if (!num && num !== 0) return '-';
+      return Number(num).toLocaleString('ko-KR');
+    }
+
     function renderList(id, items) {
       const el = document.getElementById(id);
       if (!items || items.length === 0) {
@@ -672,17 +686,25 @@
     }
 
     let chart;
-    function renderChart() {
+    function renderChart(dailyData) {
       const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
+
+      const labels = dailyData.length > 0 
+        ? dailyData.map(d => d.label)
+        : ['월', '화', '수', '목', '금', '토', '일'];
+      
+      const data = dailyData.length > 0
+        ? dailyData.map(d => d.value)
+        : [2800, 3200, 2900, 3500, 4100, 3800, 3200];
 
       chart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: ['월', '화', '수', '목', '금', '토', '일'],
+          labels: labels,
           datasets: [{
             label: "노출",
-            data: [2800, 3200, 2900, 3500, 4100, 3800, 3200],
+            data: data,
             borderColor: "#5d4a3a",
             backgroundColor: "rgba(93, 74, 58, 0.1)",
             fill: true,
@@ -710,34 +732,94 @@
       });
     }
 
+    async function loadMetaData(metaAccountId) {
+      if (!metaAccountId) {
+        console.log('Meta 계정 ID 없음');
+        return null;
+      }
+
+      try {
+        const response = await fetch(`/api/meta/report?action=insights&account_id=act_${metaAccountId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          console.error('Meta API 오류:', data.error);
+          return null;
+        }
+
+        const insights = data.insights || [];
+        
+        // 전체 합계 계산
+        let totalImpressions = 0;
+        let totalClicks = 0;
+        let totalReach = 0;
+
+        insights.forEach(item => {
+          totalImpressions += item.impressions || 0;
+          totalClicks += item.clicks || 0;
+          totalReach += item.reach || 0;
+        });
+
+        return {
+          reach: totalReach,
+          impressions: totalImpressions,
+          clicks: totalClicks
+        };
+
+      } catch (error) {
+        console.error('Meta API 호출 실패:', error);
+        return null;
+      }
+    }
+
     async function boot() {
+      // 사용자 정보 가져오기
       const me = await api("/api/me");
       if (!me?.user) {
         location.href = "/report/login.html";
         return;
       }
-      document.getElementById("userName").textContent = me.user.username;
 
-      const data = await api("/api/report");
-      if (!data.ok) {
-        document.getElementById("clientName").textContent = "로드 실패";
+      // 관리자면 관리자 페이지로
+      if (me.user.role === 'admin') {
+        location.href = "/admin/dashboard.html";
         return;
       }
 
-      const r = data.report || {};
-      document.getElementById("clientName").textContent = (r.clientName || '고객') + '님의 리포트';
-      document.getElementById("period").textContent = (r.period || '최근 7일') + ' 기준';
+      document.getElementById("userName").textContent = me.user.name || me.user.username;
+      document.getElementById("clientName").textContent = (me.user.name || me.user.username) + '님의 리포트';
+      document.getElementById("period").textContent = '최근 30일 기준';
 
-      // KPI 매핑
-      if (r.kpis && r.kpis.length > 0) {
-        document.getElementById("reach").textContent = '▲ ' + (r.kpis[0]?.value || '-');
-        document.getElementById("impressions").textContent = r.kpis[1]?.value || '-';
-        document.getElementById("engagement").textContent = '▲ ' + (r.kpis[2]?.value || '-');
+      // Meta API에서 데이터 가져오기
+      const metaData = await loadMetaData(me.user.meta_account_id);
+      
+      if (metaData) {
+        // 광고를 본 사람 (도달)
+        document.getElementById("reach").textContent = formatNumber(metaData.reach) + '명';
+        
+        // 총 노출
+        document.getElementById("impressions").textContent = formatNumber(metaData.impressions);
+        
+        // 노출 진행바 (목표 30,000 기준)
+        const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
+        document.getElementById("impressionBar").style.width = progressPercent + '%';
+        
+        // 반응한 사람 (클릭)
+        document.getElementById("engagement").textContent = formatNumber(metaData.clicks) + '명';
       }
 
-      renderList("highlights", r.highlights || []);
-      renderList("actions", r.actions || []);
-      renderChart();
+      // 기존 리포트 데이터도 가져오기 (잘된 점, 개선할 점 등)
+      const data = await api("/api/report");
+      if (data.ok && data.report) {
+        const r = data.report;
+        renderList("highlights", r.highlights || []);
+        renderList("actions", r.actions || []);
+      } else {
+        renderList("highlights", []);
+        renderList("actions", []);
+      }
+
+      renderChart([]);
     }
 
     // Tab 클릭
