@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 
-// ⚠️ 형 프로젝트 환경변수에 맞게 수정함!
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
+    process.env.SUPABASE_KEY
 );
 
 export default async function handler(req, res) {
@@ -79,7 +78,7 @@ async function handleGet(req, res) {
 
     // 검색 필터
     if (search) {
-        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+        query = query.or(`name.ilike.%${search}%,username.ilike.%${search}%`);
     }
 
     // 상태 필터
@@ -154,7 +153,7 @@ async function getStats(res) {
 async function exportUsers(res) {
     const { data, error } = await supabase
         .from('users')
-        .select('name, email, phone, company, plan, status, created_at')
+        .select('name, username, phone, company, plan, status, meta_account_id, created_at')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -162,14 +161,15 @@ async function exportUsers(res) {
     }
 
     // CSV 생성
-    const headers = ['이름', '이메일', '연락처', '회사', '플랜', '상태', '가입일'];
+    const headers = ['이름', '아이디', '연락처', '회사', '플랜', '상태', 'Meta계정ID', '가입일'];
     const rows = (data || []).map(user => [
         user.name || '',
-        user.email || '',
+        user.username || '',
         user.phone || '',
         user.company || '',
         user.plan || '',
         user.status || '',
+        user.meta_account_id || '',
         user.created_at ? new Date(user.created_at).toLocaleDateString('ko-KR') : ''
     ]);
 
@@ -188,27 +188,35 @@ async function exportUsers(res) {
 
 // POST - 회원 생성
 async function handlePost(req, res) {
-    const { name, email, password, phone, company, plan, status, meta_account_id } = req.body;
+    const { name, username, password, phone, plan, status, meta_account_id } = req.body;
 
-    // 필수 필드 검증
-    if (!name || !email || !password) {
+    // 필수 필드 검증 (이름, 아이디, 비밀번호만 필수)
+    if (!name || !username || !password) {
         return res.status(400).json({ 
             success: false, 
-            error: '이름, 이메일, 비밀번호는 필수입니다.' 
+            error: '이름, 아이디, 비밀번호는 필수입니다.' 
         });
     }
 
-    // 이메일 중복 체크
+    // 비밀번호 4자리 이상
+    if (password.length < 4) {
+        return res.status(400).json({ 
+            success: false, 
+            error: '비밀번호는 4자리 이상이어야 합니다.' 
+        });
+    }
+
+    // 아이디 중복 체크
     const { data: existing } = await supabase
         .from('users')
         .select('id')
-        .eq('email', email)
+        .eq('username', username)
         .single();
 
     if (existing) {
         return res.status(400).json({ 
             success: false, 
-            error: '이미 사용 중인 이메일입니다.' 
+            error: '이미 사용 중인 아이디입니다.' 
         });
     }
 
@@ -220,12 +228,13 @@ async function handlePost(req, res) {
         .from('users')
         .insert({
             name,
-            email,
+            username,
             password: hashedPassword,
             phone: phone || null,
-            company: company || null,
+            company: null,  // 회원 추가 시 회사명은 비워둠 (나중에 Meta에서 가져옴)
             plan: plan || 'basic',
-            status: status || 'pending',
+            status: status || 'active',
+            role: 'client',
             meta_account_id: meta_account_id || null,
             created_at: new Date().toISOString()
         })
@@ -249,21 +258,21 @@ async function handlePut(req, res) {
         return res.status(400).json({ success: false, error: 'User ID required' });
     }
 
-    const { name, email, phone, company, plan, status, meta_account_id } = req.body;
+    const { name, username, phone, company, plan, status, meta_account_id } = req.body;
 
-    // 이메일 변경 시 중복 체크
-    if (email) {
+    // 아이디 변경 시 중복 체크
+    if (username) {
         const { data: existing } = await supabase
             .from('users')
             .select('id')
-            .eq('email', email)
+            .eq('username', username)
             .neq('id', id)
             .single();
 
         if (existing) {
             return res.status(400).json({ 
                 success: false, 
-                error: '이미 사용 중인 이메일입니다.' 
+                error: '이미 사용 중인 아이디입니다.' 
             });
         }
     }
@@ -273,9 +282,9 @@ async function handlePut(req, res) {
     };
 
     if (name) updateData.name = name;
-    if (email) updateData.email = email;
+    if (username) updateData.username = username;
     if (phone !== undefined) updateData.phone = phone || null;
-    if (company !== undefined) updateData.company = company || null;
+    if (company !== undefined) updateData.company = company || null;  // 수정 시 회사명 변경 가능
     if (plan) updateData.plan = plan;
     if (status) updateData.status = status;
     if (meta_account_id !== undefined) updateData.meta_account_id = meta_account_id || null;
