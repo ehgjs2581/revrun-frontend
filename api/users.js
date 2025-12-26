@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 // ⚠️ 형 프로젝트 환경변수에 맞게 수정함!
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
+    process.env.SUPABASE_KEY
 );
 
 export default async function handler(req, res) {
