@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
+    process.env.SUPABASE_KEY
 );
 
 const META_API_VERSION = 'v18.0';
@@ -315,7 +315,10 @@ async function syncData(req, res) {
 // 리포트 생성 (PDF용 데이터)
 async function generateReport(req, res) {
     const { client_id, start_date, end_date, format } = req.body;
+// 5. 환경변수에서 가져오기
+if (process.env.META_ACCESS_TOKEN) return process.env.META_ACCESS_TOKEN;
 
+return null;
     if (!client_id) {
         return res.status(400).json({ success: false, error: 'client_id required' });
     }
