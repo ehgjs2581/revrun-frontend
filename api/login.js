@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcryptjs';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -27,15 +28,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: '아이디와 비밀번호를 입력하세요' });
     }
 
-    // Supabase에서 유저 찾기
+    // Supabase에서 유저 찾기 (username으로만 검색)
     const { data: user, error } = await supabase
       .from('users')
       .select('*')
       .eq('username', username)
-      .eq('password', password)
       .single();
 
     if (error || !user) {
+      return res.status(401).json({ ok: false, error: '아이디 또는 비밀번호가 틀렸습니다' });
+    }
+
+    // 비밀번호 확인 (bcrypt 해싱 비교)
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
       return res.status(401).json({ ok: false, error: '아이디 또는 비밀번호가 틀렸습니다' });
     }
 
@@ -50,7 +57,9 @@ export default async function handler(req, res) {
       user: {
         user_id: user.id,
         username: user.username,
-        role: user.role
+        name: user.name,
+        role: user.role,
+        meta_account_id: user.meta_account_id
       }
     });
 
