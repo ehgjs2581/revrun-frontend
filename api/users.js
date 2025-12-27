@@ -81,7 +81,7 @@ async function handlePut(req, res) {
     const { id } = req.query;
     if (!id) return res.status(400).json({ success: false, error: 'User ID required' });
 
-    const { name, phone, plan, status, meta_account_id, naver_visitors } = req.body;
+    const { name, phone, plan, status, meta_account_id, naver_visitors, ai_highlights, ai_actions, ai_generated_at } = req.body;
     const updateData = { updated_at: new Date().toISOString() };
 
     if (name) updateData.name = name;
@@ -90,6 +90,11 @@ async function handlePut(req, res) {
     if (status) updateData.status = status;
     if (meta_account_id !== undefined) updateData.meta_account_id = meta_account_id || null;
     if (naver_visitors !== undefined) updateData.naver_visitors = parseInt(naver_visitors) || 0;
+    
+    // AI 코멘트 필드
+    if (ai_highlights !== undefined) updateData.ai_highlights = ai_highlights;
+    if (ai_actions !== undefined) updateData.ai_actions = ai_actions;
+    if (ai_generated_at !== undefined) updateData.ai_generated_at = ai_generated_at;
 
     const { data, error } = await supabase.from('users').update(updateData).eq('id', id).select().single();
     if (error) return res.status(500).json({ success: false, error: error.message });

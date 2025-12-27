@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>고객 리포트</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --cream: #faf8f5; --light-cream: #f5f3ef; --warm-beige: #e8e3db; --medium-brown: #8b7355; --dark-brown: #5d4a3a; --deep-brown: #3a2f23; --accent-green: #5d8a66; --accent-pink: #c4a4a4; }
+    body { font-family: 'Manrope', -apple-system, sans-serif; background: var(--cream); color: var(--deep-brown); line-height: 1.6; padding: 32px; }
+    .card { background: white; border: 1px solid var(--warm-beige); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--deep-brown); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--warm-beige); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .stat-box { background: var(--light-cream); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .stat-label { font-size: 13px; color: var(--dark-brown); font-weight: 500; }
+    .stat-value { font-size: 18px; font-weight: 800; color: var(--accent-green); }
+    .big-metric-box { background: var(--light-cream); border-radius: 10px; padding: 20px; text-align: center; }
+    .big-number { font-size: 36px; font-weight: 800; color: var(--deep-brown); margin-bottom: 6px; }
+    .big-sub { font-size: 13px; color: var(--medium-brown); }
+    .progress-simple { height: 6px; background: var(--warm-beige); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent-green); border-radius: 3px; }
+    .naver-box { background: var(--light-cream); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .naver-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--dark-brown); }
+    .naver-icon { width: 22px; height: 22px; background: #03c75a; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; }
+    .naver-value { font-size: 16px; font-weight: 800; color: var(--accent-green); }
+    .insight-list { list-style: none; }
+    .insight-item { padding: 14px 0 14px 16px; border-left: 2px solid var(--warm-beige); margin-bottom: 10px; font-size: 14px; color: var(--dark-brown); line-height: 1.5; }
+    .insight-item.highlight { border-left-color: var(--accent-green); }
+    .insight-item.action { border-left-color: var(--accent-pink); }
+    .loading { text-align: center; padding: 60px; color: var(--medium-brown); }
+    .client-info { background: var(--deep-brown); color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .client-name { font-size: 18px; font-weight: 700; }
+    .client-meta { font-size: 12px; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="client-info">
+    <div>
+      <div class="client-name" id="clientName">로딩 중...</div>
+      <div class="client-meta">최근 30일 기준</div>
+    </div>
+    <div class="client-meta" id="commentDate"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">광고 효과</h3>
+    <div class="grid-2" style="margin-bottom: 16px;">
+      <div class="stat-box">
+        <span class="stat-label">광고를 본 사람</span>
+        <span class="stat-value" id="reach">-</span>
+      </div>
+      <div class="big-metric-box">
+        <div class="big-number" id="impressions">-</div>
+        <div class="big-sub">총 노출 / 목표 30,000회</div>
+        <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="stat-box">
+        <span class="stat-label">반응한 사람</span>
+        <span class="stat-value" id="engagement">-</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">클릭률 (CTR)</span>
+        <span class="stat-value" id="ctr">-</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">랜딩페이지 방문</h3>
+    <div class="naver-box">
+      <div class="naver-label"><span class="naver-icon">N</span><span>네이버플레이스 유입</span></div>
+      <span class="naver-value" id="naverVisit">-</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">✨ 잘된 점</h3>
+    <ul class="insight-list" id="highlights"><li class="insight-item highlight">데이터를 불러오는 중...</li></ul>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">📋 개선할 점</h3>
+    <ul class="insight-list" id="actions"><li class="insight-item action">데이터를 불러오는 중...</li></ul>
+  </div>
+
+  <script>
+    const AD_ACCOUNT_ID = 'act_543464623056642';
+
+    function formatNumber(num) { return (!num && num !== 0) ? '-' : Number(num).toLocaleString('ko-KR'); }
+
+    function renderList(id, items, className) {
+      const el = document.getElementById(id);
+      if (!items || items.length === 0) { el.innerHTML = `<li class="insight-item ${className}">아직 분석 데이터가 없습니다.</li>`; return; }
+      el.innerHTML = items.map(item => `<li class="insight-item ${className}">${item}</li>`).join('');
+    }
+
+    async function boot() {
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get('id');
+      if (!userId) { document.body.innerHTML = '<div class="loading">사용자 ID가 필요합니다.</div>'; return; }
+
+      try {
+        // 사용자 정보 가져오기
+        const userRes = await fetch(`/api/users?id=${userId}`);
+        const userData = await userRes.json();
+        if (!userData.success) throw new Error('User not found');
+        const user = userData.user;
+
+        document.getElementById('clientName').textContent = (user.name || user.username) + '님의 리포트';
+        if (user.ai_generated_at) {
+          document.getElementById('commentDate').textContent = 'AI 코멘트: ' + new Date(user.ai_generated_at).toLocaleDateString('ko-KR');
+        }
+
+        // Meta 데이터 가져오기
+        if (user.meta_account_id) {
+          const metaRes = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
+          const metaData = await metaRes.json();
+          if (metaData.success) {
+            const campaign = (metaData.insights || []).find(c => c.campaignId === user.meta_account_id);
+            if (campaign) {
+              document.getElementById('reach').textContent = formatNumber(campaign.reach) + '명';
+              document.getElementById('impressions').textContent = formatNumber(campaign.impressions);
+              document.getElementById('engagement').textContent = formatNumber(campaign.clicks) + '명';
+              document.getElementById('ctr').textContent = (campaign.ctr || 0).toFixed(2) + '%';
+              const progressPercent = Math.min((campaign.impressions / 30000) * 100, 100);
+              document.getElementById('impressionBar').style.width = progressPercent + '%';
+              const landingVisits = (campaign.conversions || 0) + (user.naver_visitors || 0);
+              document.getElementById('naverVisit').textContent = '▲ ' + formatNumber(landingVisits) + '명';
+            }
+          }
+        } else {
+          document.getElementById('naverVisit').textContent = '▲ ' + formatNumber(user.naver_visitors || 0) + '명';
+        }
+
+        // AI 코멘트 표시
+        let highlights = [], actions = [];
+        try {
+          if (user.ai_highlights) highlights = JSON.parse(user.ai_highlights);
+          if (user.ai_actions) actions = JSON.parse(user.ai_actions);
+        } catch (e) {}
+        renderList('highlights', highlights, 'highlight');
+        renderList('actions', actions, 'action');
+
+      } catch (e) {
+        document.body.innerHTML = '<div class="loading">데이터를 불러올 수 없습니다.</div>';
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

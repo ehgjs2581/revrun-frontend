@@ -51,8 +51,10 @@
     .naver-value { font-size: 18px; font-weight: 800; color: var(--accent-green); }
     .chart-box { background: var(--light-cream); border-radius: 12px; padding: 24px; height: 300px; }
     .insight-list { list-style: none; }
-    .insight-item { padding: 16px 0 16px 20px; border-left: 2px solid var(--warm-beige); margin-bottom: 12px; font-size: 15px; color: var(--dark-brown); line-height: 1.6; }
+    .insight-item { padding: 16px 0 16px 20px; border-left: 2px solid var(--warm-beige); margin-bottom: 12px; font-size: 15px; color: var(--dark-brown); line-height: 1.6; transition: all 0.3s ease; }
     .insight-item:hover { border-left-color: var(--deep-brown); padding-left: 24px; }
+    .insight-item.highlight { border-left-color: var(--accent-green); }
+    .insight-item.action { border-left-color: var(--accent-pink); }
     .insta-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: var(--deep-brown); border-radius: 12px; color: white; text-decoration: none; font-weight: 600; font-size: 14px; }
     .insta-link:hover { background: var(--dark-brown); }
     @media (max-width: 768px) { .container { padding: 24px 16px 60px; } .header { flex-direction: column; gap: 20px; text-align: center; } .page-title { font-size: 22px; } .big-number { font-size: 32px; } }
@@ -93,7 +95,7 @@
         <div class="stat-box">
           <div>
             <span class="stat-label">반응한 사람</span>
-            <div class="stat-sub">(좋아요, 댓글, 네이버플레이스 방문)</div>
+            <div class="stat-sub">(좋아요, 댓글, 클릭)</div>
           </div>
           <span class="stat-value green" id="engagement">-</span>
         </div>
@@ -134,13 +136,13 @@
     </div>
 
     <div class="card">
-      <h3 class="card-title">잘된 점</h3>
-      <ul class="insight-list" id="highlights"><li class="insight-item">데이터를 불러오는 중...</li></ul>
+      <h3 class="card-title">✨ 잘된 점</h3>
+      <ul class="insight-list" id="highlights"><li class="insight-item highlight">데이터를 불러오는 중...</li></ul>
     </div>
 
     <div class="card">
-      <h3 class="card-title">개선할 점</h3>
-      <ul class="insight-list" id="actions"><li class="insight-item">데이터를 불러오는 중...</li></ul>
+      <h3 class="card-title">📋 개선할 점</h3>
+      <ul class="insight-list" id="actions"><li class="insight-item action">데이터를 불러오는 중...</li></ul>
     </div>
 
     <div class="card">
@@ -154,7 +156,7 @@
 
   <script>
     const AD_ACCOUNT_ID = 'act_543464623056642';
-    let naverVisitorsExtra = 0;
+    let userData = null;
 
     async function api(path, opts = {}) {
       const res = await fetch(path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
@@ -163,10 +165,13 @@
 
     function formatNumber(num) { return (!num && num !== 0) ? '-' : Number(num).toLocaleString('ko-KR'); }
 
-    function renderList(id, items) {
+    function renderList(id, items, className) {
       const el = document.getElementById(id);
-      if (!items || items.length === 0) { el.innerHTML = '<li class="insight-item">데이터가 없습니다</li>'; return; }
-      el.innerHTML = items.map(item => `<li class="insight-item">${item}</li>`).join('');
+      if (!items || items.length === 0) { 
+        el.innerHTML = `<li class="insight-item ${className}">아직 분석 데이터가 없습니다.</li>`; 
+        return; 
+      }
+      el.innerHTML = items.map(item => `<li class="insight-item ${className}">${item}</li>`).join('');
     }
 
     let chart;
@@ -197,13 +202,13 @@
       if (!me?.user) { location.href = "/report/login.html"; return; }
       if (me.user.role === 'admin') { location.href = "/admin/dashboard.html"; return; }
 
-      document.getElementById("userName").textContent = me.user.name || me.user.username;
-      document.getElementById("clientName").textContent = (me.user.name || me.user.username) + '님의 리포트';
+      userData = me.user;
+      document.getElementById("userName").textContent = userData.name || userData.username;
+      document.getElementById("clientName").textContent = (userData.name || userData.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
 
-      naverVisitorsExtra = me.user.naver_visitors || 0;
-
-      const campaignId = me.user.meta_account_id;
+      const naverVisitorsExtra = userData.naver_visitors || 0;
+      const campaignId = userData.meta_account_id;
       const metaData = await loadMetaData(campaignId);
       
       if (metaData) {
@@ -213,16 +218,25 @@
         document.getElementById("impressionBar").style.width = progressPercent + '%';
         document.getElementById("engagement").textContent = formatNumber(metaData.clicks) + '명';
         
-        // 랜딩페이지 방문 = conversions(또는 clicks) + 네이버 방문자 수동 입력
-        const landingPageVisits = (metaData.conversions || metaData.clicks || 0) + naverVisitorsExtra;
+        const landingPageVisits = (metaData.conversions || 0) + naverVisitorsExtra;
         document.getElementById("naverVisit").textContent = '▲ ' + formatNumber(landingPageVisits) + '명';
       } else {
         document.getElementById("naverVisit").textContent = '▲ ' + formatNumber(naverVisitorsExtra) + '명';
       }
 
-      const data = await api("/api/report");
-      if (data.ok && data.report) { renderList("highlights", data.report.highlights || []); renderList("actions", data.report.actions || []); }
-      else { renderList("highlights", []); renderList("actions", []); }
+      // AI 코멘트 표시
+      let highlights = [];
+      let actions = [];
+      
+      try {
+        if (userData.ai_highlights) highlights = JSON.parse(userData.ai_highlights);
+        if (userData.ai_actions) actions = JSON.parse(userData.ai_actions);
+      } catch (e) {
+        console.error('코멘트 파싱 오류:', e);
+      }
+
+      renderList("highlights", highlights, "highlight");
+      renderList("actions", actions, "action");
 
       renderChart();
     }

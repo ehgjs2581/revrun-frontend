@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, username, name, role, meta_account_id, company, plan, status, naver_visitors')
+      .select('id, username, name, role, meta_account_id, company, plan, status, naver_visitors, ai_highlights, ai_actions, ai_generated_at')
       .eq('id', sessionId)
       .single();
 
@@ -37,7 +37,10 @@ export default async function handler(req, res) {
         company: user.company,
         plan: user.plan,
         status: user.status,
-        naver_visitors: user.naver_visitors || 0
+        naver_visitors: user.naver_visitors || 0,
+        ai_highlights: user.ai_highlights || null,
+        ai_actions: user.ai_actions || null,
+        ai_generated_at: user.ai_generated_at || null
       }
     });
   } catch (err) {
