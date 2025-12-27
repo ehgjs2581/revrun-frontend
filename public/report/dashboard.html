@@ -36,7 +36,6 @@
       padding: 48px 32px 80px;
     }
 
-    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -105,7 +104,6 @@
       color: var(--cream);
     }
 
-    /* Title */
     .page-header {
       margin-bottom: 40px;
     }
@@ -122,7 +120,6 @@
       color: var(--medium-brown);
     }
 
-    /* Card */
     .card {
       background: white;
       border: 1px solid var(--warm-beige);
@@ -140,7 +137,6 @@
       border-bottom: 1px solid var(--warm-beige);
     }
 
-    /* 2 Column Grid */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -151,7 +147,6 @@
       .grid-2 { grid-template-columns: 1fr; }
     }
 
-    /* Stat Box */
     .stat-box {
       background: var(--light-cream);
       border-radius: 12px;
@@ -183,7 +178,6 @@
       color: var(--accent-green);
     }
 
-    /* Big Metric */
     .big-metric-box {
       background: var(--light-cream);
       border-radius: 12px;
@@ -217,7 +211,6 @@
       border-radius: 4px;
     }
 
-    /* Gender Bar */
     .gender-bar {
       display: flex;
       height: 40px;
@@ -246,7 +239,6 @@
       font-weight: 600;
     }
 
-    /* Age Bars */
     .age-row {
       display: flex;
       align-items: center;
@@ -284,7 +276,6 @@
       color: var(--deep-brown);
     }
 
-    /* Naver Section */
     .naver-box {
       background: var(--light-cream);
       border-radius: 12px;
@@ -322,7 +313,6 @@
       color: var(--accent-green);
     }
 
-    /* Tabs */
     .tabs {
       display: flex;
       gap: 8px;
@@ -353,7 +343,6 @@
       color: var(--dark-brown);
     }
 
-    /* Time Section */
     .time-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -389,7 +378,6 @@
       margin-bottom: 8px;
     }
 
-    /* Instagram Link */
     .insta-link {
       display: flex;
       align-items: center;
@@ -409,7 +397,6 @@
       background: var(--dark-brown);
     }
 
-    /* Insights */
     .insight-list {
       list-style: none;
     }
@@ -429,7 +416,6 @@
       padding-left: 24px;
     }
 
-    /* Chart */
     .chart-box {
       background: var(--light-cream);
       border-radius: 12px;
@@ -437,7 +423,6 @@
       height: 300px;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .container { padding: 24px 16px 60px; }
       .header { flex-direction: column; gap: 20px; text-align: center; }
@@ -450,7 +435,6 @@
 <body>
   <div class="container">
     
-    <!-- Header -->
     <header class="header">
       <div class="brand">
         <div class="logo">RV</div>
@@ -465,13 +449,11 @@
       </div>
     </header>
 
-    <!-- Page Title -->
     <div class="page-header">
       <h2 class="page-title" id="clientName">성과 리포트</h2>
       <p class="page-meta" id="period">최근 30일 기준</p>
     </div>
 
-    <!-- 광고 효과 -->
     <div class="card">
       <h3 class="card-title">광고 효과</h3>
       
@@ -507,7 +489,6 @@
       </div>
     </div>
 
-    <!-- 연령대 -->
     <div class="card">
       <h3 class="card-title">연령대별 반응</h3>
       <div id="ageChart">
@@ -534,7 +515,6 @@
       </div>
     </div>
 
-    <!-- 네이버 플레이스 -->
     <div class="card">
       <h3 class="card-title">네이버 플레이스</h3>
       <div class="naver-box">
@@ -546,7 +526,6 @@
       </div>
     </div>
 
-    <!-- 상권 분석 -->
     <div class="card">
       <h3 class="card-title">상권 분석</h3>
       
@@ -624,7 +603,6 @@
       </div>
     </div>
 
-    <!-- 일별 추이 -->
     <div class="card">
       <h3 class="card-title">일별 추이</h3>
       <div class="chart-box">
@@ -632,7 +610,6 @@
       </div>
     </div>
 
-    <!-- 잘된 점 -->
     <div class="card">
       <h3 class="card-title">잘된 점</h3>
       <ul class="insight-list" id="highlights">
@@ -640,7 +617,6 @@
       </ul>
     </div>
 
-    <!-- 개선할 점 -->
     <div class="card">
       <h3 class="card-title">개선할 점</h3>
       <ul class="insight-list" id="actions">
@@ -648,7 +624,6 @@
       </ul>
     </div>
 
-    <!-- 광고 미리보기 -->
     <div class="card">
       <h3 class="card-title">광고 미리보기</h3>
       <a href="#" class="insta-link" id="instaLink">
@@ -662,6 +637,8 @@
   </div>
 
   <script>
+    const AD_ACCOUNT_ID = 'act_543464623056642';
+
     async function api(path, opts = {}) {
       const res = await fetch(path, {
         credentials: "include",
@@ -732,14 +709,14 @@
       });
     }
 
-    async function loadMetaData(metaAccountId) {
-      if (!metaAccountId) {
-        console.log('Meta 계정 ID 없음');
+    async function loadMetaData(campaignId) {
+      if (!campaignId) {
+        console.log('캠페인 ID 없음');
         return null;
       }
 
       try {
-        const response = await fetch(`/api/meta/report?action=insights&account_id=act_${metaAccountId}`);
+        const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
         const data = await response.json();
 
         if (!data.success) {
@@ -748,22 +725,18 @@
         }
 
         const insights = data.insights || [];
+        const campaign = insights.find(item => item.campaignId === campaignId);
         
-        // 전체 합계 계산
-        let totalImpressions = 0;
-        let totalClicks = 0;
-        let totalReach = 0;
-
-        insights.forEach(item => {
-          totalImpressions += item.impressions || 0;
-          totalClicks += item.clicks || 0;
-          totalReach += item.reach || 0;
-        });
+        if (!campaign) {
+          console.log('해당 캠페인을 찾을 수 없음:', campaignId);
+          return null;
+        }
 
         return {
-          reach: totalReach,
-          impressions: totalImpressions,
-          clicks: totalClicks
+          reach: campaign.reach || 0,
+          impressions: campaign.impressions || 0,
+          clicks: campaign.clicks || 0,
+          campaignName: campaign.campaignName || ''
         };
 
       } catch (error) {
@@ -773,14 +746,12 @@
     }
 
     async function boot() {
-      // 사용자 정보 가져오기
       const me = await api("/api/me");
       if (!me?.user) {
         location.href = "/report/login.html";
         return;
       }
 
-      // 관리자면 관리자 페이지로
       if (me.user.role === 'admin') {
         location.href = "/admin/dashboard.html";
         return;
@@ -790,25 +761,17 @@
       document.getElementById("clientName").textContent = (me.user.name || me.user.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
 
-      // Meta API에서 데이터 가져오기
-      const metaData = await loadMetaData(me.user.meta_account_id);
+      const campaignId = me.user.meta_account_id;
+      const metaData = await loadMetaData(campaignId);
       
       if (metaData) {
-        // 광고를 본 사람 (도달)
         document.getElementById("reach").textContent = formatNumber(metaData.reach) + '명';
-        
-        // 총 노출
         document.getElementById("impressions").textContent = formatNumber(metaData.impressions);
-        
-        // 노출 진행바 (목표 30,000 기준)
         const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
         document.getElementById("impressionBar").style.width = progressPercent + '%';
-        
-        // 반응한 사람 (클릭)
         document.getElementById("engagement").textContent = formatNumber(metaData.clicks) + '명';
       }
 
-      // 기존 리포트 데이터도 가져오기 (잘된 점, 개선할 점 등)
       const data = await api("/api/report");
       if (data.ok && data.report) {
         const r = data.report;
@@ -822,7 +785,6 @@
       renderChart([]);
     }
 
-    // Tab 클릭
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
