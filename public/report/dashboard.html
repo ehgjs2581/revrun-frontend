@@ -60,6 +60,7 @@
     .naver-box { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; }
     .naver-label { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; color: var(--dark-brown); }
     .naver-icon { width: 32px; height: 32px; background: #03c75a; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px; }
+    .naver-icon-small { display: inline-flex; width: 24px; height: 24px; background: #03c75a; border-radius: 6px; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; margin-right: 8px; vertical-align: middle; }
     .naver-value-wrap { display: flex; align-items: center; gap: 10px; }
     .naver-value { font-size: 28px; font-weight: 800; color: #16a34a; }
     .naver-arrow { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: white; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); animation: bounce 1s infinite; }
@@ -163,21 +164,21 @@
     <div class="card">
       <h3 class="card-title">👥 연령대별 반응</h3>
       <div id="ageChart">
-        <div class="age-row"><span class="age-label">18-24</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
-        <div class="age-row"><span class="age-label">25-34</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
-        <div class="age-row"><span class="age-label">35-44</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
-        <div class="age-row"><span class="age-label">45-54</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
-        <div class="age-row"><span class="age-label">55-64</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
-        <div class="age-row"><span class="age-label">65+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age65" style="width: 0%;"></div></div><span class="age-percent" id="age65p">0%</span></div>
+        <div class="age-row"><span class="age-label">10대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age13" style="width: 0%;"></div></div><span class="age-percent" id="age13p">0%</span></div>
+        <div class="age-row"><span class="age-label">20대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
+        <div class="age-row"><span class="age-label">30대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
+        <div class="age-row"><span class="age-label">40대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
+        <div class="age-row"><span class="age-label">50대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
+        <div class="age-row"><span class="age-label">60대+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
       </div>
     </div>
 
     <div class="card">
-      <h3 class="card-title">🏪 네이버플레이스 유입</h3>
+      <h3 class="card-title"><span class="naver-icon-small">N</span> 네이버플레이스 유입</h3>
       <div class="naver-box">
         <div class="naver-label">
           <span class="naver-icon">N</span>
-          <span>네이버플레이스 유입</span>
+          <span>네이버에 내 가게<br>검색한 사람</span>
         </div>
         <div class="naver-value-wrap">
           <span class="naver-value" id="naverVisit">0</span>
@@ -346,18 +347,40 @@
       document.getElementById('femaleBar').style.width = femaleP + '%';
       document.getElementById('femaleBar').textContent = `여성 ${femaleP}%`;
       
-      // 연령
+      // 연령 (Meta는 13-17, 18-24, 25-34... 형식으로 옴)
+      // 10대: 13-17, 20대: 18-24, 30대: 25-34, 40대: 35-44, 50대: 45-54, 60대+: 55-64 + 65+
       const ageMap = {
-        '18-24': 'age18', '25-34': 'age25', '35-44': 'age35',
-        '45-54': 'age45', '55-64': 'age55', '65+': 'age65'
+        '13-17': 'age13',
+        '18-24': 'age18', 
+        '25-34': 'age25', 
+        '35-44': 'age35',
+        '45-54': 'age45', 
+        '55-64': 'age55',
+        '65+': 'age55'  // 65+도 60대+에 합침
       };
+      
+      // 60대+ 합산용
+      let age55Total = 0;
+      
       Object.keys(ageMap).forEach(key => {
         const p = demo.age?.[key]?.percent || 0;
-        const bar = document.getElementById(ageMap[key]);
-        const pEl = document.getElementById(ageMap[key] + 'p');
-        if (bar) bar.style.width = p + '%';
-        if (pEl) pEl.textContent = p + '%';
+        const targetId = ageMap[key];
+        
+        if (key === '55-64' || key === '65+') {
+          age55Total += p;
+        } else {
+          const bar = document.getElementById(targetId);
+          const pEl = document.getElementById(targetId + 'p');
+          if (bar) bar.style.width = p + '%';
+          if (pEl) pEl.textContent = p + '%';
+        }
       });
+      
+      // 60대+ 합산 적용
+      const bar55 = document.getElementById('age55');
+      const pEl55 = document.getElementById('age55p');
+      if (bar55) bar55.style.width = age55Total + '%';
+      if (pEl55) pEl55.textContent = age55Total + '%';
     }
 
     // 기간 탭 클릭
