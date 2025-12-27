@@ -322,89 +322,84 @@
 
             showToast('AI 코멘트 생성 중...', 'success');
 
-            // 데이터 분석 후 코멘트 생성
+            // 데이터 분석 후 코멘트 생성 (긍정적인 톤!)
             const highlights = [];
-            const actions = [];
+            const improvements = [];
 
-            const { impressions, reach, clicks, ctr, cpc, cpm, spend, conversions, costPerConversion, frequency } = campaign;
-
-            // ===== 잘된 점 분석 =====
-            // CTR 분석 (업계 평균 1~3%)
-            if (ctr >= 5) {
-                highlights.push(`클릭률 ${ctr.toFixed(2)}%로 업계 평균(1~3%)보다 ${(ctr / 2).toFixed(1)}배 높은 우수한 성과입니다. 광고 소재가 타겟 고객의 관심을 효과적으로 끌고 있습니다.`);
-            } else if (ctr >= 3) {
-                highlights.push(`클릭률 ${ctr.toFixed(2)}%로 업계 평균 이상의 양호한 성과를 보이고 있습니다.`);
-            }
-
-            // CPC 분석 (저렴할수록 좋음)
-            if (cpc > 0 && cpc < 500) {
-                highlights.push(`클릭당 비용 ${Math.round(cpc).toLocaleString()}원으로 매우 효율적인 광고 집행이 이루어지고 있습니다.`);
-            } else if (cpc > 0 && cpc < 1500) {
-                highlights.push(`클릭당 비용 ${Math.round(cpc).toLocaleString()}원으로 적정 수준의 광고 효율을 유지하고 있습니다.`);
-            }
-
-            // 도달 대비 클릭 (반응률)
+            const { impressions, reach, clicks, conversions, frequency } = campaign;
             const engagementRate = reach > 0 ? (clicks / reach * 100) : 0;
+
+            // ===== 🎉 잘된 점 =====
+            
+            // 노출 성과
+            if (impressions >= 10000) {
+                highlights.push(`우리 가게 광고가 ${impressions.toLocaleString()}번이나 노출되었어요! 동네에서 인지도가 확 올라가고 있습니다.`);
+            } else if (impressions >= 5000) {
+                highlights.push(`${impressions.toLocaleString()}번 노출! 우리 가게 알리기 순항 중이에요.`);
+            } else if (impressions >= 1000) {
+                highlights.push(`${impressions.toLocaleString()}번 광고가 노출되었어요. 좋은 출발입니다!`);
+            }
+
+            // 도달 성과
+            if (reach >= 2000) {
+                highlights.push(`${reach.toLocaleString()}명의 새로운 잠재 고객에게 우리 가게를 알렸어요!`);
+            } else if (reach >= 500) {
+                highlights.push(`${reach.toLocaleString()}명에게 우리 가게가 노출되었어요!`);
+            }
+
+            // 클릭 & 관심 성과
+            if (clicks >= 100) {
+                highlights.push(`${clicks.toLocaleString()}명이 우리 광고에 관심을 보였어요! 반응이 아주 좋습니다.`);
+            } else if (clicks >= 30) {
+                highlights.push(`${clicks.toLocaleString()}명이 광고에 관심을 보이고 있어요!`);
+            }
+
+            // 반응률이 좋을 때
             if (engagementRate >= 10) {
-                highlights.push(`도달 대비 반응률 ${engagementRate.toFixed(1)}%로 타겟팅이 정확하게 이루어지고 있습니다.`);
+                highlights.push(`광고 반응이 아주 뜨거워요! 콘텐츠가 사람들 마음에 쏙 드는 것 같아요.`);
+            } else if (engagementRate >= 5) {
+                highlights.push(`광고를 본 사람들이 적극적으로 반응하고 있어요!`);
             }
 
             // 전환 성과
-            if (conversions > 0 && costPerConversion > 0 && costPerConversion < 20000) {
-                highlights.push(`전환당 비용 ${Math.round(costPerConversion).toLocaleString()}원으로 효율적인 고객 유치가 이루어지고 있습니다. 총 ${conversions}건의 전환이 발생했습니다.`);
-            } else if (conversions > 20) {
-                highlights.push(`총 ${conversions}건의 전환이 발생하여 광고가 실질적인 고객 행동으로 이어지고 있습니다.`);
+            if (conversions >= 10) {
+                highlights.push(`${conversions}명이 네이버플레이스까지 방문했어요! 실제 고객으로 이어지고 있습니다.`);
+            } else if (conversions >= 1) {
+                highlights.push(`${conversions}명이 광고를 보고 네이버플레이스에 방문했어요!`);
             }
 
-            // 빈도 분석
-            if (frequency >= 1 && frequency <= 2) {
-                highlights.push(`광고 노출 빈도 ${frequency.toFixed(1)}회로 적정 수준을 유지하여 피로도 없이 효과적으로 메시지를 전달하고 있습니다.`);
+            // 기본 성과
+            if (highlights.length < 2) {
+                highlights.push(`광고가 순조롭게 진행 중이에요!`);
+                if (reach > 0) highlights.push(`${reach.toLocaleString()}명에게 우리 가게를 소개했어요.`);
             }
 
-            // 기본 잘된 점 (아무것도 없을 때)
-            if (highlights.length === 0) {
-                if (impressions > 1000) highlights.push(`총 ${impressions.toLocaleString()}회 노출로 브랜드 인지도 확대에 기여하고 있습니다.`);
-                if (reach > 500) highlights.push(`${reach.toLocaleString()}명에게 광고가 도달하여 잠재 고객층을 확보하고 있습니다.`);
+            // ===== 💡 더 좋아지려면 (긍정적 제안) =====
+            
+            // 노출 더 늘리기
+            if (impressions < 10000) {
+                improvements.push(`광고 기간이 늘어나면 더 많은 분들에게 우리 가게를 알릴 수 있어요!`);
             }
 
-            // ===== 개선할 점 분석 =====
-            // 노출 목표 대비
-            const impressionGoal = 30000;
-            const impressionPercent = (impressions / impressionGoal * 100);
-            if (impressionPercent < 50) {
-                actions.push(`노출 목표 ${impressionGoal.toLocaleString()}회 대비 ${impressionPercent.toFixed(1)}% 달성 중입니다. 예산 증액 또는 광고 기간 연장을 권장합니다.`);
-            } else if (impressionPercent < 100) {
-                actions.push(`노출 목표 달성률 ${impressionPercent.toFixed(1)}%입니다. 목표 달성을 위해 지속적인 모니터링이 필요합니다.`);
+            // 클릭 늘리기
+            if (clicks < 50) {
+                improvements.push(`새로운 영상이나 이미지를 추가하면 더 많은 관심을 끌 수 있어요!`);
             }
 
-            // CTR 개선
-            if (ctr < 1) {
-                actions.push(`클릭률 ${ctr.toFixed(2)}%로 업계 평균보다 낮습니다. 광고 소재 변경 또는 타겟팅 조정을 검토해 보세요.`);
-            } else if (ctr < 2) {
-                actions.push(`클릭률 개선의 여지가 있습니다. A/B 테스트를 통해 더 효과적인 소재를 찾아보세요.`);
+            // 전환 늘리기
+            if (conversions < 5) {
+                improvements.push(`네이버플레이스 연결을 강화하면 방문 고객이 더 늘어날 수 있어요!`);
             }
 
-            // CPC 개선
-            if (cpc > 3000) {
-                actions.push(`클릭당 비용 ${Math.round(cpc).toLocaleString()}원으로 다소 높은 편입니다. 타겟팅 범위 조정 또는 입찰 전략 변경을 고려해 보세요.`);
+            // 이벤트 제안
+            improvements.push(`특별 이벤트나 신메뉴 소식이 있으면 알려주세요! 광고에 반영하면 반응이 더 좋아져요.`);
+
+            // 기본 제안
+            if (improvements.length < 2) {
+                improvements.push(`지금처럼 꾸준히 운영하면 더 좋은 결과가 나올 거예요!`);
             }
 
-            // 빈도 과다
-            if (frequency > 3) {
-                actions.push(`광고 노출 빈도가 ${frequency.toFixed(1)}회로 높아 피로도가 우려됩니다. 새로운 소재 추가 또는 타겟 확장을 권장합니다.`);
-            }
-
-            // 전환 개선
-            if (conversions === 0 && clicks > 50) {
-                actions.push(`클릭은 발생하지만 전환이 없습니다. 랜딩페이지 최적화 또는 전환 추적 설정을 확인해 보세요.`);
-            } else if (costPerConversion > 30000) {
-                actions.push(`전환당 비용 ${Math.round(costPerConversion).toLocaleString()}원으로 높은 편입니다. 타겟팅 정밀화를 통해 효율을 개선할 수 있습니다.`);
-            }
-
-            // 기본 개선점 (아무것도 없을 때)
-            if (actions.length === 0) {
-                actions.push('현재 광고 성과가 전반적으로 양호합니다. 지속적인 모니터링과 함께 새로운 소재 테스트를 진행해 보세요.');
-            }
+            const actions = improvements;
 
             // DB에 저장
             try {
