@@ -4,444 +4,66 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 광고 성과 리포트</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --cream: #faf8f5;
-      --light-cream: #f5f3ef;
-      --warm-beige: #e8e3db;
-      --medium-brown: #8b7355;
-      --dark-brown: #5d4a3a;
-      --deep-brown: #3a2f23;
-      --accent-green: #5d8a66;
-      --accent-blue: #5a7a9a;
-      --accent-pink: #c4a4a4;
-    }
-
-    body {
-      font-family: 'Manrope', -apple-system, sans-serif;
-      background: var(--cream);
-      color: var(--deep-brown);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 48px 32px 80px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 48px;
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .logo {
-      width: 48px;
-      height: 48px;
-      background: var(--deep-brown);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 16px;
-      color: var(--cream);
-    }
-
-    .brand-info h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      margin-bottom: 2px;
-    }
-
-    .brand-info span {
-      font-size: 13px;
-      color: var(--medium-brown);
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--dark-brown);
-    }
-
-    .btn-logout {
-      padding: 10px 24px;
-      border: 1px solid var(--deep-brown);
-      background: transparent;
-      color: var(--deep-brown);
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-logout:hover {
-      background: var(--deep-brown);
-      color: var(--cream);
-    }
-
-    .page-header {
-      margin-bottom: 40px;
-    }
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--deep-brown);
-      margin-bottom: 8px;
-    }
-
-    .page-meta {
-      font-size: 14px;
-      color: var(--medium-brown);
-    }
-
-    .card {
-      background: white;
-      border: 1px solid var(--warm-beige);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 24px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-
-    .stat-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: var(--dark-brown);
-      font-weight: 500;
-    }
-
-    .stat-sub {
-      font-size: 11px;
-      color: var(--medium-brown);
-      margin-top: 4px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--deep-brown);
-    }
-
-    .stat-value.green {
-      color: var(--accent-green);
-    }
-
-    .big-metric-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .big-number {
-      font-size: 42px;
-      font-weight: 800;
-      color: var(--deep-brown);
-      margin-bottom: 8px;
-    }
-
-    .big-sub {
-      font-size: 14px;
-      color: var(--medium-brown);
-    }
-
-    .progress-simple {
-      height: 8px;
-      background: var(--warm-beige);
-      border-radius: 4px;
-      margin-top: 16px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent-green);
-      border-radius: 4px;
-    }
-
-    .gender-bar {
-      display: flex;
-      height: 40px;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    .gender-male {
-      background: var(--dark-brown);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .gender-female {
-      background: var(--accent-pink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .age-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .age-label {
-      width: 60px;
-      font-size: 13px;
-      color: var(--dark-brown);
-      font-weight: 500;
-    }
-
-    .age-bar-bg {
-      flex: 1;
-      height: 24px;
-      background: var(--warm-beige);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .age-bar-fill {
-      height: 100%;
-      background: var(--medium-brown);
-      border-radius: 6px;
-      transition: width 0.6s ease;
-    }
-
-    .age-percent {
-      width: 45px;
-      text-align: right;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-    }
-
-    .naver-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .naver-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--dark-brown);
-    }
-
-    .naver-icon {
-      width: 24px;
-      height: 24px;
-      background: #03c75a;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-    }
-
-    .naver-value {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent-green);
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .tab {
-      padding: 8px 16px;
-      border: 1px solid var(--warm-beige);
-      background: transparent;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--medium-brown);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .tab.active {
-      background: var(--deep-brown);
-      color: white;
-      border-color: var(--deep-brown);
-    }
-
-    .tab:hover:not(.active) {
-      border-color: var(--dark-brown);
-      color: var(--dark-brown);
-    }
-
-    .time-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .time-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    .time-label {
-      font-size: 14px;
-      color: var(--dark-brown);
-    }
-
-    .time-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-    }
-
-    .peak-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      background: var(--accent-green);
-      color: white;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .insta-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px;
-      background: var(--deep-brown);
-      border-radius: 12px;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    .insta-link:hover {
-      background: var(--dark-brown);
-    }
-
-    .insight-list {
-      list-style: none;
-    }
-
-    .insight-item {
-      padding: 16px 0 16px 20px;
-      border-left: 2px solid var(--warm-beige);
-      margin-bottom: 12px;
-      font-size: 15px;
-      color: var(--dark-brown);
-      line-height: 1.6;
-      transition: all 0.3s ease;
-    }
-
-    .insight-item:hover {
-      border-left-color: var(--deep-brown);
-      padding-left: 24px;
-    }
-
-    .chart-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 24px;
-      height: 300px;
-    }
-
-    @media (max-width: 768px) {
-      .container { padding: 24px 16px 60px; }
-      .header { flex-direction: column; gap: 20px; text-align: center; }
-      .page-title { font-size: 22px; }
-      .big-number { font-size: 32px; }
-      .time-grid { grid-template-columns: 1fr; }
-    }
+    :root { --cream: #faf8f5; --light-cream: #f5f3ef; --warm-beige: #e8e3db; --medium-brown: #8b7355; --dark-brown: #5d4a3a; --deep-brown: #3a2f23; --accent-green: #5d8a66; --accent-pink: #c4a4a4; }
+    body { font-family: 'Manrope', -apple-system, sans-serif; background: var(--cream); color: var(--deep-brown); line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--warm-beige); }
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .logo { width: 48px; height: 48px; background: var(--deep-brown); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: var(--cream); }
+    .brand-info h1 { font-size: 22px; font-weight: 700; color: var(--deep-brown); margin-bottom: 2px; }
+    .brand-info span { font-size: 13px; color: var(--medium-brown); }
+    .user-area { display: flex; align-items: center; gap: 16px; }
+    .user-name { font-size: 14px; font-weight: 600; color: var(--dark-brown); }
+    .btn-logout { padding: 10px 24px; border: 1px solid var(--deep-brown); background: transparent; color: var(--deep-brown); font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; }
+    .btn-logout:hover { background: var(--deep-brown); color: var(--cream); }
+    .page-header { margin-bottom: 40px; }
+    .page-title { font-size: 28px; font-weight: 800; color: var(--deep-brown); margin-bottom: 8px; }
+    .page-meta { font-size: 14px; color: var(--medium-brown); }
+    .card { background: white; border: 1px solid var(--warm-beige); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--deep-brown); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--warm-beige); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    .stat-box { background: var(--light-cream); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .stat-label { font-size: 14px; color: var(--dark-brown); font-weight: 500; }
+    .stat-sub { font-size: 11px; color: var(--medium-brown); margin-top: 4px; }
+    .stat-value { font-size: 20px; font-weight: 800; color: var(--deep-brown); }
+    .stat-value.green { color: var(--accent-green); }
+    .big-metric-box { background: var(--light-cream); border-radius: 12px; padding: 24px; text-align: center; }
+    .big-number { font-size: 42px; font-weight: 800; color: var(--deep-brown); margin-bottom: 8px; }
+    .big-sub { font-size: 14px; color: var(--medium-brown); }
+    .progress-simple { height: 8px; background: var(--warm-beige); border-radius: 4px; margin-top: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent-green); border-radius: 4px; }
+    .gender-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin-top: 12px; }
+    .gender-male { background: var(--dark-brown); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; }
+    .gender-female { background: var(--accent-pink); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; }
+    .age-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .age-label { width: 60px; font-size: 13px; color: var(--dark-brown); font-weight: 500; }
+    .age-bar-bg { flex: 1; height: 24px; background: var(--warm-beige); border-radius: 6px; overflow: hidden; }
+    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 6px; }
+    .age-percent { width: 45px; text-align: right; font-size: 14px; font-weight: 700; color: var(--deep-brown); }
+    .naver-box { background: var(--light-cream); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .naver-label { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--dark-brown); }
+    .naver-icon { width: 24px; height: 24px; background: #03c75a; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; }
+    .naver-value { font-size: 18px; font-weight: 800; color: var(--accent-green); }
+    .chart-box { background: var(--light-cream); border-radius: 12px; padding: 24px; height: 300px; }
+    .insight-list { list-style: none; }
+    .insight-item { padding: 16px 0 16px 20px; border-left: 2px solid var(--warm-beige); margin-bottom: 12px; font-size: 15px; color: var(--dark-brown); line-height: 1.6; }
+    .insight-item:hover { border-left-color: var(--deep-brown); padding-left: 24px; }
+    .insta-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: var(--deep-brown); border-radius: 12px; color: white; text-decoration: none; font-weight: 600; font-size: 14px; }
+    .insta-link:hover { background: var(--dark-brown); }
+    @media (max-width: 768px) { .container { padding: 24px 16px 60px; } .header { flex-direction: column; gap: 20px; text-align: center; } .page-title { font-size: 22px; } .big-number { font-size: 32px; } }
   </style>
 </head>
 <body>
   <div class="container">
-    
     <header class="header">
       <div class="brand">
         <div class="logo">RV</div>
-        <div class="brand-info">
-          <h1>REVRUN</h1>
-          <span>광고 성과 리포트</span>
-        </div>
+        <div class="brand-info"><h1>REVRUN</h1><span>광고 성과 리포트</span></div>
       </div>
       <div class="user-area">
         <span class="user-name" id="userName">-</span>
@@ -456,7 +78,6 @@
 
     <div class="card">
       <h3 class="card-title">광고 효과</h3>
-      
       <div class="grid-2" style="margin-bottom: 20px;">
         <div class="stat-box">
           <span class="stat-label">광고를 본 사람</span>
@@ -465,12 +86,9 @@
         <div class="big-metric-box">
           <div class="big-number" id="impressions">-</div>
           <div class="big-sub">총 노출 / 목표 30,000회</div>
-          <div class="progress-simple">
-            <div class="progress-fill" id="impressionBar" style="width: 0%;"></div>
-          </div>
+          <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
         </div>
       </div>
-
       <div class="grid-2">
         <div class="stat-box">
           <div>
@@ -492,274 +110,98 @@
     <div class="card">
       <h3 class="card-title">연령대별 반응</h3>
       <div id="ageChart">
-        <div class="age-row">
-          <span class="age-label">18-24세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 4%;"></div></div>
-          <span class="age-percent">4%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">25-34세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 55%;"></div></div>
-          <span class="age-percent">55%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">35-44세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 30%;"></div></div>
-          <span class="age-percent">30%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">45-54세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 11%;"></div></div>
-          <span class="age-percent">11%</span>
-        </div>
+        <div class="age-row"><span class="age-label">18-24세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 4%;"></div></div><span class="age-percent">4%</span></div>
+        <div class="age-row"><span class="age-label">25-34세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 55%;"></div></div><span class="age-percent">55%</span></div>
+        <div class="age-row"><span class="age-label">35-44세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 30%;"></div></div><span class="age-percent">30%</span></div>
+        <div class="age-row"><span class="age-label">45-54세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 11%;"></div></div><span class="age-percent">11%</span></div>
       </div>
     </div>
 
     <div class="card">
-      <h3 class="card-title">네이버 플레이스</h3>
+      <h3 class="card-title">랜딩페이지 방문</h3>
       <div class="naver-box">
         <div class="naver-label">
           <span class="naver-icon">N</span>
-          <span>최근 방문자 수</span>
+          <span>네이버플레이스 유입</span>
         </div>
-        <span class="naver-value" id="naverVisit">▲ 267명</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3 class="card-title">상권 분석</h3>
-      
-      <div class="tabs">
-        <button class="tab active">회식상권</button>
-        <button class="tab">MZ상권</button>
-        <button class="tab">신생상권</button>
-        <button class="tab">역주행상권</button>
-        <button class="tab">배달상권</button>
-      </div>
-
-      <div class="grid-2" style="margin-bottom: 24px;">
-        <div>
-          <div class="stat-label" style="margin-bottom: 8px;">유동인구 성별</div>
-          <div class="gender-bar">
-            <div class="gender-male" style="width: 57%;">남성 57%</div>
-            <div class="gender-female" style="width: 43%;">여성 43%</div>
-          </div>
-        </div>
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">유동인구 연령대</div>
-          <div class="age-row">
-            <span class="age-label">20대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 8%;"></div></div>
-            <span class="age-percent">8%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">30대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 13%;"></div></div>
-            <span class="age-percent">13%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">40대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 23%;"></div></div>
-            <span class="age-percent">23%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">50대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 25%;"></div></div>
-            <span class="age-percent">25%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="time-grid">
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">붐비는 요일</div>
-          <div class="time-item">
-            <span class="time-label">평일 (월~금)</span>
-            <span class="time-value">15%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">주말 (토~일)</span>
-            <span class="time-value">10%</span>
-          </div>
-        </div>
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">붐비는 시간</div>
-          <div style="margin-bottom: 8px;">
-            <span class="peak-badge">피크타임</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">18:00 - 23:00</span>
-            <span class="time-value">28.8%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">14:00 - 18:00</span>
-            <span class="time-value">25.4%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">09:00 - 12:00</span>
-            <span class="time-value">14.1%</span>
-          </div>
-        </div>
+        <span class="naver-value" id="naverVisit">-</span>
       </div>
     </div>
 
     <div class="card">
       <h3 class="card-title">일별 추이</h3>
-      <div class="chart-box">
-        <canvas id="trendChart"></canvas>
-      </div>
+      <div class="chart-box"><canvas id="trendChart"></canvas></div>
     </div>
 
     <div class="card">
       <h3 class="card-title">잘된 점</h3>
-      <ul class="insight-list" id="highlights">
-        <li class="insight-item">데이터를 불러오는 중...</li>
-      </ul>
+      <ul class="insight-list" id="highlights"><li class="insight-item">데이터를 불러오는 중...</li></ul>
     </div>
 
     <div class="card">
       <h3 class="card-title">개선할 점</h3>
-      <ul class="insight-list" id="actions">
-        <li class="insight-item">데이터를 불러오는 중...</li>
-      </ul>
+      <ul class="insight-list" id="actions"><li class="insight-item">데이터를 불러오는 중...</li></ul>
     </div>
 
     <div class="card">
       <h3 class="card-title">광고 미리보기</h3>
       <a href="#" class="insta-link" id="instaLink">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         인스타그램에서 광고 보기
       </a>
     </div>
-
   </div>
 
   <script>
     const AD_ACCOUNT_ID = 'act_543464623056642';
+    let naverVisitorsExtra = 0;
 
     async function api(path, opts = {}) {
-      const res = await fetch(path, {
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        ...opts
-      });
+      const res = await fetch(path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
       return res.json();
     }
 
-    function formatNumber(num) {
-      if (!num && num !== 0) return '-';
-      return Number(num).toLocaleString('ko-KR');
-    }
+    function formatNumber(num) { return (!num && num !== 0) ? '-' : Number(num).toLocaleString('ko-KR'); }
 
     function renderList(id, items) {
       const el = document.getElementById(id);
-      if (!items || items.length === 0) {
-        el.innerHTML = '<li class="insight-item">데이터가 없습니다</li>';
-        return;
-      }
+      if (!items || items.length === 0) { el.innerHTML = '<li class="insight-item">데이터가 없습니다</li>'; return; }
       el.innerHTML = items.map(item => `<li class="insight-item">${item}</li>`).join('');
     }
 
     let chart;
-    function renderChart(dailyData) {
+    function renderChart() {
       const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
-
-      const labels = dailyData.length > 0 
-        ? dailyData.map(d => d.label)
-        : ['월', '화', '수', '목', '금', '토', '일'];
-      
-      const data = dailyData.length > 0
-        ? dailyData.map(d => d.value)
-        : [2800, 3200, 2900, 3500, 4100, 3800, 3200];
-
       chart = new Chart(ctx, {
         type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "노출",
-            data: data,
-            borderColor: "#5d4a3a",
-            backgroundColor: "rgba(93, 74, 58, 0.1)",
-            fill: true,
-            borderWidth: 2,
-            tension: 0.4,
-            pointRadius: 0,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: "#e8e3db" },
-              ticks: { color: "#8b7355", font: { size: 11 } }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: "#8b7355", font: { size: 11 } }
-            }
-          }
-        }
+        data: { labels: ['월', '화', '수', '목', '금', '토', '일'], datasets: [{ label: "노출", data: [2800, 3200, 2900, 3500, 4100, 3800, 3200], borderColor: "#5d4a3a", backgroundColor: "rgba(93, 74, 58, 0.1)", fill: true, borderWidth: 2, tension: 0.4, pointRadius: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: "#e8e3db" }, ticks: { color: "#8b7355", font: { size: 11 } } }, x: { grid: { display: false }, ticks: { color: "#8b7355", font: { size: 11 } } } } }
       });
     }
 
     async function loadMetaData(campaignId) {
-      if (!campaignId) {
-        console.log('캠페인 ID 없음');
-        return null;
-      }
-
+      if (!campaignId) return null;
       try {
         const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
         const data = await response.json();
-
-        if (!data.success) {
-          console.error('Meta API 오류:', data.error);
-          return null;
-        }
-
-        const insights = data.insights || [];
-        const campaign = insights.find(item => item.campaignId === campaignId);
-        
-        if (!campaign) {
-          console.log('해당 캠페인을 찾을 수 없음:', campaignId);
-          return null;
-        }
-
-        return {
-          reach: campaign.reach || 0,
-          impressions: campaign.impressions || 0,
-          clicks: campaign.clicks || 0,
-          campaignName: campaign.campaignName || ''
-        };
-
-      } catch (error) {
-        console.error('Meta API 호출 실패:', error);
-        return null;
-      }
+        if (!data.success) return null;
+        const campaign = (data.insights || []).find(item => item.campaignId === campaignId);
+        if (!campaign) return null;
+        return { reach: campaign.reach || 0, impressions: campaign.impressions || 0, clicks: campaign.clicks || 0, conversions: campaign.conversions || 0 };
+      } catch (error) { return null; }
     }
 
     async function boot() {
       const me = await api("/api/me");
-      if (!me?.user) {
-        location.href = "/report/login.html";
-        return;
-      }
-
-      if (me.user.role === 'admin') {
-        location.href = "/admin/dashboard.html";
-        return;
-      }
+      if (!me?.user) { location.href = "/report/login.html"; return; }
+      if (me.user.role === 'admin') { location.href = "/admin/dashboard.html"; return; }
 
       document.getElementById("userName").textContent = me.user.name || me.user.username;
       document.getElementById("clientName").textContent = (me.user.name || me.user.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
+
+      naverVisitorsExtra = me.user.naver_visitors || 0;
 
       const campaignId = me.user.meta_account_id;
       const metaData = await loadMetaData(campaignId);
@@ -770,33 +212,22 @@
         const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
         document.getElementById("impressionBar").style.width = progressPercent + '%';
         document.getElementById("engagement").textContent = formatNumber(metaData.clicks) + '명';
+        
+        // 랜딩페이지 방문 = conversions(또는 clicks) + 네이버 방문자 수동 입력
+        const landingPageVisits = (metaData.conversions || metaData.clicks || 0) + naverVisitorsExtra;
+        document.getElementById("naverVisit").textContent = '▲ ' + formatNumber(landingPageVisits) + '명';
+      } else {
+        document.getElementById("naverVisit").textContent = '▲ ' + formatNumber(naverVisitorsExtra) + '명';
       }
 
       const data = await api("/api/report");
-      if (data.ok && data.report) {
-        const r = data.report;
-        renderList("highlights", r.highlights || []);
-        renderList("actions", r.actions || []);
-      } else {
-        renderList("highlights", []);
-        renderList("actions", []);
-      }
+      if (data.ok && data.report) { renderList("highlights", data.report.highlights || []); renderList("actions", data.report.actions || []); }
+      else { renderList("highlights", []); renderList("actions", []); }
 
-      renderChart([]);
+      renderChart();
     }
 
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await api("/api/logout", { method: "POST" });
-      location.href = "/report/login.html";
-    });
-
+    document.getElementById("logoutBtn").addEventListener("click", async () => { await api("/api/logout", { method: "POST" }); location.href = "/report/login.html"; });
     boot();
   </script>
 </body>
