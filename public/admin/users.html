@@ -202,6 +202,7 @@
                     <div class="form-group"><label class="form-label">비밀번호 * (4자리 이상)</label><input type="password" class="form-input" name="password" required minlength="4" placeholder="****"></div>
                     <div class="form-group"><label class="form-label">연락처</label><input type="tel" class="form-input" name="phone" placeholder="010-0000-0000"></div>
                     <div class="form-group"><label class="form-label">Meta 캠페인 ID</label><input type="text" class="form-input" name="meta_account_id" placeholder="예: 120237218182010724"><div class="form-hint">광고관리자 URL에서 selected_campaign_ids= 뒤의 숫자</div></div>
+                    <div class="form-group"><label class="form-label">광고 URL (인스타그램)</label><input type="url" class="form-input" name="instagram_url" placeholder="https://www.instagram.com/reel/..."><div class="form-hint">고객에게 보여줄 광고 게시물 링크</div></div>
                     <div class="form-group"><label class="form-label">네이버 방문자 추가</label><input type="number" class="form-input" name="naver_visitors" placeholder="0" min="0" value="0"><div class="form-hint">Meta 랜딩페이지 조회수에 더해질 숫자</div></div>
                     <div class="form-row">
                         <div class="form-group"><label class="form-label">플랜</label><select class="form-input" name="plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="enterprise">Enterprise</option></select></div>
@@ -226,6 +227,7 @@
                     <div class="form-group"><label class="form-label">아이디</label><input type="text" class="form-input" name="username" disabled></div>
                     <div class="form-group"><label class="form-label">연락처</label><input type="tel" class="form-input" name="phone"></div>
                     <div class="form-group"><label class="form-label">Meta 캠페인 ID</label><input type="text" class="form-input" name="meta_account_id"><div class="form-hint">광고관리자 URL에서 selected_campaign_ids= 뒤의 숫자</div></div>
+                    <div class="form-group"><label class="form-label">광고 URL (인스타그램)</label><input type="url" class="form-input" name="instagram_url" placeholder="https://www.instagram.com/reel/..."><div class="form-hint">고객에게 보여줄 광고 게시물 링크</div></div>
                     <div class="form-group"><label class="form-label">네이버 방문자 추가</label><input type="number" class="form-input" name="naver_visitors" min="0"><div class="form-hint">Meta 랜딩페이지 조회수에 더해질 숫자</div></div>
                     <div class="form-row">
                         <div class="form-group"><label class="form-label">플랜</label><select class="form-input" name="plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="enterprise">Enterprise</option></select></div>
@@ -477,6 +479,7 @@
                     form.querySelector('[name="username"]').value = user.username || '';
                     form.querySelector('[name="phone"]').value = user.phone || '';
                     form.querySelector('[name="meta_account_id"]').value = user.meta_account_id || '';
+                    form.querySelector('[name="instagram_url"]').value = user.instagram_url || '';
                     form.querySelector('[name="naver_visitors"]').value = user.naver_visitors || 0;
                     form.querySelector('[name="plan"]').value = user.plan || 'basic';
                     form.querySelector('[name="status"]').value = user.status || 'active';
