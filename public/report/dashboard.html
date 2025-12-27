@@ -24,11 +24,12 @@
     .page-title { font-size: 28px; font-weight: 800; color: var(--deep-brown); margin-bottom: 8px; }
     .page-meta { font-size: 14px; color: var(--medium-brown); }
     .card { background: white; border: 1px solid var(--warm-beige); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--warm-beige); }
     .card-title { font-size: 16px; font-weight: 700; color: var(--deep-brown); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--warm-beige); }
+    .card-title-inline { font-size: 16px; font-weight: 700; color: var(--deep-brown); margin: 0; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
     
-    /* 통계 박스 - 화살표 추가 */
     .stat-box { background: var(--light-cream); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
     .stat-label { font-size: 14px; color: var(--dark-brown); font-weight: 500; }
     .stat-sub { font-size: 11px; color: var(--medium-brown); margin-top: 4px; }
@@ -38,7 +39,6 @@
     .stat-arrow { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent-green-light); border-radius: 50%; animation: pulse 2s infinite; }
     .stat-arrow svg { width: 16px; height: 16px; color: var(--accent-green); }
     
-    /* 큰 숫자 박스 */
     .big-metric-box { background: var(--light-cream); border-radius: 12px; padding: 24px; text-align: center; }
     .big-number-wrap { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
     .big-number { font-size: 48px; font-weight: 800; color: var(--deep-brown); }
@@ -49,15 +49,14 @@
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), #4ade80); border-radius: 4px; transition: width 1.5s ease-out; }
     
     .gender-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin-top: 12px; }
-    .gender-male { background: var(--dark-brown); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; }
-    .gender-female { background: var(--accent-pink); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; }
+    .gender-male { background: var(--dark-brown); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; transition: width 1s ease-out; }
+    .gender-female { background: var(--accent-pink); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; transition: width 1s ease-out; }
     .age-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .age-label { width: 60px; font-size: 13px; color: var(--dark-brown); font-weight: 500; }
     .age-bar-bg { flex: 1; height: 24px; background: var(--warm-beige); border-radius: 6px; overflow: hidden; }
-    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 6px; }
+    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 6px; transition: width 1s ease-out; }
     .age-percent { width: 45px; text-align: right; font-size: 14px; font-weight: 700; color: var(--deep-brown); }
     
-    /* 네이버 박스 */
     .naver-box { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; }
     .naver-label { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; color: var(--dark-brown); }
     .naver-icon { width: 32px; height: 32px; background: #03c75a; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px; }
@@ -65,6 +64,12 @@
     .naver-value { font-size: 28px; font-weight: 800; color: #16a34a; }
     .naver-arrow { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: white; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); animation: bounce 1s infinite; }
     .naver-arrow svg { width: 18px; height: 18px; color: #16a34a; }
+    
+    /* 기간 선택 탭 */
+    .period-tabs { display: flex; gap: 8px; }
+    .period-tab { padding: 8px 16px; border: 1px solid var(--warm-beige); background: white; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--medium-brown); cursor: pointer; transition: all 0.2s; }
+    .period-tab:hover { border-color: var(--dark-brown); color: var(--dark-brown); }
+    .period-tab.active { background: var(--deep-brown); color: white; border-color: var(--deep-brown); }
     
     .chart-box { background: var(--light-cream); border-radius: 12px; padding: 24px; height: 300px; }
     .insight-list { list-style: none; }
@@ -79,28 +84,13 @@
     .insta-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 12px; color: white; text-decoration: none; font-weight: 600; font-size: 14px; transition: transform 0.2s, box-shadow 0.2s; }
     .insta-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(188, 24, 136, 0.3); }
     
-    /* 애니메이션 */
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    @keyframes fadeInLeft {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .count-animate {
-      animation: countUp 0.5s ease-out forwards;
-    }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .count-animate { animation: countUp 0.5s ease-out forwards; }
     
-    @media (max-width: 768px) { .container { padding: 24px 16px 60px; } .header { flex-direction: column; gap: 20px; text-align: center; } .page-title { font-size: 22px; } .big-number { font-size: 36px; } }
+    @media (max-width: 768px) { .container { padding: 24px 16px 60px; } .header { flex-direction: column; gap: 20px; text-align: center; } .page-title { font-size: 22px; } .big-number { font-size: 36px; } .card-header { flex-direction: column; gap: 12px; align-items: flex-start; } }
   </style>
 </head>
 <body>
@@ -130,7 +120,7 @@
             <div class="stat-sub">우리 가게를 알게 된 분들</div>
           </div>
           <div class="stat-value-wrap">
-            <span class="stat-value green" id="reach">-</span>
+            <span class="stat-value green" id="reach">0</span>
             <div class="stat-arrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
@@ -138,7 +128,7 @@
         </div>
         <div class="big-metric-box">
           <div class="big-number-wrap">
-            <span class="big-number" id="impressions">-</span>
+            <span class="big-number" id="impressions">0</span>
             <div class="big-arrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
@@ -154,7 +144,7 @@
             <div class="stat-sub">좋아요, 댓글, 클릭</div>
           </div>
           <div class="stat-value-wrap">
-            <span class="stat-value green" id="engagement">-</span>
+            <span class="stat-value green" id="engagement">0</span>
             <div class="stat-arrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
@@ -163,8 +153,8 @@
         <div>
           <div class="stat-label" style="margin-bottom: 8px;">성별 비율</div>
           <div class="gender-bar">
-            <div class="gender-male" id="maleBar" style="width: 76%;">남성 76%</div>
-            <div class="gender-female" id="femaleBar" style="width: 24%;">여성 24%</div>
+            <div class="gender-male" id="maleBar" style="width: 50%;">남성 50%</div>
+            <div class="gender-female" id="femaleBar" style="width: 50%;">여성 50%</div>
           </div>
         </div>
       </div>
@@ -173,10 +163,12 @@
     <div class="card">
       <h3 class="card-title">👥 연령대별 반응</h3>
       <div id="ageChart">
-        <div class="age-row"><span class="age-label">18-24세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 4%;"></div></div><span class="age-percent">4%</span></div>
-        <div class="age-row"><span class="age-label">25-34세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 55%;"></div></div><span class="age-percent">55%</span></div>
-        <div class="age-row"><span class="age-label">35-44세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 30%;"></div></div><span class="age-percent">30%</span></div>
-        <div class="age-row"><span class="age-label">45-54세</span><div class="age-bar-bg"><div class="age-bar-fill" style="width: 11%;"></div></div><span class="age-percent">11%</span></div>
+        <div class="age-row"><span class="age-label">18-24</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
+        <div class="age-row"><span class="age-label">25-34</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
+        <div class="age-row"><span class="age-label">35-44</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
+        <div class="age-row"><span class="age-label">45-54</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
+        <div class="age-row"><span class="age-label">55-64</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
+        <div class="age-row"><span class="age-label">65+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age65" style="width: 0%;"></div></div><span class="age-percent" id="age65p">0%</span></div>
       </div>
     </div>
 
@@ -188,7 +180,7 @@
           <span>광고 보고 방문한 고객</span>
         </div>
         <div class="naver-value-wrap">
-          <span class="naver-value" id="naverVisit">-</span>
+          <span class="naver-value" id="naverVisit">0</span>
           <div class="naver-arrow">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
           </div>
@@ -197,7 +189,14 @@
     </div>
 
     <div class="card">
-      <h3 class="card-title">📈 일별 추이 (최근 7일)</h3>
+      <div class="card-header">
+        <h3 class="card-title-inline">📈 일별 추이</h3>
+        <div class="period-tabs">
+          <button class="period-tab active" data-days="7">7일</button>
+          <button class="period-tab" data-days="30">30일</button>
+          <button class="period-tab" data-days="0">전체</button>
+        </div>
+      </div>
       <div class="chart-box"><canvas id="trendChart"></canvas></div>
     </div>
 
@@ -223,30 +222,28 @@
   <script>
     const AD_ACCOUNT_ID = 'act_543464623056642';
     let userData = null;
+    let campaignId = null;
 
     async function api(path, opts = {}) {
       const res = await fetch(path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
       return res.json();
     }
 
-    // 숫자 카운팅 애니메이션
     function animateCount(element, target, suffix = '') {
+      if (!element || target === null || target === undefined) return;
       const duration = 1500;
-      const start = 0;
       const startTime = performance.now();
+      const targetNum = parseInt(target) || 0;
       
       function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const easeOut = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(start + (target - start) * easeOut);
+        const current = Math.floor(targetNum * easeOut);
         element.textContent = current.toLocaleString('ko-KR') + suffix;
-        
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        }
+        if (progress < 1) requestAnimationFrame(update);
+        else element.textContent = targetNum.toLocaleString('ko-KR') + suffix;
       }
-      
       element.classList.add('count-animate');
       requestAnimationFrame(update);
     }
@@ -265,9 +262,7 @@
       const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
       
-      let labels = [];
-      let data = [];
-      
+      let labels = [], data = [];
       if (dailyData && dailyData.length > 0) {
         labels = dailyData.map(d => {
           const date = new Date(d.date);
@@ -282,10 +277,10 @@
       chart = new Chart(ctx, {
         type: "line",
         data: { 
-          labels: labels, 
+          labels, 
           datasets: [{ 
             label: "노출", 
-            data: data, 
+            data, 
             borderColor: "#22c55e", 
             backgroundColor: "rgba(34, 197, 94, 0.1)", 
             fill: true, 
@@ -309,33 +304,72 @@
       });
     }
 
-    async function loadMetaData(campaignId) {
-      if (!campaignId) return null;
+    async function loadMetaData(cid) {
+      if (!cid) return null;
       try {
         const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
         const data = await response.json();
         if (!data.success) return null;
-        const campaign = (data.insights || []).find(item => item.campaignId === campaignId);
-        if (!campaign) return null;
-        return { 
-          reach: campaign.reach || 0, 
-          impressions: campaign.impressions || 0, 
-          clicks: campaign.clicks || 0, 
-          conversions: campaign.conversions || 0,
-          campaignName: campaign.campaignName || ''
-        };
+        const campaign = (data.insights || []).find(item => item.campaignId === cid);
+        return campaign || null;
       } catch (error) { return null; }
     }
 
-    async function loadDailyData(campaignId) {
-      if (!campaignId) return null;
+    async function loadDailyData(cid, days = 7) {
+      if (!cid) return null;
       try {
-        const response = await fetch(`/api/meta/report?action=daily&campaign_id=${campaignId}`);
+        const response = await fetch(`/api/meta/report?action=daily&campaign_id=${cid}&days=${days}`);
         const data = await response.json();
         if (!data.success) return null;
         return data.dailyData || [];
       } catch (error) { return null; }
     }
+
+    async function loadDemographics(cid) {
+      if (!cid) return null;
+      try {
+        const response = await fetch(`/api/meta/report?action=demographics&campaign_id=${cid}`);
+        const data = await response.json();
+        if (!data.success) return null;
+        return data;
+      } catch (error) { return null; }
+    }
+
+    function updateDemographics(demo) {
+      if (!demo) return;
+      
+      // 성별
+      const maleP = demo.gender?.malePercent || 50;
+      const femaleP = demo.gender?.femalePercent || 50;
+      document.getElementById('maleBar').style.width = maleP + '%';
+      document.getElementById('maleBar').textContent = `남성 ${maleP}%`;
+      document.getElementById('femaleBar').style.width = femaleP + '%';
+      document.getElementById('femaleBar').textContent = `여성 ${femaleP}%`;
+      
+      // 연령
+      const ageMap = {
+        '18-24': 'age18', '25-34': 'age25', '35-44': 'age35',
+        '45-54': 'age45', '55-64': 'age55', '65+': 'age65'
+      };
+      Object.keys(ageMap).forEach(key => {
+        const p = demo.age?.[key]?.percent || 0;
+        const bar = document.getElementById(ageMap[key]);
+        const pEl = document.getElementById(ageMap[key] + 'p');
+        if (bar) bar.style.width = p + '%';
+        if (pEl) pEl.textContent = p + '%';
+      });
+    }
+
+    // 기간 탭 클릭
+    document.querySelectorAll('.period-tab').forEach(tab => {
+      tab.addEventListener('click', async function() {
+        document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const days = parseInt(this.dataset.days);
+        const dailyData = await loadDailyData(campaignId, days);
+        renderChart(dailyData);
+      });
+    });
 
     async function boot() {
       const me = await api("/api/me");
@@ -343,37 +377,40 @@
       if (me.user.role === 'admin') { location.href = "/admin/dashboard.html"; return; }
 
       userData = me.user;
+      campaignId = userData.meta_account_id;
+      
       document.getElementById("userName").textContent = userData.name || userData.username;
       document.getElementById("clientName").textContent = (userData.name || userData.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
 
       const naverVisitorsExtra = userData.naver_visitors || 0;
-      const campaignId = userData.meta_account_id;
       
       // Meta 데이터 로드
       const metaData = await loadMetaData(campaignId);
+      console.log('Meta 데이터:', metaData);
       
       if (metaData) {
-        // 애니메이션으로 숫자 표시
-        animateCount(document.getElementById("reach"), metaData.reach, '명');
-        animateCount(document.getElementById("impressions"), metaData.impressions, '');
-        animateCount(document.getElementById("engagement"), metaData.clicks, '명');
+        setTimeout(() => {
+          animateCount(document.getElementById("reach"), metaData.reach, '명');
+          animateCount(document.getElementById("impressions"), metaData.impressions, '');
+          animateCount(document.getElementById("engagement"), metaData.clicks, '명');
+        }, 300);
         
-        // 프로그레스 바 애니메이션
         setTimeout(() => {
           const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
           document.getElementById("impressionBar").style.width = progressPercent + '%';
-        }, 500);
+        }, 800);
         
-        // 네이버플레이스 유입
         const landingPageVisits = (metaData.conversions || 0) + naverVisitorsExtra;
-        animateCount(document.getElementById("naverVisit"), landingPageVisits, '명');
+        setTimeout(() => animateCount(document.getElementById("naverVisit"), landingPageVisits, '명'), 500);
       } else {
-        document.getElementById("reach").textContent = '-';
-        document.getElementById("impressions").textContent = '-';
-        document.getElementById("engagement").textContent = '-';
         animateCount(document.getElementById("naverVisit"), naverVisitorsExtra, '명');
       }
+
+      // 성별/연령 데이터 로드
+      const demo = await loadDemographics(campaignId);
+      console.log('인구통계 데이터:', demo);
+      setTimeout(() => updateDemographics(demo), 500);
 
       // 인스타그램 광고 링크
       const instaLink = document.getElementById("instaLink");
@@ -383,26 +420,26 @@
         instaLink.href = "https://www.instagram.com";
       }
 
-      // 일별 데이터 로드 및 차트 렌더링
-      const dailyData = await loadDailyData(campaignId);
+      // 일별 데이터 (기본 7일)
+      const dailyData = await loadDailyData(campaignId, 7);
       renderChart(dailyData);
 
-      // AI 코멘트 표시
-      let highlights = [];
-      let actions = [];
-      
+      // AI 코멘트
+      let highlights = [], actions = [];
       try {
         if (userData.ai_highlights) highlights = JSON.parse(userData.ai_highlights);
         if (userData.ai_actions) actions = JSON.parse(userData.ai_actions);
-      } catch (e) {
-        console.error('코멘트 파싱 오류:', e);
-      }
+      } catch (e) {}
 
       renderList("highlights", highlights, "highlight");
       renderList("actions", actions, "action");
     }
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => { await api("/api/logout", { method: "POST" }); location.href = "/report/login.html"; });
+    document.getElementById("logoutBtn").addEventListener("click", async () => { 
+      await api("/api/logout", { method: "POST" }); 
+      location.href = "/report/login.html"; 
+    });
+    
     boot();
   </script>
 </body>
