@@ -1,197 +1,171 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
-
-function parseCookies(cookieHeader) {
-  const cookies = {};
-  if (cookieHeader) {
-    cookieHeader.split(';').forEach(cookie => {
-      const [name, value] = cookie.trim().split('=');
-      cookies[name] = value;
-    });
-  }
-  return cookies;
-}
-
-async function getCampaignName(campaignId) {
-  if (!campaignId || !META_ACCESS_TOKEN) return null;
-
+// DB 또는 환경변수에서 토큰 가져오기
+async function getAccessToken() {
+  // 먼저 DB에서 가져오기 시도
   try {
-    const url = `https://graph.facebook.com/v18.0/${campaignId}?fields=name&access_token=${META_ACCESS_TOKEN}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.name || null;
-  } catch (err) {
-    console.error('Campaign name error:', err);
-    return null;
-  }
-}
-
-async function getMetaInsights(campaignId) {
-  if (!campaignId || !META_ACCESS_TOKEN) return null;
-
-  try {
-    const url = `https://graph.facebook.com/v18.0/${campaignId}/insights?fields=impressions,reach,spend,actions&access_token=${META_ACCESS_TOKEN}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.data && data.data.length > 0) {
-      return data.data[0];
+    const { data } = await supabase
+      .from('settings')
+      .select('value, expires_at')
+      .eq('key', 'meta_access_token')
+      .single();
+    
+    if (data?.value) {
+      // 만료 체크 (7일 전이면 경고)
+      if (data.expires_at) {
+        const expiresAt = new Date(data.expires_at);
+        const daysLeft = Math.floor((expiresAt - new Date()) / (1000 * 60 * 60 * 24));
+        if (daysLeft < 7) {
+          console.warn(`토큰 만료 ${daysLeft}일 남음! 갱신 필요`);
+        }
+      }
+      return data.value;
     }
-    return null;
-  } catch (err) {
-    console.error('Meta API error:', err);
-    return null;
+  } catch (e) {
+    console.log('DB에서 토큰 조회 실패, 환경변수 사용');
   }
-}
-
-function formatNumber(num) {
-  return Number(num).toLocaleString('ko-KR');
-}
-
-function formatCurrency(num) {
-  return '₩' + Number(num).toLocaleString('ko-KR');
-}
-
-function getActionValue(actions, type) {
-  if (!actions) return '0';
-  const action = actions.find(a => a.action_type === type);
-  return action ? action.value : '0';
-}
-
-// 캠페인명에서 업체명 추출 (예: "원드베이크샵 리얼" -> "원드베이크샵")
-function extractBusinessName(campaignName) {
-  if (!campaignName) return '고객';
-  // 첫 번째 단어만 추출 (공백 기준)
-  const firstWord = campaignName.split(' ')[0];
-  // 날짜 패턴 제거 (예: 20251219)
-  if (/^\d{8}/.test(firstWord)) {
-    const parts = campaignName.split(' ');
-    return parts[1] || '고객';
-  }
-  return firstWord;
+  
+  // DB에 없으면 환경변수 사용
+  return process.env.META_ACCESS_TOKEN;
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', 'https://revrun.co.kr');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' });
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
-  }
-
+  const { action, account_id } = req.query;
+  
   try {
-    const cookies = parseCookies(req.headers.cookie);
-    const userId = cookies.session;
-
-    if (!userId) {
-      return res.status(401).json({ ok: false, error: 'Not authenticated' });
+    const accessToken = await getAccessToken();
+    
+    if (!accessToken) {
+      return res.status(500).json({ success: false, error: 'Meta access token not configured' });
     }
 
-    // 사용자 정보 가져오기
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('name, campaign_id')
-      .eq('id', userId)
-      .single();
-
-    if (userError || !user) {
-      return res.status(404).json({ ok: false, error: 'User not found' });
+    if (action === 'insights' && account_id) {
+      return await getCampaignInsights(account_id, accessToken, res);
     }
 
-    // 캠페인명 가져오기
-    const campaignName = await getCampaignName(user.campaign_id);
-    const businessName = user.name || extractBusinessName(campaignName) || '고객';
-
-    // Meta API에서 데이터 가져오기
-    const metaData = await getMetaInsights(user.campaign_id);
-
-    if (!metaData) {
-      return res.status(200).json({
-        ok: true,
-        report: {
-          clientName: businessName,
-          period: '최근 30일',
-          reach: '0',
-          impressions: '0',
-          spend: '₩0',
-          engagement: '0',
-          videoViews: '0',
-          linkClicks: '0',
-          landingPageViews: '0',
-          highlights: ['데이터를 불러오는 중입니다.'],
-          actions: ['캠페인이 연결되지 않았습니다.']
-        }
-      });
+    if (action === 'accounts') {
+      return await getAdAccounts(accessToken, res);
     }
 
-    // Meta 데이터 가공
-    const impressions = formatNumber(metaData.impressions || 0);
-    const reach = formatNumber(metaData.reach || 0);
-    const spend = formatCurrency(metaData.spend || 0);
-    const engagement = formatNumber(getActionValue(metaData.actions, 'post_engagement'));
-    const videoViews = formatNumber(getActionValue(metaData.actions, 'video_view'));
-    const linkClicks = formatNumber(getActionValue(metaData.actions, 'link_click'));
-    const landingPageViews = formatNumber(getActionValue(metaData.actions, 'landing_page_view'));
+    return res.status(400).json({ success: false, error: 'Invalid action. Use action=insights&account_id=xxx or action=accounts' });
 
-    // 하이라이트 자동 생성
-    const highlights = [];
-    if (Number(metaData.reach) > 1000) {
-      highlights.push(`${reach}명에게 광고가 도달했습니다.`);
-    }
-    if (Number(getActionValue(metaData.actions, 'video_view')) > 100) {
-      highlights.push(`영상이 ${videoViews}회 조회되었습니다.`);
-    }
-    if (Number(getActionValue(metaData.actions, 'link_click')) > 50) {
-      highlights.push(`${linkClicks}명이 링크를 클릭했습니다.`);
-    }
-    if (highlights.length === 0) {
-      highlights.push('광고가 정상적으로 운영되고 있습니다.');
-    }
-
-    // 개선점 자동 생성
-    const actionItems = [];
-    const ctr = (Number(getActionValue(metaData.actions, 'link_click')) / Number(metaData.impressions) * 100);
-    if (ctr < 1) {
-      actionItems.push('클릭률 개선을 위해 광고 소재 변경을 고려해보세요.');
-    }
-    if (Number(getActionValue(metaData.actions, 'landing_page_view')) < Number(getActionValue(metaData.actions, 'link_click')) * 0.5) {
-      actionItems.push('랜딩페이지 로딩 속도를 확인해보세요.');
-    }
-    if (actionItems.length === 0) {
-      actionItems.push('현재 광고 성과가 양호합니다. 유지하세요!');
-    }
-
-    return res.status(200).json({
-      ok: true,
-      report: {
-        clientName: businessName,
-        period: `${metaData.date_start} ~ ${metaData.date_stop}`,
-        reach: reach,
-        impressions: impressions,
-        spend: spend,
-        engagement: engagement,
-        videoViews: videoViews,
-        linkClicks: linkClicks,
-        landingPageViews: landingPageViews,
-        highlights: highlights,
-        actions: actionItems
-      }
-    });
-
-  } catch (err) {
-    console.error('Report error:', err);
-    return res.status(500).json({ ok: false, error: 'Server error' });
+  } catch (error) {
+    console.error('Meta API Error:', error);
+    return res.status(500).json({ success: false, error: error.message });
   }
+}
+
+async function getCampaignInsights(accountId, accessToken, res) {
+  const formattedAccountId = accountId.startsWith('act_') ? accountId : `act_${accountId}`;
+  
+  // 최근 30일
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 30);
+  
+  const timeRange = JSON.stringify({
+    since: startDate.toISOString().split('T')[0],
+    until: endDate.toISOString().split('T')[0]
+  });
+
+  const fields = [
+    'campaign_id',
+    'campaign_name',
+    'impressions',
+    'clicks',
+    'ctr',
+    'cpc',
+    'cpm',
+    'spend',
+    'reach',
+    'frequency',
+    'actions',
+    'cost_per_action_type',
+    'video_p25_watched_actions',
+    'video_p50_watched_actions',
+    'video_p75_watched_actions',
+    'video_p100_watched_actions'
+  ].join(',');
+
+  const url = `https://graph.facebook.com/v18.0/${formattedAccountId}/insights?level=campaign&fields=${fields}&time_range=${encodeURIComponent(timeRange)}&access_token=${accessToken}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (data.error) {
+    return res.status(400).json({ success: false, error: data.error.message });
+  }
+
+  const insights = (data.data || []).map(item => {
+    // 전환 수 계산 (랜딩페이지 조회 등)
+    let conversions = 0;
+    let costPerConversion = 0;
+    
+    if (item.actions) {
+      const landingPageView = item.actions.find(a => a.action_type === 'landing_page_view');
+      const linkClick = item.actions.find(a => a.action_type === 'link_click');
+      conversions = parseInt(landingPageView?.value || linkClick?.value || 0);
+    }
+    
+    if (item.cost_per_action_type) {
+      const costPerLanding = item.cost_per_action_type.find(a => a.action_type === 'landing_page_view');
+      const costPerClick = item.cost_per_action_type.find(a => a.action_type === 'link_click');
+      costPerConversion = parseFloat(costPerLanding?.value || costPerClick?.value || 0);
+    }
+
+    return {
+      campaignId: item.campaign_id,
+      campaignName: item.campaign_name,
+      impressions: parseInt(item.impressions || 0),
+      clicks: parseInt(item.clicks || 0),
+      ctr: parseFloat(item.ctr || 0),
+      cpc: parseFloat(item.cpc || 0),
+      cpm: parseFloat(item.cpm || 0),
+      spend: parseFloat(item.spend || 0),
+      reach: parseInt(item.reach || 0),
+      frequency: parseFloat(item.frequency || 0),
+      conversions,
+      costPerConversion,
+      videoViews: {
+        p25: parseInt(item.video_p25_watched_actions?.[0]?.value || 0),
+        p50: parseInt(item.video_p50_watched_actions?.[0]?.value || 0),
+        p75: parseInt(item.video_p75_watched_actions?.[0]?.value || 0),
+        p100: parseInt(item.video_p100_watched_actions?.[0]?.value || 0)
+      }
+    };
+  });
+
+  return res.status(200).json({
+    success: true,
+    dateRange: {
+      start: startDate.toISOString().split('T')[0],
+      end: endDate.toISOString().split('T')[0]
+    },
+    insights
+  });
+}
+
+async function getAdAccounts(accessToken, res) {
+  const url = `https://graph.facebook.com/v18.0/me/adaccounts?fields=id,name,account_status,currency,timezone_name&access_token=${accessToken}`;
+  
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (data.error) {
+    return res.status(400).json({ success: false, error: data.error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    accounts: data.data || []
+  });
 }

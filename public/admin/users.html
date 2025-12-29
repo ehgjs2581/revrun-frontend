@@ -7,38 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-primary: #FAF7F2;
-            --bg-secondary: #F5F0E8;
-            --bg-card: #FFFFFF;
-            --text-primary: #3D3228;
-            --text-secondary: #6B5D4D;
-            --text-muted: #9C8B7A;
-            --accent-brown: #8B7355;
-            --accent-brown-dark: #6B5A45;
-            --accent-cream: #E8DFD0;
-            --border-light: #E8E0D5;
-            --success: #5A8F5A;
-            --warning: #C9A85C;
-            --danger: #B85C5C;
-            --shadow-sm: 0 1px 3px rgba(59, 50, 40, 0.08);
-            --shadow-md: 0 4px 12px rgba(59, 50, 40, 0.1);
-            --shadow-lg: 0 8px 24px rgba(59, 50, 40, 0.12);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-        .sidebar {
-            position: fixed; left: 0; top: 0; width: 260px; height: 100vh;
-            background: var(--bg-card); border-right: 1px solid var(--border-light);
-            padding: 24px 16px; display: flex; flex-direction: column; z-index: 100;
-        }
+        :root { --bg-primary: #FAF7F2; --bg-secondary: #F5F0E8; --bg-card: #FFFFFF; --text-primary: #3D3228; --text-secondary: #6B5D4D; --text-muted: #9C8B7A; --accent-brown: #8B7355; --accent-brown-dark: #6B5A45; --accent-cream: #E8DFD0; --border-light: #E8E0D5; --success: #5A8F5A; --warning: #C9A85C; --danger: #B85C5C; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border-light); padding: 24px 16px; display: flex; flex-direction: column; z-index: 100; }
         .logo { display: flex; align-items: center; gap: 12px; padding: 0 12px 24px; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; }
         .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-brown), var(--accent-brown-dark)); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
         .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
@@ -62,12 +33,16 @@
         .header-actions { display: flex; gap: 12px; }
         .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s ease; }
         .btn-primary { background: var(--accent-brown); color: white; }
-        .btn-primary:hover { background: var(--accent-brown-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-primary:hover { background: var(--accent-brown-dark); }
         .btn-secondary { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-light); }
-        .btn-secondary:hover { background: var(--bg-secondary); border-color: var(--accent-brown); }
+        .btn-secondary:hover { background: var(--bg-secondary); }
+        .btn-ai { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 11px; padding: 6px 12px; }
+        .btn-ai:hover { opacity: 0.9; }
+        .btn-ai:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-ai-delete { background: var(--danger); color: white; font-size: 11px; padding: 6px 8px; border: none; border-radius: var(--radius-sm); cursor: pointer; }
+        .btn-ai-delete:hover { opacity: 0.8; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
-        .stat-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border-light); transition: all 0.2s ease; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border-light); }
         .stat-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
         .stat-icon.users { background: #E8F4E8; color: var(--success); }
         .stat-icon.active { background: #FFF8E8; color: var(--warning); }
@@ -77,67 +52,67 @@
         .stat-label { font-size: 14px; color: var(--text-muted); }
         .filters-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
         .search-box { flex: 1; max-width: 400px; min-width: 200px; position: relative; }
-        .search-box input { width: 100%; padding: 12px 16px 12px 44px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-card); transition: all 0.2s ease; }
-        .search-box input:focus { outline: none; border-color: var(--accent-brown); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
+        .search-box input { width: 100%; padding: 12px 16px 12px 44px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-card); }
+        .search-box input:focus { outline: none; border-color: var(--accent-brown); }
         .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .filter-select { padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-card); color: var(--text-secondary); cursor: pointer; min-width: 140px; }
-        .filter-select:focus { outline: none; border-color: var(--accent-brown); }
+        .filter-select { padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-card); color: var(--text-secondary); cursor: pointer; }
         .table-container { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-light); overflow: hidden; }
         .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
         thead { background: var(--bg-secondary); }
-        th { padding: 16px 20px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-light); white-space: nowrap; }
-        td { padding: 16px 20px; font-size: 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border-light); }
+        th { padding: 16px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-light); white-space: nowrap; }
+        td { padding: 14px 16px; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-light); }
         tbody tr:hover { background: var(--bg-primary); }
-        tbody tr:last-child td { border-bottom: none; }
         .user-cell { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-cream); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--accent-brown); flex-shrink: 0; }
-        .user-info h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-        .user-info span { font-size: 12px; color: var(--text-muted); }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-cream); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--accent-brown); font-size: 14px; }
+        .user-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .user-info span { font-size: 11px; color: var(--text-muted); }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
         .status-badge.active { background: #E8F4E8; color: var(--success); }
         .status-badge.pending { background: #FFF8E8; color: var(--warning); }
         .status-badge.inactive { background: #F8E8E8; color: var(--danger); }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-        .plan-badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-        .plan-badge.pro { background: var(--accent-cream); color: var(--accent-brown); }
-        .plan-badge.basic { background: var(--bg-secondary); color: var(--text-muted); }
-        .plan-badge.enterprise { background: linear-gradient(135deg, #3D3228, #6B5D4D); color: white; }
-        .action-btns { display: flex; gap: 8px; }
-        .action-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .action-btns { display: flex; gap: 6px; }
+        .action-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 14px; }
         .action-btn:hover { background: var(--bg-secondary); color: var(--accent-brown); border-color: var(--accent-brown); }
         .action-btn.danger:hover { background: #FFF0F0; color: var(--danger); border-color: var(--danger); }
-        .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-secondary); flex-wrap: wrap; gap: 12px; }
+        .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-secondary); }
         .table-info { font-size: 14px; color: var(--text-muted); }
         .pagination { display: flex; align-items: center; gap: 8px; }
-        .page-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s ease; }
+        .page-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .page-btn:hover { border-color: var(--accent-brown); color: var(--accent-brown); }
         .page-btn.active { background: var(--accent-brown); color: white; border-color: var(--accent-brown); }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; padding: 20px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal { background: var(--bg-card); border-radius: var(--radius-lg); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: transform 0.3s ease; }
+        .modal { background: var(--bg-card); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: transform 0.3s ease; }
         .modal-overlay.active .modal { transform: translateY(0); }
         .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 24px; border-bottom: 1px solid var(--border-light); }
         .modal-title { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-        .modal-close { width: 36px; height: 36px; border-radius: var(--radius-sm); border: none; background: var(--bg-secondary); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .modal-close { width: 36px; height: 36px; border-radius: var(--radius-sm); border: none; background: var(--bg-secondary); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .modal-close:hover { background: var(--border-light); color: var(--text-primary); }
         .modal-body { padding: 24px; }
         .form-group { margin-bottom: 20px; }
         .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-        .form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; transition: all 0.2s ease; }
-        .form-input:focus { outline: none; border-color: var(--accent-brown); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
-        .form-input:disabled { background: var(--bg-secondary); color: var(--text-muted); cursor: not-allowed; }
+        .form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 14px; }
+        .form-input:focus { outline: none; border-color: var(--accent-brown); }
+        .form-input:disabled { background: var(--bg-secondary); color: var(--text-muted); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 24px; border-top: 1px solid var(--border-light); }
         .toast-container { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 12px; }
-        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border-left: 4px solid; transform: translateX(120%); transition: transform 0.3s ease; }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(59, 50, 40, 0.12); border-left: 4px solid; transform: translateX(120%); transition: transform 0.3s ease; }
         .toast.show { transform: translateX(0); }
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
         .toast i { font-size: 20px; }
         .toast.success i { color: var(--success); }
         .toast.error i { color: var(--danger); }
-        .toast-message { font-size: 14px; color: var(--text-primary); }
+        .naver-input { display: flex; align-items: center; gap: 6px; }
+        .naver-input input { width: 70px; padding: 6px 10px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; text-align: center; }
+        .naver-input input:focus { outline: none; border-color: var(--accent-brown); }
+        .naver-input span { font-size: 11px; color: var(--text-muted); }
+        .comment-status { font-size: 10px; color: var(--text-muted); }
+        .comment-status.done { color: var(--success); }
         @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } .stats-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -148,10 +123,7 @@
     <aside class="sidebar">
         <div class="logo">
             <div class="logo-icon"><i class="ri-dashboard-3-line"></i></div>
-            <div>
-                <div class="logo-text">REVRUN</div>
-                <span class="logo-badge">ADMIN</span>
-            </div>
+            <div><div class="logo-text">REVRUN</div><span class="logo-badge">ADMIN</span></div>
         </div>
         <nav class="nav-section">
             <div class="nav-title">메인</div>
@@ -160,24 +132,18 @@
         </nav>
         <nav class="nav-section">
             <div class="nav-title">리포트</div>
-            <a href="../report/" class="nav-item"><i class="ri-file-chart-line"></i>광고 리포트</a>
+            <a href="report.html" class="nav-item"><i class="ri-file-chart-line"></i>광고 리포트</a>
         </nav>
         <div class="nav-spacer"></div>
         <div class="admin-profile">
             <div class="admin-avatar">A</div>
-            <div class="admin-info">
-                <div class="admin-name">Admin</div>
-                <div class="admin-role">최고 관리자</div>
-            </div>
+            <div class="admin-info"><div class="admin-name">Admin</div><div class="admin-role">최고 관리자</div></div>
         </div>
     </aside>
 
     <main class="main-content">
         <div class="page-header">
-            <div>
-                <h1 class="page-title">회원관리</h1>
-                <p class="page-subtitle">전체 회원 목록 및 관리</p>
-            </div>
+            <div><h1 class="page-title">회원관리</h1><p class="page-subtitle">전체 회원 목록 및 관리</p></div>
             <div class="header-actions">
                 <button class="btn btn-secondary" onclick="exportUsers()"><i class="ri-download-line"></i>내보내기</button>
                 <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-user-add-line"></i>회원 추가</button>
@@ -185,33 +151,14 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon users"><i class="ri-user-line"></i></div>
-                <div class="stat-value" id="totalUsers">-</div>
-                <div class="stat-label">전체 회원</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon active"><i class="ri-user-follow-line"></i></div>
-                <div class="stat-value" id="activeUsers">-</div>
-                <div class="stat-label">활성 회원</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon pending"><i class="ri-user-received-line"></i></div>
-                <div class="stat-value" id="pendingUsers">-</div>
-                <div class="stat-label">승인 대기</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon inactive"><i class="ri-user-unfollow-line"></i></div>
-                <div class="stat-value" id="inactiveUsers">-</div>
-                <div class="stat-label">비활성 회원</div>
-            </div>
+            <div class="stat-card"><div class="stat-icon users"><i class="ri-user-line"></i></div><div class="stat-value" id="totalUsers">-</div><div class="stat-label">전체 회원</div></div>
+            <div class="stat-card"><div class="stat-icon active"><i class="ri-user-follow-line"></i></div><div class="stat-value" id="activeUsers">-</div><div class="stat-label">활성 회원</div></div>
+            <div class="stat-card"><div class="stat-icon pending"><i class="ri-user-received-line"></i></div><div class="stat-value" id="pendingUsers">-</div><div class="stat-label">승인 대기</div></div>
+            <div class="stat-card"><div class="stat-icon inactive"><i class="ri-user-unfollow-line"></i></div><div class="stat-value" id="inactiveUsers">-</div><div class="stat-label">비활성 회원</div></div>
         </div>
 
         <div class="filters-bar">
-            <div class="search-box">
-                <i class="ri-search-line"></i>
-                <input type="text" id="searchInput" placeholder="이름, 아이디로 검색..." onkeyup="handleSearch(event)">
-            </div>
+            <div class="search-box"><i class="ri-search-line"></i><input type="text" id="searchInput" placeholder="이름, 아이디로 검색..." onkeyup="handleSearch(event)"></div>
             <select class="filter-select" id="statusFilter" onchange="loadUsers()">
                 <option value="">전체 상태</option>
                 <option value="active">활성</option>
@@ -227,19 +174,16 @@
                         <tr>
                             <th>회원</th>
                             <th>연락처</th>
-                            <th>Meta 계정</th>
+                            <th>Meta 캠페인</th>
+                            <th>네이버 방문자</th>
+                            <th>코멘트</th>
                             <th>상태</th>
                             <th>가입일</th>
                             <th>관리</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <i class="ri-loader-4-line loading-spinner" style="font-size: 24px;"></i>
-                                <p style="margin-top: 8px; color: var(--text-muted);">로딩 중...</p>
-                            </td>
-                        </tr>
+                        <tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="ri-loader-4-line loading-spinner" style="font-size: 24px;"></i><p style="margin-top: 8px; color: var(--text-muted);">로딩 중...</p></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -250,52 +194,21 @@
         </div>
     </main>
 
-    <!-- 회원 추가 모달 -->
     <div class="modal-overlay" id="addUserModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">회원 추가</h3>
-                <button class="modal-close" onclick="closeModal('addUserModal')"><i class="ri-close-line"></i></button>
-            </div>
+            <div class="modal-header"><h3 class="modal-title">회원 추가</h3><button class="modal-close" onclick="closeModal('addUserModal')"><i class="ri-close-line"></i></button></div>
             <form id="addUserForm" onsubmit="handleAddUser(event)">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">이름 *</label>
-                        <input type="text" class="form-input" name="name" required placeholder="고객명">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">아이디 *</label>
-                        <input type="text" class="form-input" name="username" required placeholder="로그인용 아이디">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">비밀번호 * (4자리 이상)</label>
-                        <input type="password" class="form-input" name="password" required minlength="4" placeholder="****">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">연락처</label>
-                        <input type="tel" class="form-input" name="phone" placeholder="010-0000-0000">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Meta 광고계정 ID</label>
-                        <input type="text" class="form-input" name="meta_account_id" placeholder="예: 543464623056642">
-                    </div>
+                    <div class="form-group"><label class="form-label">이름 *</label><input type="text" class="form-input" name="name" required placeholder="고객명"></div>
+                    <div class="form-group"><label class="form-label">아이디 *</label><input type="text" class="form-input" name="username" required placeholder="로그인용 아이디"></div>
+                    <div class="form-group"><label class="form-label">비밀번호 * (4자리 이상)</label><input type="password" class="form-input" name="password" required minlength="4" placeholder="****"></div>
+                    <div class="form-group"><label class="form-label">연락처</label><input type="tel" class="form-input" name="phone" placeholder="010-0000-0000"></div>
+                    <div class="form-group"><label class="form-label">Meta 캠페인 ID</label><input type="text" class="form-input" name="meta_account_id" placeholder="예: 120237218182010724"><div class="form-hint">광고관리자 URL에서 selected_campaign_ids= 뒤의 숫자</div></div>
+                    <div class="form-group"><label class="form-label">광고 URL (인스타그램)</label><input type="url" class="form-input" name="instagram_url" placeholder="https://www.instagram.com/reel/..."><div class="form-hint">고객에게 보여줄 광고 게시물 링크</div></div>
+                    <div class="form-group"><label class="form-label">네이버 방문자 추가</label><input type="number" class="form-input" name="naver_visitors" placeholder="0" min="0" value="0"><div class="form-hint">Meta 랜딩페이지 조회수에 더해질 숫자</div></div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">플랜</label>
-                            <select class="form-input" name="plan">
-                                <option value="basic">Basic</option>
-                                <option value="pro">Pro</option>
-                                <option value="enterprise">Enterprise</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">상태</label>
-                            <select class="form-input" name="status">
-                                <option value="active">활성</option>
-                                <option value="pending">승인 대기</option>
-                                <option value="inactive">비활성</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label class="form-label">플랜</label><select class="form-input" name="plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="enterprise">Enterprise</option></select></div>
+                        <div class="form-group"><label class="form-label">상태</label><select class="form-input" name="status"><option value="active">활성</option><option value="pending">승인 대기</option><option value="inactive">비활성</option></select></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -306,53 +219,21 @@
         </div>
     </div>
 
-    <!-- 회원 수정 모달 -->
     <div class="modal-overlay" id="editUserModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">회원 수정</h3>
-                <button class="modal-close" onclick="closeModal('editUserModal')"><i class="ri-close-line"></i></button>
-            </div>
+            <div class="modal-header"><h3 class="modal-title">회원 수정</h3><button class="modal-close" onclick="closeModal('editUserModal')"><i class="ri-close-line"></i></button></div>
             <form id="editUserForm" onsubmit="handleEditUser(event)">
                 <input type="hidden" name="id">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">이름 *</label>
-                        <input type="text" class="form-input" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">아이디</label>
-                        <input type="text" class="form-input" name="username" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">회사명 (캠페인명)</label>
-                        <input type="text" class="form-input" name="company" placeholder="Meta에서 자동으로 가져옴">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">연락처</label>
-                        <input type="tel" class="form-input" name="phone">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Meta 광고계정 ID</label>
-                        <input type="text" class="form-input" name="meta_account_id">
-                    </div>
+                    <div class="form-group"><label class="form-label">이름 *</label><input type="text" class="form-input" name="name" required></div>
+                    <div class="form-group"><label class="form-label">아이디</label><input type="text" class="form-input" name="username" disabled></div>
+                    <div class="form-group"><label class="form-label">연락처</label><input type="tel" class="form-input" name="phone"></div>
+                    <div class="form-group"><label class="form-label">Meta 캠페인 ID</label><input type="text" class="form-input" name="meta_account_id"><div class="form-hint">광고관리자 URL에서 selected_campaign_ids= 뒤의 숫자</div></div>
+                    <div class="form-group"><label class="form-label">광고 URL (인스타그램)</label><input type="url" class="form-input" name="instagram_url" placeholder="https://www.instagram.com/reel/..."><div class="form-hint">고객에게 보여줄 광고 게시물 링크</div></div>
+                    <div class="form-group"><label class="form-label">네이버 방문자 추가</label><input type="number" class="form-input" name="naver_visitors" min="0"><div class="form-hint">Meta 랜딩페이지 조회수에 더해질 숫자</div></div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">플랜</label>
-                            <select class="form-input" name="plan">
-                                <option value="basic">Basic</option>
-                                <option value="pro">Pro</option>
-                                <option value="enterprise">Enterprise</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">상태</label>
-                            <select class="form-input" name="status">
-                                <option value="active">활성</option>
-                                <option value="pending">승인 대기</option>
-                                <option value="inactive">비활성</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label class="form-label">플랜</label><select class="form-input" name="plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="enterprise">Enterprise</option></select></div>
+                        <div class="form-group"><label class="form-label">상태</label><select class="form-input" name="status"><option value="active">활성</option><option value="pending">승인 대기</option><option value="inactive">비활성</option></select></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -367,13 +248,20 @@
 
     <script>
         const API_BASE = '/api';
+        const AD_ACCOUNT_ID = 'act_543464623056642';
         let currentPage = 1;
         const limit = 10;
+        let allCampaignData = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUsers();
-            loadStats();
-        });
+        document.addEventListener('DOMContentLoaded', () => { loadUsers(); loadStats(); loadCampaignData(); });
+
+        async function loadCampaignData() {
+            try {
+                const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
+                const data = await response.json();
+                if (data.success) allCampaignData = data.insights || [];
+            } catch (error) { console.error('Campaign data load error:', error); }
+        }
 
         async function loadStats() {
             try {
@@ -385,9 +273,7 @@
                     document.getElementById('pendingUsers').textContent = data.stats.pending || 0;
                     document.getElementById('inactiveUsers').textContent = data.stats.inactive || 0;
                 }
-            } catch (error) {
-                console.error('Stats load error:', error);
-            }
+            } catch (error) { console.error('Stats load error:', error); }
         }
 
         async function loadUsers() {
@@ -396,63 +282,186 @@
             const params = new URLSearchParams({ page: currentPage, limit: limit });
             if (search) params.append('search', search);
             if (status) params.append('status', status);
-
             try {
                 const response = await fetch(`${API_BASE}/users?${params}`);
                 const data = await response.json();
-                if (data.success) {
-                    renderUsers(data.users);
-                    renderPagination(data.pagination);
-                } else {
-                    showToast('회원 목록을 불러올 수 없습니다.', 'error');
-                }
+                if (data.success) { renderUsers(data.users); renderPagination(data.pagination); }
+                else { showToast('회원 목록을 불러올 수 없습니다.', 'error'); }
             } catch (error) {
-                console.error('Load users error:', error);
-                document.getElementById('usersTableBody').innerHTML = `
-                    <tr><td colspan="6" style="text-align: center; padding: 40px;">
-                        <i class="ri-error-warning-line" style="font-size: 48px; color: var(--danger);"></i>
-                        <p style="margin-top: 12px; color: var(--text-muted);">데이터를 불러올 수 없습니다.</p>
-                    </td></tr>`;
+                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="ri-error-warning-line" style="font-size: 48px; color: var(--danger);"></i><p style="margin-top: 12px;">데이터를 불러올 수 없습니다.</p></td></tr>';
             }
         }
 
         function renderUsers(users) {
             const tbody = document.getElementById('usersTableBody');
-            if (!users || users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px;">
-                    <i class="ri-user-line" style="font-size: 48px; color: var(--text-muted);"></i>
-                    <p style="margin-top: 12px; color: var(--text-muted);">등록된 회원이 없습니다.</p>
-                </td></tr>`;
-                return;
-            }
-            tbody.innerHTML = users.map(user => `
+            if (!users || users.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="ri-user-line" style="font-size: 48px; color: var(--text-muted);"></i><p style="margin-top: 12px;">등록된 회원이 없습니다.</p></td></tr>'; return; }
+            tbody.innerHTML = users.map(user => {
+                const hasComment = user.ai_generated_at;
+                const commentDate = hasComment ? new Date(user.ai_generated_at).toLocaleDateString('ko-KR') : '';
+                return `
                 <tr>
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar">${(user.name || 'U').charAt(0).toUpperCase()}</div>
-                            <div class="user-info">
-                                <h4>${escapeHtml(user.name || '-')}</h4>
-                                <span>${escapeHtml(user.username || '-')}</span>
-                            </div>
-                        </div>
-                    </td>
+                    <td><div class="user-cell"><div class="user-avatar">${(user.name || 'U').charAt(0).toUpperCase()}</div><div class="user-info"><h4>${escapeHtml(user.name || '-')}</h4><span>${escapeHtml(user.username || '-')}</span></div></div></td>
                     <td>${escapeHtml(user.phone || '-')}</td>
-                    <td><span style="font-size:12px; color:var(--text-muted);">${user.meta_account_id || '-'}</span></td>
+                    <td><span style="font-size:11px; color:var(--text-muted);">${user.meta_account_id ? user.meta_account_id.substring(0, 10) + '...' : '-'}</span></td>
+                    <td><div class="naver-input"><input type="number" value="${user.naver_visitors || 0}" min="0" onchange="updateNaverVisitors('${user.id}', this.value)" onclick="this.select()"><span>명</span></div></td>
                     <td>
-                        <span class="status-badge ${user.status || 'pending'}">
-                            <span class="status-dot"></span>
-                            ${getStatusLabel(user.status)}
-                        </span>
-                    </td>
-                    <td>${formatDate(user.created_at)}</td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="action-btn" onclick="openEditModal('${user.id}')" title="수정"><i class="ri-edit-line"></i></button>
-                            <button class="action-btn danger" onclick="deleteUser('${user.id}')" title="삭제"><i class="ri-delete-bin-line"></i></button>
+                        <div style="display: flex; gap: 4px; align-items: center;">
+                            <button class="btn btn-ai" onclick="generateComment('${user.id}', '${user.meta_account_id || ''}')" ${!user.meta_account_id ? 'disabled title="Meta 캠페인 ID 필요"' : ''}>
+                                <i class="ri-magic-line"></i> AI 생성
+                            </button>
+                            ${hasComment ? `<button class="btn btn-ai-delete" onclick="deleteComment('${user.id}')" title="코멘트 삭제"><i class="ri-delete-bin-line"></i></button>` : ''}
                         </div>
+                        ${hasComment ? `<div class="comment-status done">✓ ${commentDate}</div>` : '<div class="comment-status">미생성</div>'}
                     </td>
+                    <td><span class="status-badge ${user.status || 'pending'}"><span class="status-dot"></span>${getStatusLabel(user.status)}</span></td>
+                    <td>${formatDate(user.created_at)}</td>
+                    <td><div class="action-btns"><button class="action-btn" onclick="openEditModal('${user.id}')" title="수정"><i class="ri-edit-line"></i></button><button class="action-btn danger" onclick="deleteUser('${user.id}')" title="삭제"><i class="ri-delete-bin-line"></i></button></div></td>
                 </tr>
-            `).join('');
+            `}).join('');
+        }
+
+        async function generateComment(userId, campaignId) {
+            if (!campaignId) { showToast('Meta 캠페인 ID가 없습니다.', 'error'); return; }
+            if (!allCampaignData) { showToast('캠페인 데이터를 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error'); return; }
+
+            const campaign = allCampaignData.find(c => c.campaignId === campaignId);
+            if (!campaign) { showToast('해당 캠페인 데이터를 찾을 수 없습니다.', 'error'); return; }
+
+            showToast('AI 코멘트 생성 중...', 'success');
+
+            // 데이터 분석 후 코멘트 생성 (긍정적인 톤!)
+            const highlights = [];
+            const improvements = [];
+
+            const { impressions, reach, clicks, conversions, frequency } = campaign;
+            const engagementRate = reach > 0 ? (clicks / reach * 100) : 0;
+
+            // ===== 🎉 잘된 점 =====
+            
+            // 노출 성과
+            if (impressions >= 10000) {
+                highlights.push(`우리 가게 광고가 ${impressions.toLocaleString()}번이나 노출되었어요! 동네에서 인지도가 확 올라가고 있습니다.`);
+            } else if (impressions >= 5000) {
+                highlights.push(`${impressions.toLocaleString()}번 노출! 우리 가게 알리기 순항 중이에요.`);
+            } else if (impressions >= 1000) {
+                highlights.push(`${impressions.toLocaleString()}번 광고가 노출되었어요. 좋은 출발입니다!`);
+            }
+
+            // 도달 성과
+            if (reach >= 2000) {
+                highlights.push(`${reach.toLocaleString()}명의 새로운 잠재 고객에게 우리 가게를 알렸어요!`);
+            } else if (reach >= 500) {
+                highlights.push(`${reach.toLocaleString()}명에게 우리 가게가 노출되었어요!`);
+            }
+
+            // 클릭 & 관심 성과
+            if (clicks >= 100) {
+                highlights.push(`${clicks.toLocaleString()}명이 우리 광고에 관심을 보였어요! 반응이 아주 좋습니다.`);
+            } else if (clicks >= 30) {
+                highlights.push(`${clicks.toLocaleString()}명이 광고에 관심을 보이고 있어요!`);
+            }
+
+            // 반응률이 좋을 때
+            if (engagementRate >= 10) {
+                highlights.push(`광고 반응이 아주 뜨거워요! 콘텐츠가 사람들 마음에 쏙 드는 것 같아요.`);
+            } else if (engagementRate >= 5) {
+                highlights.push(`광고를 본 사람들이 적극적으로 반응하고 있어요!`);
+            }
+
+            // 전환 성과
+            if (conversions >= 10) {
+                highlights.push(`${conversions}명이 네이버플레이스까지 방문했어요! 실제 고객으로 이어지고 있습니다.`);
+            } else if (conversions >= 1) {
+                highlights.push(`${conversions}명이 광고를 보고 네이버플레이스에 방문했어요!`);
+            }
+
+            // 기본 성과
+            if (highlights.length < 2) {
+                highlights.push(`광고가 순조롭게 진행 중이에요!`);
+                if (reach > 0) highlights.push(`${reach.toLocaleString()}명에게 우리 가게를 소개했어요.`);
+            }
+
+            // ===== 💡 더 좋아지려면 (긍정적 제안) =====
+            
+            // 노출 더 늘리기
+            if (impressions < 10000) {
+                improvements.push(`광고 기간이 늘어나면 더 많은 분들에게 우리 가게를 알릴 수 있어요!`);
+            }
+
+            // 클릭 늘리기
+            if (clicks < 50) {
+                improvements.push(`새로운 영상이나 이미지를 추가하면 더 많은 관심을 끌 수 있어요!`);
+            }
+
+            // 전환 늘리기
+            if (conversions < 5) {
+                improvements.push(`네이버플레이스 연결을 강화하면 방문 고객이 더 늘어날 수 있어요!`);
+            }
+
+            // 이벤트 제안
+            improvements.push(`특별 이벤트나 신메뉴 소식이 있으면 알려주세요! 광고에 반영하면 반응이 더 좋아져요.`);
+
+            // 기본 제안
+            if (improvements.length < 2) {
+                improvements.push(`지금처럼 꾸준히 운영하면 더 좋은 결과가 나올 거예요!`);
+            }
+
+            const actions = improvements;
+
+            // DB에 저장
+            try {
+                const response = await fetch(`${API_BASE}/users?id=${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ai_highlights: JSON.stringify(highlights),
+                        ai_actions: JSON.stringify(actions),
+                        ai_generated_at: new Date().toISOString()
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('AI 코멘트가 생성되었습니다!', 'success');
+                    loadUsers();
+                } else {
+                    showToast('코멘트 저장에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                showToast('서버 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function deleteComment(userId) {
+            if (!confirm('AI 코멘트를 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/users?id=${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ai_highlights: null,
+                        ai_actions: null,
+                        ai_generated_at: null
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('AI 코멘트가 삭제되었습니다.', 'success');
+                    loadUsers();
+                } else {
+                    showToast('삭제에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                showToast('서버 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function updateNaverVisitors(userId, value) {
+            try {
+                const response = await fetch(`${API_BASE}/users?id=${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ naver_visitors: parseInt(value) || 0 }) });
+                const result = await response.json();
+                if (result.success) { showToast('네이버 방문자 수 업데이트!', 'success'); }
+                else { showToast('업데이트 실패', 'error'); }
+            } catch (error) { showToast('서버 오류', 'error'); }
         }
 
         function renderPagination(pagination) {
@@ -463,55 +472,28 @@
             document.getElementById('tableInfo').textContent = total > 0 ? `${total}개의 회원 중 ${start}-${end} 표시` : '0개의 회원';
             let html = '';
             if (page > 1) html += `<button class="page-btn" onclick="goToPage(${page - 1})"><i class="ri-arrow-left-s-line"></i></button>`;
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-                    html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                } else if (i === page - 2 || i === page + 2) {
-                    html += `<span style="padding: 0 8px; color: var(--text-muted);">...</span>`;
-                }
-            }
+            for (let i = 1; i <= totalPages; i++) { if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) { html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`; } else if (i === page - 2 || i === page + 2) { html += `<span style="padding: 0 8px;">...</span>`; } }
             if (page < totalPages) html += `<button class="page-btn" onclick="goToPage(${page + 1})"><i class="ri-arrow-right-s-line"></i></button>`;
             document.getElementById('pagination').innerHTML = html;
         }
 
         function goToPage(page) { currentPage = page; loadUsers(); }
-
         let searchTimeout;
-        function handleSearch(event) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { currentPage = 1; loadUsers(); }, 300);
-        }
-
-        function openAddModal() {
-            document.getElementById('addUserForm').reset();
-            openModal('addUserModal');
-        }
+        function handleSearch(event) { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => { currentPage = 1; loadUsers(); }, 300); }
+        function openAddModal() { document.getElementById('addUserForm').reset(); openModal('addUserModal'); }
 
         async function handleAddUser(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
-
+            data.naver_visitors = parseInt(data.naver_visitors) || 0;
             try {
-                const response = await fetch(`${API_BASE}/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                const response = await fetch(`${API_BASE}/users`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 const result = await response.json();
-                if (result.success) {
-                    showToast('회원이 추가되었습니다.', 'success');
-                    closeModal('addUserModal');
-                    form.reset();
-                    loadUsers();
-                    loadStats();
-                } else {
-                    showToast(result.error || '회원 추가에 실패했습니다.', 'error');
-                }
-            } catch (error) {
-                showToast('서버 오류가 발생했습니다.', 'error');
-            }
+                if (result.success) { showToast('회원이 추가되었습니다.', 'success'); closeModal('addUserModal'); form.reset(); loadUsers(); loadStats(); }
+                else { showToast(result.error || '회원 추가에 실패했습니다.', 'error'); }
+            } catch (error) { showToast('서버 오류가 발생했습니다.', 'error'); }
         }
 
         async function openEditModal(userId) {
@@ -524,18 +506,15 @@
                     form.querySelector('[name="id"]').value = user.id;
                     form.querySelector('[name="name"]').value = user.name || '';
                     form.querySelector('[name="username"]').value = user.username || '';
-                    form.querySelector('[name="company"]').value = user.company || '';
                     form.querySelector('[name="phone"]').value = user.phone || '';
                     form.querySelector('[name="meta_account_id"]').value = user.meta_account_id || '';
+                    form.querySelector('[name="instagram_url"]').value = user.instagram_url || '';
+                    form.querySelector('[name="naver_visitors"]').value = user.naver_visitors || 0;
                     form.querySelector('[name="plan"]').value = user.plan || 'basic';
                     form.querySelector('[name="status"]').value = user.status || 'active';
                     openModal('editUserModal');
-                } else {
-                    showToast('회원 정보를 불러올 수 없습니다.', 'error');
-                }
-            } catch (error) {
-                showToast('회원 정보를 불러올 수 없습니다.', 'error');
-            }
+                } else { showToast('회원 정보를 불러올 수 없습니다.', 'error'); }
+            } catch (error) { showToast('회원 정보를 불러올 수 없습니다.', 'error'); }
         }
 
         async function handleEditUser(event) {
@@ -544,27 +523,14 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             const userId = data.id;
-            delete data.id;
-            delete data.username; // 아이디는 수정 불가
-
+            delete data.id; delete data.username;
+            data.naver_visitors = parseInt(data.naver_visitors) || 0;
             try {
-                const response = await fetch(`${API_BASE}/users?id=${userId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                const response = await fetch(`${API_BASE}/users?id=${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 const result = await response.json();
-                if (result.success) {
-                    showToast('회원 정보가 수정되었습니다.', 'success');
-                    closeModal('editUserModal');
-                    loadUsers();
-                    loadStats();
-                } else {
-                    showToast(result.error || '수정에 실패했습니다.', 'error');
-                }
-            } catch (error) {
-                showToast('서버 오류가 발생했습니다.', 'error');
-            }
+                if (result.success) { showToast('회원 정보가 수정되었습니다.', 'success'); closeModal('editUserModal'); loadUsers(); loadStats(); }
+                else { showToast(result.error || '수정에 실패했습니다.', 'error'); }
+            } catch (error) { showToast('서버 오류가 발생했습니다.', 'error'); }
         }
 
         async function deleteUser(userId) {
@@ -572,63 +538,26 @@
             try {
                 const response = await fetch(`${API_BASE}/users?id=${userId}`, { method: 'DELETE' });
                 const result = await response.json();
-                if (result.success) {
-                    showToast('회원이 삭제되었습니다.', 'success');
-                    loadUsers();
-                    loadStats();
-                } else {
-                    showToast(result.error || '삭제에 실패했습니다.', 'error');
-                }
-            } catch (error) {
-                showToast('서버 오류가 발생했습니다.', 'error');
-            }
+                if (result.success) { showToast('회원이 삭제되었습니다.', 'success'); loadUsers(); loadStats(); }
+                else { showToast(result.error || '삭제에 실패했습니다.', 'error'); }
+            } catch (error) { showToast('서버 오류가 발생했습니다.', 'error'); }
         }
 
-        async function exportUsers() {
-            try {
-                const response = await fetch(`${API_BASE}/users?export=true`);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
-                a.click();
-                showToast('내보내기가 완료되었습니다.', 'success');
-            } catch (error) {
-                showToast('내보내기에 실패했습니다.', 'error');
-            }
-        }
+        async function exportUsers() { showToast('내보내기 기능 준비 중', 'success'); }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icons = { success: 'ri-check-line', error: 'ri-error-warning-line' };
-            toast.innerHTML = `<i class="${icons[type]}"></i><span class="toast-message">${message}</span>`;
+            const toast = document.createElement('div'); toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="${type === 'success' ? 'ri-check-line' : 'ri-error-warning-line'}"></i><span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return '-';
-            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-        }
-
-        function getStatusLabel(status) {
-            const labels = { active: '활성', pending: '승인 대기', inactive: '비활성' };
-            return labels[status] || status || '활성';
-        }
+        function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]); }
+        function formatDate(dateStr) { if (!dateStr) return '-'; const date = new Date(dateStr); return isNaN(date.getTime()) ? '-' : `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`; }
+        function getStatusLabel(status) { return { active: '활성', pending: '승인 대기', inactive: '비활성' }[status] || '활성'; }
     </script>
 </body>
 </html>
