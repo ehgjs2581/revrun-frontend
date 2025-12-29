@@ -55,6 +55,10 @@ export default async function handler(req, res) {
       return await getDemographics(req.query.campaign_id, accessToken, res);
     }
 
+    if (action === 'creative' && req.query.campaign_id) {
+      return await getAdCreative(req.query.campaign_id, accessToken, res);
+    }
+
     if (action === 'accounts') {
       return await getAdAccounts(accessToken, res);
     }
@@ -246,6 +250,54 @@ async function getDemographics(campaignId, accessToken, res) {
     }
 
     return res.status(200).json({ success: true, gender, age });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+}
+
+async function getAdCreative(campaignId, accessToken, res) {
+  try {
+    // 1. 캠페인에서 광고 ID들 가져오기
+    const adsUrl = `https://graph.facebook.com/v18.0/${campaignId}/ads?fields=id,name,status,creative{id,thumbnail_url,object_story_spec,effective_object_story_id}&access_token=${accessToken}`;
+    const adsResponse = await fetch(adsUrl);
+    const adsData = await adsResponse.json();
+
+    if (adsData.error) {
+      return res.status(400).json({ success: false, error: adsData.error.message });
+    }
+
+    const ads = (adsData.data || []).map(ad => {
+      let previewUrl = null;
+      let thumbnailUrl = ad.creative?.thumbnail_url || null;
+      let storyId = ad.creative?.effective_object_story_id || null;
+      
+      // effective_object_story_id가 있으면 인스타/페북 게시물 링크 생성
+      if (storyId) {
+        const parts = storyId.split('_');
+        if (parts.length === 2) {
+          previewUrl = `https://www.facebook.com/${parts[0]}/posts/${parts[1]}`;
+        }
+      }
+
+      return {
+        adId: ad.id,
+        adName: ad.name,
+        status: ad.status,
+        creativeId: ad.creative?.id || null,
+        thumbnailUrl,
+        previewUrl,
+        storyId
+      };
+    });
+
+    // 활성 광고 우선, 첫번째 광고 반환
+    const activeAd = ads.find(a => a.status === 'ACTIVE') || ads[0];
+
+    return res.status(200).json({ 
+      success: true, 
+      ads,
+      primaryAd: activeAd || null
+    });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }

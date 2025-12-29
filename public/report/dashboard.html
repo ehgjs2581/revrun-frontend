@@ -994,8 +994,36 @@
       setTimeout(() => updateDemographics(demo), 500);
 
       const instaLink = document.getElementById("instaLink");
-      if (userData.instagram_url) {
-        // 광고 ID면 Meta 라이브러리 링크로 변환
+      
+      // 광고 크리에이티브 자동 가져오기
+      if (campaignId) {
+        try {
+          const creativeRes = await fetch(`/api/meta/report?action=creative&campaign_id=${campaignId}`);
+          const creativeData = await creativeRes.json();
+          if (creativeData.success && creativeData.primaryAd?.previewUrl) {
+            instaLink.href = creativeData.primaryAd.previewUrl;
+          } else if (userData.instagram_url) {
+            // fallback: 수동 입력된 URL 사용
+            if (/^\d+$/.test(userData.instagram_url)) {
+              instaLink.href = `https://www.facebook.com/ads/library/?id=${userData.instagram_url}`;
+            } else {
+              instaLink.href = userData.instagram_url;
+            }
+          } else {
+            instaLink.style.display = "none";
+          }
+        } catch (e) {
+          if (userData.instagram_url) {
+            if (/^\d+$/.test(userData.instagram_url)) {
+              instaLink.href = `https://www.facebook.com/ads/library/?id=${userData.instagram_url}`;
+            } else {
+              instaLink.href = userData.instagram_url;
+            }
+          } else {
+            instaLink.style.display = "none";
+          }
+        }
+      } else if (userData.instagram_url) {
         if (/^\d+$/.test(userData.instagram_url)) {
           instaLink.href = `https://www.facebook.com/ads/library/?id=${userData.instagram_url}`;
         } else {
