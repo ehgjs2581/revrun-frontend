@@ -995,9 +995,14 @@
 
       const instaLink = document.getElementById("instaLink");
       if (userData.instagram_url) {
-        instaLink.href = userData.instagram_url;
+        // 광고 ID면 Meta 라이브러리 링크로 변환
+        if (/^\d+$/.test(userData.instagram_url)) {
+          instaLink.href = `https://www.facebook.com/ads/library/?id=${userData.instagram_url}`;
+        } else {
+          instaLink.href = userData.instagram_url;
+        }
       } else {
-        instaLink.href = "https://www.instagram.com";
+        instaLink.style.display = "none";
       }
 
       const dailyData = await loadDailyData(campaignId, 7);
