@@ -253,7 +253,43 @@
         const limit = 10;
         let allCampaignData = null;
 
-        document.addEventListener('DOMContentLoaded', () => { loadUsers(); loadStats(); loadCampaignData(); });
+        document.addEventListener('DOMContentLoaded', () => { 
+            checkSupabaseConnection();
+            loadUsers(); 
+            loadStats(); 
+            loadCampaignData(); 
+        });
+
+        async function checkSupabaseConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/users?stats=true`, { timeout: 5000 });
+                const data = await response.json();
+                if (!data.success && data.error) {
+                    if (data.error.includes('connect') || data.error.includes('timeout') || data.error.includes('ECONNREFUSED')) {
+                        showSupabaseAlert();
+                    }
+                }
+            } catch (error) {
+                showSupabaseAlert();
+            }
+        }
+
+        function showSupabaseAlert() {
+            const alertHtml = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 16px 24px; z-index: 9999; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="ri-error-warning-fill" style="font-size: 24px;"></i>
+                        <div>
+                            <strong style="font-size: 15px;">⚠️ Supabase 데이터베이스 연결 오류</strong>
+                            <p style="font-size: 13px; margin-top: 4px; opacity: 0.9;">무료플랜 일시정지 상태일 수 있습니다. Supabase 대시보드에서 Resume 버튼을 눌러주세요.</p>
+                        </div>
+                    </div>
+                    <a href="https://supabase.com/dashboard" target="_blank" style="background: white; color: #dc2626; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Supabase 대시보드 열기</a>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('afterbegin', alertHtml);
+            document.querySelector('.container').style.marginTop = '80px';
+        }
 
         async function loadCampaignData() {
             try {
