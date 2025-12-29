@@ -212,9 +212,10 @@
       height: 24px;
       background: var(--accent-green-light);
       border-radius: 50%;
+      animation: pulse 2s infinite;
     }
     
-    .stat-arrow lottie-player { width: 20px; height: 20px; }
+    .stat-arrow svg { width: 14px; height: 14px; color: var(--accent-green); }
     
     /* 큰 메트릭 박스 */
     .big-metric-box {
@@ -248,9 +249,10 @@
       height: 28px;
       background: var(--accent-green-light);
       border-radius: 50%;
+      animation: bounce 1s infinite;
     }
     
-    .big-arrow lottie-player { width: 24px; height: 24px; }
+    .big-arrow svg { width: 18px; height: 18px; color: var(--accent-green); }
     .big-sub { font-size: 11px; color: var(--medium-brown); }
     
     .progress-simple {
@@ -404,9 +406,10 @@
       background: white;
       border-radius: 50%;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      animation: bounce 1s infinite;
     }
     
-    .naver-arrow lottie-player { width: 22px; height: 22px; }
+    .naver-arrow svg { width: 16px; height: 16px; color: #16a34a; }
     
     /* ========================================
        기간 탭
@@ -499,6 +502,16 @@
     @keyframes countUp {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
     }
     
     .count-animate { animation: countUp 0.5s ease-out forwards; }
@@ -656,7 +669,7 @@
           <div class="stat-value-wrap">
             <span class="stat-value green" id="reach">0</span>
             <div class="stat-arrow">
-              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
           </div>
         </div>
@@ -664,7 +677,7 @@
           <div class="big-number-wrap">
             <span class="big-number" id="impressions">0</span>
             <div class="big-arrow">
-              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
           </div>
           <div class="big-sub">총 노출 횟수</div>
@@ -680,7 +693,7 @@
           <div class="stat-value-wrap">
             <span class="stat-value green" id="engagement">0</span>
             <div class="stat-arrow">
-              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             </div>
           </div>
         </div>
@@ -721,7 +734,7 @@
         <div class="naver-value-wrap">
           <span class="naver-value" id="naverVisit">0</span>
           <div class="naver-arrow">
-            <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
           </div>
         </div>
       </div>
