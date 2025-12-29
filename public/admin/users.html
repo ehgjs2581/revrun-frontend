@@ -335,73 +335,63 @@
             const { impressions, reach, clicks, conversions, frequency } = campaign;
             const engagementRate = reach > 0 ? (clicks / reach * 100) : 0;
 
-            // ===== 🎉 잘된 점 (짧은 문장) =====
+            // ===== 🎉 잘된 점 =====
             
             if (impressions >= 10000) {
-                highlights.push(`광고가 ${impressions.toLocaleString()}번 노출되었어요!`);
-                highlights.push(`동네 인지도가 확 올라가고 있습니다.`);
+                highlights.push(`우리 가게 광고가 ${impressions.toLocaleString()}번이나 노출되었어요! 동네에서 인지도가 확 올라가고 있습니다.`);
             } else if (impressions >= 5000) {
-                highlights.push(`${impressions.toLocaleString()}번 노출 달성!`);
-                highlights.push(`우리 가게 알리기 순항 중이에요.`);
+                highlights.push(`${impressions.toLocaleString()}번 노출! 우리 가게 알리기 순항 중이에요.`);
             } else if (impressions >= 1000) {
-                highlights.push(`${impressions.toLocaleString()}번 광고가 노출되었어요.`);
-                highlights.push(`좋은 출발입니다!`);
+                highlights.push(`${impressions.toLocaleString()}번 광고가 노출되었어요. 좋은 출발입니다!`);
             }
 
             if (reach >= 2000) {
-                highlights.push(`${reach.toLocaleString()}명의 새로운 잠재 고객에게 도달했어요!`);
+                highlights.push(`${reach.toLocaleString()}명의 새로운 잠재 고객에게 우리 가게를 알렸어요!`);
             } else if (reach >= 500) {
                 highlights.push(`${reach.toLocaleString()}명에게 우리 가게가 노출되었어요!`);
             }
 
             if (clicks >= 100) {
-                highlights.push(`${clicks.toLocaleString()}명이 광고에 관심을 보였어요!`);
-                highlights.push(`반응이 아주 좋습니다.`);
+                highlights.push(`${clicks.toLocaleString()}명이 우리 광고에 관심을 보였어요! 반응이 아주 좋습니다.`);
             } else if (clicks >= 30) {
-                highlights.push(`${clicks.toLocaleString()}명이 광고에 반응했어요!`);
+                highlights.push(`${clicks.toLocaleString()}명이 광고에 관심을 보이고 있어요!`);
             }
 
             if (engagementRate >= 10) {
-                highlights.push(`광고 반응이 아주 뜨거워요!`);
-                highlights.push(`콘텐츠가 사람들 마음에 쏙 드는 것 같아요.`);
+                highlights.push(`광고 반응이 아주 뜨거워요! 콘텐츠가 사람들 마음에 쏙 드는 것 같아요.`);
             } else if (engagementRate >= 5) {
-                highlights.push(`광고를 본 사람들이 적극 반응 중!`);
+                highlights.push(`광고를 본 사람들이 적극적으로 반응하고 있어요!`);
             }
 
             if (conversions >= 10) {
-                highlights.push(`${conversions}명이 네이버플레이스를 방문했어요!`);
-                highlights.push(`실제 고객으로 이어지고 있습니다.`);
+                highlights.push(`${conversions}명이 네이버플레이스까지 방문했어요! 실제 고객으로 이어지고 있습니다.`);
             } else if (conversions >= 1) {
-                highlights.push(`${conversions}명이 네이버플레이스에 방문했어요!`);
+                highlights.push(`${conversions}명이 광고를 보고 네이버플레이스에 방문했어요!`);
             }
 
             if (highlights.length < 2) {
                 highlights.push(`광고가 순조롭게 진행 중이에요!`);
-                if (reach > 0) highlights.push(`${reach.toLocaleString()}명에게 소개했어요.`);
+                if (reach > 0) highlights.push(`${reach.toLocaleString()}명에게 우리 가게를 소개했어요.`);
             }
 
-            // ===== 💡 더 좋아지려면 (짧은 문장) =====
+            // ===== 💡 더 좋아지려면 =====
             
             if (impressions < 10000) {
-                improvements.push(`광고 기간이 늘어나면 더 많이 알릴 수 있어요!`);
+                improvements.push(`광고 기간이 늘어나면 더 많은 분들에게 우리 가게를 알릴 수 있어요!`);
             }
 
             if (clicks < 50) {
-                improvements.push(`새로운 영상이나 이미지를 추가해보세요!`);
-                improvements.push(`더 많은 관심을 끌 수 있어요.`);
+                improvements.push(`새로운 영상이나 이미지를 추가하면 더 많은 관심을 끌 수 있어요!`);
             }
 
             if (conversions < 5) {
-                improvements.push(`네이버플레이스 연결을 강화해보세요!`);
-                improvements.push(`방문 고객이 더 늘어날 수 있어요.`);
+                improvements.push(`네이버플레이스 연결을 강화하면 방문 고객이 더 늘어날 수 있어요!`);
             }
 
-            improvements.push(`특별 이벤트나 신메뉴 소식이 있으면 알려주세요!`);
-            improvements.push(`광고에 반영하면 반응이 더 좋아져요.`);
+            improvements.push(`특별 이벤트나 신메뉴 소식이 있으면 알려주세요! 광고에 반영하면 반응이 더 좋아져요.`);
 
             if (improvements.length < 2) {
-                improvements.push(`지금처럼 꾸준히 운영해주세요!`);
-                improvements.push(`더 좋은 결과가 나올 거예요.`);
+                improvements.push(`지금처럼 꾸준히 운영하면 더 좋은 결과가 나올 거예요!`);
             }
 
             const actions = improvements;
