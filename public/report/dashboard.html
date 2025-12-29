@@ -4,460 +4,155 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN | 광고 성과 리포트</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --cream: #faf8f5;
-      --light-cream: #f5f3ef;
-      --warm-beige: #e8e3db;
-      --medium-brown: #8b7355;
-      --dark-brown: #5d4a3a;
-      --deep-brown: #3a2f23;
-      --accent-green: #5d8a66;
-      --accent-blue: #5a7a9a;
-      --accent-pink: #c4a4a4;
+    :root { --cream: #faf8f5; --light-cream: #f5f3ef; --warm-beige: #e8e3db; --medium-brown: #8b7355; --dark-brown: #5d4a3a; --deep-brown: #3a2f23; --accent-green: #22c55e; --accent-green-light: #dcfce7; --accent-pink: #c4a4a4; }
+    body { font-family: 'Manrope', -apple-system, sans-serif; background: var(--cream); color: var(--deep-brown); line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--warm-beige); }
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .logo { width: 48px; height: 48px; background: var(--deep-brown); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: var(--cream); }
+    .brand-info h1 { font-size: 22px; font-weight: 700; color: var(--deep-brown); margin-bottom: 2px; }
+    .brand-info span { font-size: 13px; color: var(--medium-brown); }
+    .user-area { display: flex; align-items: center; gap: 16px; }
+    .user-name { font-size: 14px; font-weight: 600; color: var(--dark-brown); }
+    .btn-logout { padding: 10px 24px; border: 1px solid var(--deep-brown); background: transparent; color: var(--deep-brown); font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; border-radius: 8px; }
+    .btn-logout:hover { background: var(--deep-brown); color: var(--cream); }
+    .page-header { margin-bottom: 40px; }
+    .page-title { font-size: 28px; font-weight: 800; color: var(--deep-brown); margin-bottom: 8px; }
+    .page-meta { font-size: 14px; color: var(--medium-brown); }
+    .card { background: white; border: 1px solid var(--warm-beige); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--warm-beige); }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--deep-brown); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--warm-beige); display: flex; align-items: center; gap: 8px; }
+    .card-title-inline { font-size: 16px; font-weight: 700; color: var(--deep-brown); margin: 0; display: flex; align-items: center; gap: 8px; }
+    .card-title lottie-player, .card-title-inline lottie-player { width: 28px; height: 28px; }
+    
+    /* 그리드 시스템 - 2칸 */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    
+    .stat-box { background: var(--light-cream); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .stat-label { font-size: 14px; color: var(--dark-brown); font-weight: 500; }
+    .stat-sub { font-size: 11px; color: var(--medium-brown); margin-top: 4px; }
+    .stat-value-wrap { display: flex; align-items: center; gap: 8px; }
+    .stat-value { font-size: 24px; font-weight: 800; color: var(--deep-brown); }
+    .stat-value.green { color: var(--accent-green); }
+    .stat-arrow { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent-green-light); border-radius: 50%; }
+    .stat-arrow lottie-player { width: 24px; height: 24px; }
+    
+    .big-metric-box { background: var(--light-cream); border-radius: 12px; padding: 24px; text-align: center; }
+    .big-number-wrap { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+    .big-number { font-size: 48px; font-weight: 800; color: var(--deep-brown); }
+    .big-arrow { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--accent-green-light); border-radius: 50%; }
+    .big-arrow lottie-player { width: 32px; height: 32px; }
+    .big-sub { font-size: 14px; color: var(--medium-brown); }
+    .progress-simple { height: 8px; background: var(--warm-beige); border-radius: 4px; margin-top: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), #4ade80); border-radius: 4px; transition: width 1.5s ease-out; }
+    
+    .gender-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin-top: 12px; }
+    .gender-male { background: var(--dark-brown); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; transition: width 1s ease-out; white-space: nowrap; min-width: 70px; }
+    .gender-female { background: var(--accent-pink); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; transition: width 1s ease-out; white-space: nowrap; min-width: 70px; }
+    .age-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .age-label { width: 60px; font-size: 13px; color: var(--dark-brown); font-weight: 500; }
+    .age-bar-bg { flex: 1; height: 24px; background: var(--warm-beige); border-radius: 6px; overflow: hidden; }
+    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 6px; transition: width 1s ease-out; }
+    .age-percent { width: 45px; text-align: right; font-size: 14px; font-weight: 700; color: var(--deep-brown); }
+    
+    .naver-box { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .naver-label { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; color: var(--dark-brown); }
+    .naver-icon { width: 32px; height: 32px; background: #03c75a; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px; }
+    .naver-icon-small { display: inline-flex; width: 24px; height: 24px; background: #03c75a; border-radius: 6px; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; margin-right: 8px; vertical-align: middle; }
+    .naver-value-wrap { display: flex; align-items: center; gap: 10px; }
+    .naver-value { font-size: 28px; font-weight: 800; color: #16a34a; }
+    .naver-arrow { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: white; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .naver-arrow lottie-player { width: 28px; height: 28px; }
+    
+    .period-tabs { display: flex; gap: 8px; }
+    .period-tab { padding: 8px 16px; border: 1px solid var(--warm-beige); background: white; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--medium-brown); cursor: pointer; transition: all 0.2s; }
+    .period-tab:hover { border-color: var(--dark-brown); color: var(--dark-brown); }
+    .period-tab.active { background: var(--deep-brown); color: white; border-color: var(--deep-brown); }
+    
+    .chart-box { background: var(--light-cream); border-radius: 12px; padding: 24px; height: 300px; }
+    .insight-list { list-style: none; }
+    .insight-item { padding: 16px 0 16px 20px; border-left: 2px solid var(--warm-beige); margin-bottom: 12px; font-size: 15px; color: var(--dark-brown); line-height: 1.6; transition: all 0.3s ease; opacity: 0; animation: fadeInLeft 0.5s forwards; }
+    .insight-item:nth-child(1) { animation-delay: 0.1s; }
+    .insight-item:nth-child(2) { animation-delay: 0.2s; }
+    .insight-item:nth-child(3) { animation-delay: 0.3s; }
+    .insight-item:nth-child(4) { animation-delay: 0.4s; }
+    .insight-item:hover { border-left-color: var(--deep-brown); padding-left: 24px; }
+    .insight-item.highlight { border-left-color: var(--accent-green); }
+    .insight-item.action { border-left-color: var(--accent-pink); }
+    .insta-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 12px; color: white; text-decoration: none; font-weight: 600; font-size: 14px; transition: transform 0.2s, box-shadow 0.2s; }
+    .insta-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(188, 24, 136, 0.3); }
+    
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .count-animate { animation: countUp 0.5s ease-out forwards; }
+    
+    /* 브레이크포인트: 태블릿 (1024px 이하) */
+    @media (max-width: 1024px) {
+      .container { padding: 40px 24px 60px; }
+      .grid-2 { gap: 20px; }
+      .big-number { font-size: 42px; }
     }
-
-    body {
-      font-family: 'Manrope', -apple-system, sans-serif;
-      background: var(--cream);
-      color: var(--deep-brown);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 48px 32px 80px;
-    }
-
-    /* Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 48px;
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .logo {
-      width: 48px;
-      height: 48px;
-      background: var(--deep-brown);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 16px;
-      color: var(--cream);
-    }
-
-    .brand-info h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      margin-bottom: 2px;
-    }
-
-    .brand-info span {
-      font-size: 13px;
-      color: var(--medium-brown);
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--dark-brown);
-    }
-
-    .btn-logout {
-      padding: 10px 24px;
-      border: 1px solid var(--deep-brown);
-      background: transparent;
-      color: var(--deep-brown);
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-logout:hover {
-      background: var(--deep-brown);
-      color: var(--cream);
-    }
-
-    /* Title */
-    .page-header {
-      margin-bottom: 40px;
-    }
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--deep-brown);
-      margin-bottom: 8px;
-    }
-
-    .page-meta {
-      font-size: 14px;
-      color: var(--medium-brown);
-    }
-
-    /* Card */
-    .card {
-      background: white;
-      border: 1px solid var(--warm-beige);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 24px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    /* 2 Column Grid */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-
-    /* Stat Box */
-    .stat-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: var(--dark-brown);
-      font-weight: 500;
-    }
-
-    .stat-sub {
-      font-size: 11px;
-      color: var(--medium-brown);
-      margin-top: 4px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--deep-brown);
-    }
-
-    .stat-value.green {
-      color: var(--accent-green);
-    }
-
-    /* Big Metric */
-    .big-metric-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .big-number {
-      font-size: 42px;
-      font-weight: 800;
-      color: var(--deep-brown);
-      margin-bottom: 8px;
-    }
-
-    .big-sub {
-      font-size: 14px;
-      color: var(--medium-brown);
-    }
-
-    .progress-simple {
-      height: 8px;
-      background: var(--warm-beige);
-      border-radius: 4px;
-      margin-top: 16px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent-green);
-      border-radius: 4px;
-    }
-
-    /* Gender Bar */
-    .gender-bar {
-      display: flex;
-      height: 40px;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    .gender-male {
-      background: var(--dark-brown);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .gender-female {
-      background: var(--accent-pink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    /* Age Bars */
-    .age-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .age-label {
-      width: 60px;
-      font-size: 13px;
-      color: var(--dark-brown);
-      font-weight: 500;
-    }
-
-    .age-bar-bg {
-      flex: 1;
-      height: 24px;
-      background: var(--warm-beige);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .age-bar-fill {
-      height: 100%;
-      background: var(--medium-brown);
-      border-radius: 6px;
-      transition: width 0.6s ease;
-    }
-
-    .age-percent {
-      width: 45px;
-      text-align: right;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-    }
-
-    /* Naver Section */
-    .naver-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .naver-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--dark-brown);
-    }
-
-    .naver-icon {
-      width: 24px;
-      height: 24px;
-      background: #03c75a;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-    }
-
-    .naver-value {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent-green);
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .tab {
-      padding: 8px 16px;
-      border: 1px solid var(--warm-beige);
-      background: transparent;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--medium-brown);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .tab.active {
-      background: var(--deep-brown);
-      color: white;
-      border-color: var(--deep-brown);
-    }
-
-    .tab:hover:not(.active) {
-      border-color: var(--dark-brown);
-      color: var(--dark-brown);
-    }
-
-    /* Time Section */
-    .time-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .time-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--warm-beige);
-    }
-
-    .time-label {
-      font-size: 14px;
-      color: var(--dark-brown);
-    }
-
-    .time-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-    }
-
-    .peak-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      background: var(--accent-green);
-      color: white;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    /* Instagram Link */
-    .insta-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px;
-      background: var(--deep-brown);
-      border-radius: 12px;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    .insta-link:hover {
-      background: var(--dark-brown);
-    }
-
-    /* Insights */
-    .insight-list {
-      list-style: none;
-    }
-
-    .insight-item {
-      padding: 16px 0 16px 20px;
-      border-left: 2px solid var(--warm-beige);
-      margin-bottom: 12px;
-      font-size: 15px;
-      color: var(--dark-brown);
-      line-height: 1.6;
-      transition: all 0.3s ease;
-    }
-
-    .insight-item:hover {
-      border-left-color: var(--deep-brown);
-      padding-left: 24px;
-    }
-
-    /* Chart */
-    .chart-box {
-      background: var(--light-cream);
-      border-radius: 12px;
-      padding: 24px;
-      height: 300px;
-    }
-
-    /* Responsive */
+    
+    /* 브레이크포인트: 태블릿 세로 (768px 이하) */
     @media (max-width: 768px) {
       .container { padding: 24px 16px 60px; }
       .header { flex-direction: column; gap: 20px; text-align: center; }
-      .page-title { font-size: 22px; }
+      .page-title { font-size: 24px; }
+      .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .big-number { font-size: 36px; }
+      .card { padding: 20px; }
+      .card-title { font-size: 15px; margin-bottom: 20px; padding-bottom: 12px; }
+      .card-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .stat-box { padding: 16px; }
+      .stat-value { font-size: 20px; }
+      .naver-value { font-size: 24px; }
+      .period-tabs { width: 100%; justify-content: center; }
+      .period-tab { padding: 8px 12px; font-size: 12px; }
+      .chart-box { height: 250px; padding: 16px; }
+      .insight-item { font-size: 14px; padding: 12px 0 12px 16px; }
+    }
+    
+    /* 브레이크포인트: 모바일 (480px 이하) */
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px 50px; }
+      .page-title { font-size: 20px; }
+      .grid-2 { grid-template-columns: 1fr; gap: 12px; }
+      .stat-box { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .stat-value-wrap { align-self: flex-end; }
+      .stat-label { font-size: 13px; }
+      .stat-value { font-size: 22px; }
       .big-number { font-size: 32px; }
-      .time-grid { grid-template-columns: 1fr; }
+      .big-metric-box { padding: 20px; }
+      .naver-box { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .naver-value-wrap { align-self: flex-end; }
+      .naver-label { font-size: 14px; }
+      .naver-label span:last-child { line-height: 1.4; }
+      .naver-value { font-size: 22px; }
+      .gender-bar { height: 36px; }
+      .gender-male, .gender-female { font-size: 11px; min-width: 60px; }
+      .age-label { width: 50px; font-size: 12px; }
+      .age-percent { font-size: 12px; }
+      .chart-box { height: 220px; padding: 12px; }
+      .insta-link { font-size: 13px; padding: 14px; }
+      .card { padding: 16px; margin-bottom: 16px; }
+      .btn-logout { padding: 8px 16px; font-size: 12px; }
+      .user-name { font-size: 13px; }
+      .logo { width: 40px; height: 40px; font-size: 14px; }
+      .brand-info h1 { font-size: 18px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    
-    <!-- Header -->
     <header class="header">
       <div class="brand">
         <div class="logo">RV</div>
-        <div class="brand-info">
-          <h1>REVRUN</h1>
-          <span>광고 성과 리포트</span>
-        </div>
+        <div class="brand-info"><h1>REVRUN</h1><span>광고 성과 리포트</span></div>
       </div>
       <div class="user-area">
         <span class="user-name" id="userName">-</span>
@@ -465,376 +160,369 @@
       </div>
     </header>
 
-    <!-- Page Title -->
     <div class="page-header">
       <h2 class="page-title" id="clientName">성과 리포트</h2>
       <p class="page-meta" id="period">최근 30일 기준</p>
     </div>
 
-    <!-- 광고 효과 -->
     <div class="card">
-      <h3 class="card-title">광고 효과</h3>
-      
+      <h3 class="card-title">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_kuknoxwl.json" background="transparent" speed="1" loop autoplay></lottie-player>
+        광고 효과
+      </h3>
       <div class="grid-2" style="margin-bottom: 20px;">
         <div class="stat-box">
-          <span class="stat-label">광고를 본 사람</span>
-          <span class="stat-value green" id="reach">-</span>
-        </div>
-        <div class="big-metric-box">
-          <div class="big-number" id="impressions">-</div>
-          <div class="big-sub">총 노출 / 목표 30,000회</div>
-          <div class="progress-simple">
-            <div class="progress-fill" id="impressionBar" style="width: 0%;"></div>
+          <div>
+            <span class="stat-label">광고를 본 사람</span>
+            <div class="stat-sub">우리 가게를 알게 된 분들</div>
+          </div>
+          <div class="stat-value-wrap">
+            <span class="stat-value green" id="reach">0</span>
+            <div class="stat-arrow">
+              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+            </div>
           </div>
         </div>
+        <div class="big-metric-box">
+          <div class="big-number-wrap">
+            <span class="big-number" id="impressions">0</span>
+            <div class="big-arrow">
+              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+            </div>
+          </div>
+          <div class="big-sub">총 노출 횟수</div>
+          <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
+        </div>
       </div>
-
       <div class="grid-2">
         <div class="stat-box">
           <div>
             <span class="stat-label">반응한 사람</span>
-            <div class="stat-sub">(좋아요, 댓글, 네이버플레이스 방문)</div>
+            <div class="stat-sub">좋아요, 댓글, 클릭</div>
           </div>
-          <span class="stat-value green" id="engagement">-</span>
+          <div class="stat-value-wrap">
+            <span class="stat-value green" id="engagement">0</span>
+            <div class="stat-arrow">
+              <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
+            </div>
+          </div>
         </div>
         <div>
           <div class="stat-label" style="margin-bottom: 8px;">성별 비율</div>
           <div class="gender-bar">
-            <div class="gender-male" id="maleBar" style="width: 76%;">남성 76%</div>
-            <div class="gender-female" id="femaleBar" style="width: 24%;">여성 24%</div>
+            <div class="gender-male" id="maleBar" style="width: 50%;">남성 50%</div>
+            <div class="gender-female" id="femaleBar" style="width: 50%;">여성 50%</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 연령대 -->
     <div class="card">
-      <h3 class="card-title">연령대별 반응</h3>
+      <h3 class="card-title">
+        <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_v1yudlrx.json" background="transparent" speed="1" loop autoplay></lottie-player>
+        연령대별 반응
+      </h3>
       <div id="ageChart">
-        <div class="age-row">
-          <span class="age-label">18-24세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 4%;"></div></div>
-          <span class="age-percent">4%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">25-34세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 55%;"></div></div>
-          <span class="age-percent">55%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">35-44세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 30%;"></div></div>
-          <span class="age-percent">30%</span>
-        </div>
-        <div class="age-row">
-          <span class="age-label">45-54세</span>
-          <div class="age-bar-bg"><div class="age-bar-fill" style="width: 11%;"></div></div>
-          <span class="age-percent">11%</span>
-        </div>
+        <div class="age-row"><span class="age-label">10대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age13" style="width: 0%;"></div></div><span class="age-percent" id="age13p">0%</span></div>
+        <div class="age-row"><span class="age-label">20대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
+        <div class="age-row"><span class="age-label">30대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
+        <div class="age-row"><span class="age-label">40대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
+        <div class="age-row"><span class="age-label">50대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
+        <div class="age-row"><span class="age-label">60대+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
       </div>
     </div>
 
-    <!-- 네이버 플레이스 -->
     <div class="card">
-      <h3 class="card-title">네이버 플레이스</h3>
+      <h3 class="card-title"><span class="naver-icon-small">N</span> 네이버플레이스 유입</h3>
       <div class="naver-box">
         <div class="naver-label">
           <span class="naver-icon">N</span>
-          <span>최근 방문자 수</span>
+          <span>네이버에 내 가게 검색한 사람</span>
         </div>
-        <span class="naver-value" id="naverVisit">▲ 267명</span>
-      </div>
-    </div>
-
-    <!-- 상권 분석 -->
-    <div class="card">
-      <h3 class="card-title">상권 분석</h3>
-      
-      <div class="tabs">
-        <button class="tab active">회식상권</button>
-        <button class="tab">MZ상권</button>
-        <button class="tab">신생상권</button>
-        <button class="tab">역주행상권</button>
-        <button class="tab">배달상권</button>
-      </div>
-
-      <div class="grid-2" style="margin-bottom: 24px;">
-        <div>
-          <div class="stat-label" style="margin-bottom: 8px;">유동인구 성별</div>
-          <div class="gender-bar">
-            <div class="gender-male" style="width: 57%;">남성 57%</div>
-            <div class="gender-female" style="width: 43%;">여성 43%</div>
-          </div>
-        </div>
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">유동인구 연령대</div>
-          <div class="age-row">
-            <span class="age-label">20대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 8%;"></div></div>
-            <span class="age-percent">8%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">30대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 13%;"></div></div>
-            <span class="age-percent">13%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">40대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 23%;"></div></div>
-            <span class="age-percent">23%</span>
-          </div>
-          <div class="age-row">
-            <span class="age-label">50대</span>
-            <div class="age-bar-bg"><div class="age-bar-fill" style="width: 25%;"></div></div>
-            <span class="age-percent">25%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="time-grid">
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">붐비는 요일</div>
-          <div class="time-item">
-            <span class="time-label">평일 (월~금)</span>
-            <span class="time-value">15%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">주말 (토~일)</span>
-            <span class="time-value">10%</span>
-          </div>
-        </div>
-        <div>
-          <div class="stat-label" style="margin-bottom: 12px;">붐비는 시간</div>
-          <div style="margin-bottom: 8px;">
-            <span class="peak-badge">피크타임</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">18:00 - 23:00</span>
-            <span class="time-value">28.8%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">14:00 - 18:00</span>
-            <span class="time-value">25.4%</span>
-          </div>
-          <div class="time-item">
-            <span class="time-label">09:00 - 12:00</span>
-            <span class="time-value">14.1%</span>
+        <div class="naver-value-wrap">
+          <span class="naver-value" id="naverVisit">0</span>
+          <div class="naver-arrow">
+            <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_yyjaansa.json" background="transparent" speed="1" loop autoplay></lottie-player>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 일별 추이 -->
     <div class="card">
-      <h3 class="card-title">일별 추이</h3>
-      <div class="chart-box">
-        <canvas id="trendChart"></canvas>
+      <div class="card-header">
+        <h3 class="card-title-inline">
+          <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_xxlxpaw5.json" background="transparent" speed="1" loop autoplay></lottie-player>
+          일별 추이
+        </h3>
+        <div class="period-tabs">
+          <button class="period-tab active" data-days="7">7일</button>
+          <button class="period-tab" data-days="30">30일</button>
+          <button class="period-tab" data-days="0">전체</button>
+        </div>
       </div>
+      <div class="chart-box"><canvas id="trendChart"></canvas></div>
     </div>
 
-    <!-- 잘된 점 -->
     <div class="card">
-      <h3 class="card-title">잘된 점</h3>
-      <ul class="insight-list" id="highlights">
-        <li class="insight-item">데이터를 불러오는 중...</li>
-      </ul>
+      <h3 class="card-title">
+        <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_touohxv0.json" background="transparent" speed="1" loop autoplay></lottie-player>
+        잘된 점
+      </h3>
+      <ul class="insight-list" id="highlights"><li class="insight-item highlight">데이터를 불러오는 중...</li></ul>
     </div>
 
-    <!-- 개선할 점 -->
     <div class="card">
-      <h3 class="card-title">개선할 점</h3>
-      <ul class="insight-list" id="actions">
-        <li class="insight-item">데이터를 불러오는 중...</li>
-      </ul>
+      <h3 class="card-title">
+        <lottie-player src="https://assets8.lottiefiles.com/packages/lf20_swnrn2oy.json" background="transparent" speed="1" loop autoplay></lottie-player>
+        더 좋아지려면
+      </h3>
+      <ul class="insight-list" id="actions"><li class="insight-item action">데이터를 불러오는 중...</li></ul>
     </div>
 
-    <!-- 광고 미리보기 -->
     <div class="card">
-      <h3 class="card-title">광고 미리보기</h3>
-      <a href="#" class="insta-link" id="instaLink">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
+      <h3 class="card-title">
+        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_kd5rzej5.json" background="transparent" speed="1" loop autoplay></lottie-player>
+        광고 미리보기
+      </h3>
+      <a href="#" class="insta-link" id="instaLink" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         인스타그램에서 광고 보기
       </a>
     </div>
-
   </div>
 
   <script>
+    const AD_ACCOUNT_ID = 'act_543464623056642';
+    let userData = null;
+    let campaignId = null;
+
     async function api(path, opts = {}) {
-      const res = await fetch(path, {
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        ...opts
-      });
+      const res = await fetch(path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
       return res.json();
     }
 
-    function formatNumber(num) {
-      if (!num && num !== 0) return '-';
-      return Number(num).toLocaleString('ko-KR');
+    function animateCount(element, target, suffix = '') {
+      if (!element || target === null || target === undefined) return;
+      const duration = 1500;
+      const startTime = performance.now();
+      const targetNum = parseInt(target) || 0;
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(targetNum * easeOut);
+        element.textContent = current.toLocaleString('ko-KR') + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+        else element.textContent = targetNum.toLocaleString('ko-KR') + suffix;
+      }
+      element.classList.add('count-animate');
+      requestAnimationFrame(update);
     }
 
-    function renderList(id, items) {
+    function renderList(id, items, className) {
       const el = document.getElementById(id);
-      if (!items || items.length === 0) {
-        el.innerHTML = '<li class="insight-item">데이터가 없습니다</li>';
-        return;
+      if (!items || items.length === 0) { 
+        el.innerHTML = `<li class="insight-item ${className}">아직 분석 데이터가 없습니다.</li>`; 
+        return; 
       }
-      el.innerHTML = items.map(item => `<li class="insight-item">${item}</li>`).join('');
+      el.innerHTML = items.map(item => `<li class="insight-item ${className}">${item}</li>`).join('');
     }
 
     let chart;
     function renderChart(dailyData) {
       const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
-
-      const labels = dailyData.length > 0 
-        ? dailyData.map(d => d.label)
-        : ['월', '화', '수', '목', '금', '토', '일'];
       
-      const data = dailyData.length > 0
-        ? dailyData.map(d => d.value)
-        : [2800, 3200, 2900, 3500, 4100, 3800, 3200];
-
+      let labels = [], data = [];
+      if (dailyData && dailyData.length > 0) {
+        labels = dailyData.map(d => {
+          const date = new Date(d.date);
+          return `${date.getMonth() + 1}/${date.getDate()}`;
+        });
+        data = dailyData.map(d => d.impressions);
+      } else {
+        labels = ['데이터 없음'];
+        data = [0];
+      }
+      
       chart = new Chart(ctx, {
         type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "노출",
-            data: data,
-            borderColor: "#5d4a3a",
-            backgroundColor: "rgba(93, 74, 58, 0.1)",
-            fill: true,
-            borderWidth: 2,
-            tension: 0.4,
-            pointRadius: 0,
-          }]
+        data: { 
+          labels, 
+          datasets: [{ 
+            label: "노출", 
+            data, 
+            borderColor: "#22c55e", 
+            backgroundColor: "rgba(34, 197, 94, 0.1)", 
+            fill: true, 
+            borderWidth: 3, 
+            tension: 0.4, 
+            pointRadius: 5,
+            pointBackgroundColor: "#22c55e",
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2
+          }] 
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: "#e8e3db" },
-              ticks: { color: "#8b7355", font: { size: 11 } }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: "#8b7355", font: { size: 11 } }
-            }
-          }
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } }, 
+          scales: { 
+            y: { beginAtZero: true, grid: { color: "#e8e3db" }, ticks: { color: "#8b7355", font: { size: 11 } } }, 
+            x: { grid: { display: false }, ticks: { color: "#8b7355", font: { size: 11 } } } 
+          } 
         }
       });
     }
 
-    async function loadMetaData(metaAccountId) {
-      if (!metaAccountId) {
-        console.log('Meta 계정 ID 없음');
-        return null;
-      }
-
+    async function loadMetaData(cid) {
+      if (!cid) return null;
       try {
-        const response = await fetch(`/api/meta/report?action=insights&account_id=act_${metaAccountId}`);
+        const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
         const data = await response.json();
-
-        if (!data.success) {
-          console.error('Meta API 오류:', data.error);
-          return null;
-        }
-
-        const insights = data.insights || [];
-        
-        // 전체 합계 계산
-        let totalImpressions = 0;
-        let totalClicks = 0;
-        let totalReach = 0;
-
-        insights.forEach(item => {
-          totalImpressions += item.impressions || 0;
-          totalClicks += item.clicks || 0;
-          totalReach += item.reach || 0;
-        });
-
-        return {
-          reach: totalReach,
-          impressions: totalImpressions,
-          clicks: totalClicks
-        };
-
-      } catch (error) {
-        console.error('Meta API 호출 실패:', error);
-        return null;
-      }
+        if (!data.success) return null;
+        const campaign = (data.insights || []).find(item => item.campaignId === cid);
+        return campaign || null;
+      } catch (error) { return null; }
     }
+
+    async function loadDailyData(cid, days = 7) {
+      if (!cid) return null;
+      try {
+        const response = await fetch(`/api/meta/report?action=daily&campaign_id=${cid}&days=${days}`);
+        const data = await response.json();
+        if (!data.success) return null;
+        return data.dailyData || [];
+      } catch (error) { return null; }
+    }
+
+    async function loadDemographics(cid) {
+      if (!cid) return null;
+      try {
+        const response = await fetch(`/api/meta/report?action=demographics&campaign_id=${cid}`);
+        const data = await response.json();
+        if (!data.success) return null;
+        return data;
+      } catch (error) { return null; }
+    }
+
+    function updateDemographics(demo) {
+      if (!demo) return;
+      
+      const maleP = demo.gender?.malePercent || 50;
+      const femaleP = demo.gender?.femalePercent || 50;
+      document.getElementById('maleBar').style.width = maleP + '%';
+      document.getElementById('maleBar').textContent = `남성 ${maleP}%`;
+      document.getElementById('femaleBar').style.width = femaleP + '%';
+      document.getElementById('femaleBar').textContent = `여성 ${femaleP}%`;
+      
+      const ageMap = {
+        '13-17': 'age13',
+        '18-24': 'age18', 
+        '25-34': 'age25', 
+        '35-44': 'age35',
+        '45-54': 'age45', 
+        '55-64': 'age55',
+        '65+': 'age55'
+      };
+      
+      let age55Total = 0;
+      
+      Object.keys(ageMap).forEach(key => {
+        const p = demo.age?.[key]?.percent || 0;
+        const targetId = ageMap[key];
+        
+        if (key === '55-64' || key === '65+') {
+          age55Total += p;
+        } else {
+          const bar = document.getElementById(targetId);
+          const pEl = document.getElementById(targetId + 'p');
+          if (bar) bar.style.width = p + '%';
+          if (pEl) pEl.textContent = p + '%';
+        }
+      });
+      
+      const bar55 = document.getElementById('age55');
+      const pEl55 = document.getElementById('age55p');
+      if (bar55) bar55.style.width = age55Total + '%';
+      if (pEl55) pEl55.textContent = age55Total + '%';
+    }
+
+    document.querySelectorAll('.period-tab').forEach(tab => {
+      tab.addEventListener('click', async function() {
+        document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const days = parseInt(this.dataset.days);
+        const dailyData = await loadDailyData(campaignId, days);
+        renderChart(dailyData);
+      });
+    });
 
     async function boot() {
-      // 사용자 정보 가져오기
       const me = await api("/api/me");
-      if (!me?.user) {
-        location.href = "/report/login.html";
-        return;
-      }
+      if (!me?.user) { location.href = "/report/login.html"; return; }
+      if (me.user.role === 'admin') { location.href = "/admin/dashboard.html"; return; }
 
-      // 관리자면 관리자 페이지로
-      if (me.user.role === 'admin') {
-        location.href = "/admin/dashboard.html";
-        return;
-      }
-
-      document.getElementById("userName").textContent = me.user.name || me.user.username;
-      document.getElementById("clientName").textContent = (me.user.name || me.user.username) + '님의 리포트';
+      userData = me.user;
+      campaignId = userData.meta_account_id;
+      
+      document.getElementById("userName").textContent = userData.name || userData.username;
+      document.getElementById("clientName").textContent = (userData.name || userData.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
 
-      // Meta API에서 데이터 가져오기
-      const metaData = await loadMetaData(me.user.meta_account_id);
+      const naverVisitorsExtra = userData.naver_visitors || 0;
+      
+      const metaData = await loadMetaData(campaignId);
+      console.log('Meta 데이터:', metaData);
       
       if (metaData) {
-        // 광고를 본 사람 (도달)
-        document.getElementById("reach").textContent = formatNumber(metaData.reach) + '명';
+        setTimeout(() => {
+          animateCount(document.getElementById("reach"), metaData.reach, '명');
+          animateCount(document.getElementById("impressions"), metaData.impressions, '');
+          animateCount(document.getElementById("engagement"), metaData.clicks, '명');
+        }, 300);
         
-        // 총 노출
-        document.getElementById("impressions").textContent = formatNumber(metaData.impressions);
+        setTimeout(() => {
+          const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
+          document.getElementById("impressionBar").style.width = progressPercent + '%';
+        }, 800);
         
-        // 노출 진행바 (목표 30,000 기준)
-        const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
-        document.getElementById("impressionBar").style.width = progressPercent + '%';
-        
-        // 반응한 사람 (클릭)
-        document.getElementById("engagement").textContent = formatNumber(metaData.clicks) + '명';
-      }
-
-      // 기존 리포트 데이터도 가져오기 (잘된 점, 개선할 점 등)
-      const data = await api("/api/report");
-      if (data.ok && data.report) {
-        const r = data.report;
-        renderList("highlights", r.highlights || []);
-        renderList("actions", r.actions || []);
+        const landingPageVisits = (metaData.conversions || 0) + naverVisitorsExtra;
+        setTimeout(() => animateCount(document.getElementById("naverVisit"), landingPageVisits, '명'), 500);
       } else {
-        renderList("highlights", []);
-        renderList("actions", []);
+        animateCount(document.getElementById("naverVisit"), naverVisitorsExtra, '명');
       }
 
-      renderChart([]);
+      const demo = await loadDemographics(campaignId);
+      console.log('인구통계 데이터:', demo);
+      setTimeout(() => updateDemographics(demo), 500);
+
+      const instaLink = document.getElementById("instaLink");
+      if (userData.instagram_url) {
+        instaLink.href = userData.instagram_url;
+      } else {
+        instaLink.href = "https://www.instagram.com";
+      }
+
+      const dailyData = await loadDailyData(campaignId, 7);
+      renderChart(dailyData);
+
+      let highlights = [], actions = [];
+      try {
+        if (userData.ai_highlights) highlights = JSON.parse(userData.ai_highlights);
+        if (userData.ai_actions) actions = JSON.parse(userData.ai_actions);
+      } catch (e) {}
+
+      renderList("highlights", highlights, "highlight");
+      renderList("actions", actions, "action");
     }
 
-    // Tab 클릭
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-      });
+    document.getElementById("logoutBtn").addEventListener("click", async () => { 
+      await api("/api/logout", { method: "POST" }); 
+      location.href = "/report/login.html"; 
     });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await api("/api/logout", { method: "POST" });
-      location.href = "/report/login.html";
-    });
-
+    
     boot();
   </script>
 </body>
