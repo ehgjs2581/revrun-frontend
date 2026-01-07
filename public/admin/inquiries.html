@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜딩페이지DB - REVRUN Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-primary: #FAF7F2; --bg-secondary: #F5F0E8; --bg-card: #FFFFFF; --text-primary: #3D3228; --text-secondary: #6B5D4D; --text-muted: #9C8B7A; --accent-brown: #8B7355; --accent-brown-dark: #6B5A45; --accent-cream: #E8DFD0; --border-light: #E8E0D5; --success: #5A8F5A; --warning: #C9A85C; --danger: #B85C5C; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border-light); padding: 24px 16px; display: flex; flex-direction: column; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 12px; padding: 0 12px 24px; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-brown), var(--accent-brown-dark)); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .logo-badge { font-size: 10px; background: var(--accent-cream); color: var(--accent-brown); padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s ease; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-cream); color: var(--accent-brown-dark); }
+        .nav-item i { font-size: 18px; }
+        .nav-spacer { flex: 1; }
+        .admin-profile { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-md); }
+        .admin-avatar { width: 40px; height: 40px; background: var(--accent-brown); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .admin-info { flex: 1; }
+        .admin-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .admin-role { font-size: 12px; color: var(--text-muted); }
+        .main-content { margin-left: 260px; padding: 32px; min-height: 100vh; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s ease; }
+        .btn-secondary { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-light); }
+        .btn-secondary:hover { background: var(--bg-secondary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border-light); }
+        .stat-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+        .stat-icon.total { background: #E8F4E8; color: var(--success); }
+        .stat-icon.new { background: #FFF8E8; color: var(--warning); }
+        .stat-icon.contacted { background: var(--accent-cream); color: var(--accent-brown); }
+        .stat-value { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .stat-label { font-size: 14px; color: var(--text-muted); }
+        .table-container { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-light); overflow: hidden; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        thead { background: var(--bg-secondary); }
+        th { padding: 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-light); }
+        td { padding: 16px; font-size: 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border-light); }
+        tbody tr:hover { background: var(--bg-primary); }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .status-badge.new { background: #FFF8E8; color: var(--warning); }
+        .status-badge.contacted { background: #E8F4E8; color: var(--success); }
+        .action-btns { display: flex; gap: 6px; }
+        .action-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-size: 14px; }
+        .action-btn:hover { background: var(--bg-secondary); color: var(--accent-brown); border-color: var(--accent-brown); }
+        .action-btn.danger:hover { background: #FFF0F0; color: var(--danger); border-color: var(--danger); }
+        .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-secondary); }
+        .table-info { font-size: 14px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; }
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 2000; }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-left: 4px solid; margin-bottom: 12px; }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="ri-dashboard-3-line"></i></div>
+            <div><div class="logo-text">REVRUN</div><span class="logo-badge">ADMIN</span></div>
+        </div>
+        <nav class="nav-section">
+            <div class="nav-title">관리</div>
+            <a href="users.html" class="nav-item"><i class="ri-user-line"></i>회원관리</a>
+            <a href="inquiries.html" class="nav-item active"><i class="ri-mail-line"></i>랜딩페이지DB</a>
+        </nav>
+        <nav class="nav-section">
+            <div class="nav-title">리포트</div>
+            <a href="report.html" class="nav-item"><i class="ri-file-chart-line"></i>광고 리포트</a>
+        </nav>
+        <div class="nav-spacer"></div>
+        <div class="admin-profile">
+            <div class="admin-avatar">A</div>
+            <div class="admin-info"><div class="admin-name">Admin</div><div class="admin-role">최고 관리자</div></div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">랜딩페이지DB</h1>
+                <p class="page-subtitle">랜딩페이지 문의 내역</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="logout()"><i class="ri-logout-box-line"></i>로그아웃</button>
+                <button class="btn btn-secondary" onclick="exportData()"><i class="ri-download-line"></i>내보내기</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total"><i class="ri-mail-line"></i></div>
+                <div class="stat-value" id="totalCount">-</div>
+                <div class="stat-label">전체 문의</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon new"><i class="ri-mail-unread-line"></i></div>
+                <div class="stat-value" id="newCount">-</div>
+                <div class="stat-label">신규 문의</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon contacted"><i class="ri-mail-check-line"></i></div>
+                <div class="stat-value" id="contactedCount">-</div>
+                <div class="stat-label">연락 완료</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>상호명</th>
+                            <th>연락처</th>
+                            <th>업종</th>
+                            <th>상태</th>
+                            <th>문의일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inquiriesTableBody">
+                        <tr><td colspan="6" class="empty-state"><i class="ri-loader-4-line loading-spinner"></i><p>로딩 중...</p></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <div class="table-info" id="tableInfo">0개의 문의</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_BASE = '/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInquiries();
+        });
+
+        async function loadInquiries() {
+            try {
+                const response = await fetch(`${API_BASE}/inquiries`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderInquiries(data.inquiries || []);
+                    updateStats(data.inquiries || []);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('inquiriesTableBody').innerHTML = 
+                '<tr><td colspan="6" class="empty-state"><i class="ri-error-warning-line" style="font-size:48px;color:var(--danger);"></i><p style="margin-top:12px;">데이터를 불러올 수 없습니다.</p></td></tr>';
+        }
+
+        function updateStats(inquiries) {
+            const total = inquiries.length;
+            const newCount = inquiries.filter(i => i.status === 'new' || !i.status).length;
+            const contacted = inquiries.filter(i => i.status === 'contacted').length;
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('newCount').textContent = newCount;
+            document.getElementById('contactedCount').textContent = contacted;
+            document.getElementById('tableInfo').textContent = `${total}개의 문의`;
+        }
+
+        function renderInquiries(inquiries) {
+            const tbody = document.getElementById('inquiriesTableBody');
+            
+            if (!inquiries || inquiries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="ri-mail-line" style="font-size:48px;"></i><p style="margin-top:12px;">문의 내역이 없습니다.</p></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = inquiries.map(item => {
+                const statusClass = item.status === 'contacted' ? 'contacted' : 'new';
+                const statusText = item.status === 'contacted' ? '연락완료' : '신규';
+                const date = new Date(item.created_at).toLocaleDateString('ko-KR');
+                
+                return `
+                <tr>
+                    <td><strong>${escapeHtml(item.business_name || '-')}</strong></td>
+                    <td>${escapeHtml(item.phone || '-')}</td>
+                    <td>${escapeHtml(item.business_type || '-')}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${date}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="toggleStatus('${item.id}', '${item.status}')" title="상태 변경">
+                                <i class="ri-checkbox-circle-line"></i>
+                            </button>
+                            <button class="action-btn danger" onclick="deleteInquiry('${item.id}')" title="삭제">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        async function toggleStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'contacted' ? 'new' : 'contacted';
+            try {
+                const response = await fetch(`${API_BASE}/inquiries?id=${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast('상태가 변경되었습니다.', 'success');
+                    loadInquiries();
+                } else {
+                    showToast('변경에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                showToast('서버 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function deleteInquiry(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/inquiries?id=${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast('삭제되었습니다.', 'success');
+                    loadInquiries();
+                } else {
+                    showToast('삭제에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                showToast('서버 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function exportData() {
+            window.location.href = `${API_BASE}/inquiries?export=csv`;
+        }
+
+        function logout() {
+            window.location.href = '/api/logout';
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="ri-${type === 'success' ? 'check' : 'error-warning'}-line"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+        }
+    </script>
+</body>
+</html>
