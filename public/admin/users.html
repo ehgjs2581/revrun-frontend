@@ -127,8 +127,8 @@
         </div>
         <nav class="nav-section">
             <div class="nav-title">메인</div>
-            <a href="dashboard.html" class="nav-item"><i class="ri-dashboard-line"></i>대시보드</a>
             <a href="users.html" class="nav-item active"><i class="ri-user-line"></i>회원관리</a>
+            <a href="inquiries.html" class="nav-item"><i class="ri-mail-line"></i>랜딩페이지DB</a>
         </nav>
         <nav class="nav-section">
             <div class="nav-title">리포트</div>
@@ -146,6 +146,7 @@
             <div><h1 class="page-title">회원관리</h1><p class="page-subtitle">전체 회원 목록 및 관리</p></div>
             <div class="header-actions">
                 <button class="btn btn-secondary" onclick="exportUsers()"><i class="ri-download-line"></i>내보내기</button>
+                <button class="btn btn-secondary" onclick="logout()"><i class="ri-logout-box-line"></i>로그아웃</button>
                 <button class="btn btn-primary" onclick="openAddModal()"><i class="ri-user-add-line"></i>회원 추가</button>
             </div>
         </div>
@@ -245,7 +246,7 @@
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-
+             function logout() { window.location.href = '/api/logout'; }
     <script>
         const API_BASE = '/api';
         const AD_ACCOUNT_ID = 'act_543464623056642';
