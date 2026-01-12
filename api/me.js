@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, username, name, role, meta_account_id, company, plan, status, naver_visitors, ai_highlights, ai_actions, ai_generated_at, instagram_url')
+      .select('id, username, name, role, meta_account_id, campaign_id, company, plan, status, naver_visitors, ai_highlights, ai_actions, ai_generated_at, instagram_url')
       .eq('id', sessionId)
       .single();
 
@@ -33,7 +33,8 @@ export default async function handler(req, res) {
         username: user.username,
         name: user.name,
         role: user.role,
-        meta_account_id: user.meta_account_id,
+        meta_account_id: user.meta_account_id || null,
+        campaign_id: user.campaign_id || null,
         company: user.company,
         plan: user.plan,
         status: user.status,
