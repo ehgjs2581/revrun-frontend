@@ -57,10 +57,10 @@ async function handleGet(req, res) {
 }
 
 async function handlePost(req, res) {
-    const { name, username, password, phone, plan, status, meta_account_id, campaign_id, naver_visitors } = req.body;
+    const { name, username, password, phone, plan, status, meta_account_id, campaign_id, instagram_url, naver_visitors } = req.body;
 
-    if (!name || !username || !password) return res.status(400).json({ success: false, error: '이름, 아이디, 비밀번호는 필수입니다.' });
-    if (password.length < 4) return res.status(400).json({ success: false, error: '비밀번호는 4자리 이상이어야 합니다.' });
+    if (!name || !username || !password) return res.status(400).json({ success: false, error: '이름, 아이디, 비밀번호는 필수입니다' });
+    if (password.length < 4) return res.status(400).json({ success: false, error: '비밀번호는 4자리 이상이어야 합니다' });
 
     const { data: existing } = await supabase.from('users').select('id').eq('username', username).single();
     if (existing) return res.status(400).json({ success: false, error: '이미 사용 중인 아이디입니다.' });
@@ -68,16 +68,17 @@ async function handlePost(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const { data, error } = await supabase.from('users').insert({
-        name, 
-        username, 
-        password: hashedPassword, 
-        phone: phone || null, 
-        plan: plan || 'basic', 
+        name,
+        username,
+        password: hashedPassword,
+        phone: phone || null,
+        plan: plan || 'basic',
         status: status || 'active',
-        role: 'client', 
-        meta_account_id: meta_account_id || null, 
+        role: 'client',
+        meta_account_id: meta_account_id || null,
         campaign_id: campaign_id || null,
-        naver_visitors: parseInt(naver_visitors) || 0, 
+        instagram_url: instagram_url || null,
+        naver_visitors: parseInt(naver_visitors) || 0,
         created_at: new Date().toISOString()
     }).select().single();
 
@@ -90,7 +91,7 @@ async function handlePut(req, res) {
     const { id } = req.query;
     if (!id) return res.status(400).json({ success: false, error: 'User ID required' });
 
-    const { name, phone, plan, status, meta_account_id, campaign_id, naver_visitors, ai_highlights, ai_actions, ai_generated_at } = req.body;
+    const { name, phone, plan, status, meta_account_id, campaign_id, instagram_url, naver_visitors, ai_highlights, ai_actions, ai_generated_at } = req.body;
     const updateData = { updated_at: new Date().toISOString() };
 
     if (name) updateData.name = name;
@@ -99,9 +100,10 @@ async function handlePut(req, res) {
     if (status) updateData.status = status;
     if (meta_account_id !== undefined) updateData.meta_account_id = meta_account_id || null;
     if (campaign_id !== undefined) updateData.campaign_id = campaign_id || null;
+    if (instagram_url !== undefined) updateData.instagram_url = instagram_url || null;
     if (naver_visitors !== undefined) updateData.naver_visitors = parseInt(naver_visitors) || 0;
-    
-    // AI 코멘트 필드
+
+    // AI 콘텐츠 필드
     if (ai_highlights !== undefined) updateData.ai_highlights = ai_highlights;
     if (ai_actions !== undefined) updateData.ai_actions = ai_actions;
     if (ai_generated_at !== undefined) updateData.ai_generated_at = ai_generated_at;
