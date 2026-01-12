@@ -897,7 +897,7 @@
     async function loadDemographics(cid) {
       if (!cid) return null;
       try {
-        const response = await fetch(`/api/meta/report?action=demographics&campaign_id=${cid}`);
+        const response = await fetch(`/api/report?action=insights&account_id=${userData.meta_account_id}`);
         const data = await response.json();
         if (!data.success) return null;
         return data;
