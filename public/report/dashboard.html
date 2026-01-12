@@ -873,10 +873,10 @@
       });
     }
 
-    async function loadMetaData(cid) {
-      if (!cid) return null;
-      try {
-        const response = await fetch(`/api/report?action=insights&account_id=${userData.meta_account_id}`);
+    async function loadMetaData(cid, accountId) {
+  if (!cid || !accountId) return null;
+  try {
+    const response = await fetch(`/api/report?action=insights&account_id=${accountId}`);
         const data = await response.json();
         if (!data.success) return null;
         const campaign = (data.insights || []).find(item => item.campaignId === cid);
@@ -970,7 +970,7 @@
 
       const naverVisitorsExtra = userData.naver_visitors || 0;
       
-      const metaData = await loadMetaData(campaignId);
+      const metaData = await loadMetaData(campaignId, userData.meta_account_id);
       
       if (metaData) {
         setTimeout(() => {
