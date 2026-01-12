@@ -8,11 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
-    /* ========================================
-       모바일 퍼스트 기본 스타일
-    ======================================== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     :root {
       --cream: #faf8f5;
       --light-cream: #f5f3ef;
@@ -24,615 +20,230 @@
       --accent-green-light: #dcfce7;
       --accent-pink: #c4a4a4;
     }
-    
     body {
       font-family: 'Manrope', -apple-system, sans-serif;
       background: var(--cream);
       color: var(--deep-brown);
       line-height: 1.6;
     }
-    
-    /* 컨테이너 - 모바일 기본 */
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    
-    /* ========================================
-       헤더 - 모바일: 세로 중앙, PC: 가로 양끝
-    ======================================== */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 16px; }
     .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--warm-beige);
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 16px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--warm-beige);
     }
-    
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
+    .brand { display: flex; align-items: center; gap: 12px; }
     .logo {
-      width: 40px;
-      height: 40px;
-      background: var(--deep-brown);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 14px;
-      color: var(--cream);
+      width: 40px; height: 40px; background: var(--deep-brown); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: var(--cream);
     }
-    
     .brand-info h1 { font-size: 18px; font-weight: 700; color: var(--deep-brown); }
     .brand-info span { font-size: 12px; color: var(--medium-brown); }
-    
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
+    .user-area { display: flex; align-items: center; gap: 12px; }
     .user-name { font-size: 13px; font-weight: 600; color: var(--dark-brown); }
-    
     .btn-logout {
-      padding: 8px 16px;
-      border: 1px solid var(--deep-brown);
-      background: transparent;
-      color: var(--deep-brown);
-      font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.3s ease;
+      padding: 8px 16px; border: 1px solid var(--deep-brown); background: transparent;
+      color: var(--deep-brown); font-weight: 600; font-size: 12px; cursor: pointer;
+      border-radius: 6px; transition: all 0.3s ease;
     }
-    
     .btn-logout:hover { background: var(--deep-brown); color: var(--cream); }
-    
-    /* ========================================
-       페이지 헤더 - 중앙 정렬 (타이틀만)
-    ======================================== */
-    .page-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    
+    .page-header { text-align: center; margin-bottom: 24px; }
     .page-title { font-size: 22px; font-weight: 800; color: var(--deep-brown); margin-bottom: 4px; }
     .page-meta { font-size: 13px; color: var(--medium-brown); }
-    
-    /* ========================================
-       카드 - 좌측 정렬 기본
-    ======================================== */
     .card {
-      background: white;
-      border: 1px solid var(--warm-beige);
-      border-radius: 12px;
-      padding: 16px 18px;
-      margin-bottom: 16px;
+      background: white; border: 1px solid var(--warm-beige);
+      border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
     }
-    
     .card-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--warm-beige);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-align: left;
+      font-size: 14px; font-weight: 700; color: var(--deep-brown);
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--warm-beige);
+      display: flex; align-items: center; gap: 8px; text-align: left;
     }
-    
     .card-title lottie-player { width: 24px; height: 24px; }
-    
     .card-header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--warm-beige);
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--warm-beige);
     }
-    
     .card-title-inline {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--deep-brown);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
+      font-size: 14px; font-weight: 700; color: var(--deep-brown);
+      display: flex; align-items: center; gap: 8px; margin: 0;
     }
-    
     .card-title-inline lottie-player { width: 24px; height: 24px; }
-    
-    /* ========================================
-       2열 그리드 - 모바일에서도 2열 유지 (KPI/비교 데이터)
-    ======================================== */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    
-    /* 1열 스택 - 설명형 텍스트/리스트/이미지만 */
-    .stack-1 {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    /* ========================================
-       통계 박스 - 모바일 최적화
-    ======================================== */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .stat-box {
-      background: var(--light-cream);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0; /* 오버플로우 방지 */
+      background: var(--light-cream); border-radius: 10px; padding: 14px;
+      display: flex; flex-direction: column; gap: 8px; min-width: 0;
     }
-    
     .stat-label { font-size: 12px; color: var(--dark-brown); font-weight: 500; text-align: left; }
     .stat-sub { font-size: 10px; color: var(--medium-brown); margin-top: 2px; }
-    
-    .stat-value-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 6px;
-      flex-wrap: wrap; /* 숫자 길면 줄바꿈 */
-    }
-    
-    .stat-value { 
-      font-size: 18px; 
-      font-weight: 800; 
-      color: var(--deep-brown); 
-      word-break: break-word; /* 긴 숫자 처리 */
-    }
+    .stat-value-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
+    .stat-value { font-size: 18px; font-weight: 800; color: var(--deep-brown); word-break: break-word; }
     .stat-value.green { color: var(--accent-green); }
-    
     .stat-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      background: var(--accent-green-light);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; background: var(--accent-green-light);
+      border-radius: 50%; animation: pulse 2s infinite;
     }
-    
     .stat-arrow svg { width: 14px; height: 14px; color: var(--accent-green); }
-    
-    /* 큰 메트릭 박스 */
-    .big-metric-box {
-      background: var(--light-cream);
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-    }
-    
-    .big-number-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    
-    .big-number { 
-      font-size: 24px; 
-      font-weight: 800; 
-      color: var(--deep-brown); 
-      word-break: break-word;
-      min-width: 0;
-    }
-    
+    .big-metric-box { background: var(--light-cream); border-radius: 10px; padding: 16px; text-align: center; }
+    .big-number-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+    .big-number { font-size: 24px; font-weight: 800; color: var(--deep-brown); word-break: break-word; min-width: 0; }
     .big-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: var(--accent-green-light);
-      border-radius: 50%;
-      animation: bounce 1s infinite;
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--accent-green-light);
+      border-radius: 50%; animation: bounce 1s infinite;
     }
-    
     .big-arrow svg { width: 18px; height: 18px; color: var(--accent-green); }
     .big-sub { font-size: 11px; color: var(--medium-brown); }
-    
-    .progress-simple {
-      height: 6px;
-      background: var(--warm-beige);
-      border-radius: 3px;
-      margin-top: 12px;
-      overflow: hidden;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-green), #4ade80);
-      border-radius: 3px;
-      transition: width 1.5s ease-out;
-    }
-    
-    /* ========================================
-       성별 비율 - 2열 유지, 글씨 안 잘림
-    ======================================== */
-    .gender-box {
-      background: var(--light-cream);
-      border-radius: 10px;
-      padding: 14px;
-    }
-    
+    .progress-simple { height: 6px; background: var(--warm-beige); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), #4ade80); border-radius: 3px; transition: width 1.5s ease-out; }
+    .gender-box { background: var(--light-cream); border-radius: 10px; padding: 14px; }
     .gender-label { font-size: 12px; color: var(--dark-brown); font-weight: 500; margin-bottom: 8px; text-align: left; }
-    
-    .gender-bar {
-      display: flex;
-      height: 32px;
-      border-radius: 6px;
-      overflow: visible;
-    }
-    
+    .gender-bar { display: flex; height: 32px; border-radius: 6px; overflow: visible; }
     .gender-male, .gender-female {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      min-width: 55px;
-      transition: width 1s ease-out;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 11px; font-weight: 600; white-space: nowrap;
+      min-width: 55px; transition: width 1s ease-out;
     }
-    
     .gender-male { background: var(--dark-brown); border-radius: 6px 0 0 6px; }
     .gender-female { background: var(--accent-pink); border-radius: 0 6px 6px 0; }
-    
-    /* ========================================
-       연령대 - 좌측 정렬
-    ======================================== */
-    .age-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    
+    .age-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
     .age-label { width: 45px; font-size: 11px; color: var(--dark-brown); font-weight: 500; text-align: left; }
-    
-    .age-bar-bg {
-      flex: 1;
-      height: 20px;
-      background: var(--warm-beige);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    
-    .age-bar-fill {
-      height: 100%;
-      background: var(--medium-brown);
-      border-radius: 4px;
-      transition: width 1s ease-out;
-    }
-    
+    .age-bar-bg { flex: 1; height: 20px; background: var(--warm-beige); border-radius: 4px; overflow: hidden; }
+    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 4px; transition: width 1s ease-out; }
     .age-percent { width: 35px; text-align: right; font-size: 12px; font-weight: 700; color: var(--deep-brown); }
-    
-    /* ========================================
-       네이버 박스 - 2열 구조
-    ======================================== */
     .naver-box {
       background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-      border-radius: 10px;
-      padding: 16px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 12px;
+      border-radius: 10px; padding: 16px; display: grid;
+      grid-template-columns: 1fr auto; align-items: center; gap: 12px;
     }
-    
-    .naver-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--dark-brown);
-      text-align: left;
-    }
-    
+    .naver-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--dark-brown); text-align: left; }
     .naver-icon {
-      width: 28px;
-      height: 28px;
-      background: #03c75a;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-      flex-shrink: 0;
+      width: 28px; height: 28px; background: #03c75a; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 14px; flex-shrink: 0;
     }
-    
     .naver-icon-small {
-      display: inline-flex;
-      width: 20px;
-      height: 20px;
-      background: #03c75a;
-      border-radius: 4px;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 10px;
-      margin-right: 6px;
-      vertical-align: middle;
+      display: inline-flex; width: 20px; height: 20px; background: #03c75a; border-radius: 4px;
+      align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 10px;
+      margin-right: 6px; vertical-align: middle;
     }
-    
-    .naver-value-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .naver-value { 
-      font-size: 20px; 
-      font-weight: 800; 
-      color: #16a34a; 
-      word-break: break-word;
-    }
-    
+    .naver-value-wrap { display: flex; align-items: center; gap: 8px; }
+    .naver-value { font-size: 20px; font-weight: 800; color: #16a34a; word-break: break-word; }
     .naver-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 26px;
-      height: 26px;
-      background: white;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      animation: bounce 1s infinite;
+      display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; background: white; border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); animation: bounce 1s infinite;
     }
-    
     .naver-arrow svg { width: 16px; height: 16px; color: #16a34a; }
-    
-    /* ========================================
-       기간 탭
-    ======================================== */
-    .period-tabs {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-start;
-    }
-    
+    .period-tabs { display: flex; gap: 6px; justify-content: flex-start; }
     .period-tab {
-      padding: 6px 12px;
-      border: 1px solid var(--warm-beige);
-      background: white;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--medium-brown);
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 6px 12px; border: 1px solid var(--warm-beige); background: white;
+      border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--medium-brown);
+      cursor: pointer; transition: all 0.2s;
     }
-    
     .period-tab:hover { border-color: var(--dark-brown); color: var(--dark-brown); }
     .period-tab.active { background: var(--deep-brown); color: white; border-color: var(--deep-brown); }
-    
-    /* ========================================
-       차트
-    ======================================== */
-    .chart-box {
-      background: var(--light-cream);
-      border-radius: 10px;
-      padding: 12px;
-      height: 200px;
-    }
-    
-    /* ========================================
-       인사이트 리스트 - 1열 스택 허용
-    ======================================== */
+    .chart-box { background: var(--light-cream); border-radius: 10px; padding: 12px; height: 200px; }
     .insight-list { list-style: none; }
-    
     .insight-item {
-      padding: 12px 0 12px 14px;
-      border-left: 2px solid var(--warm-beige);
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: var(--dark-brown);
-      line-height: 1.8;
-      text-align: left;
-      word-break: keep-all;
-      overflow-wrap: break-word;
-      white-space: normal;
-      opacity: 0;
-      animation: fadeInLeft 0.5s forwards;
+      padding: 12px 0 12px 14px; border-left: 2px solid var(--warm-beige);
+      margin-bottom: 8px; font-size: 13px; color: var(--dark-brown);
+      line-height: 1.8; text-align: left; word-break: keep-all;
+      overflow-wrap: break-word; white-space: normal;
+      opacity: 0; animation: fadeInLeft 0.5s forwards;
     }
-    
     .insight-item:nth-child(1) { animation-delay: 0.1s; }
     .insight-item:nth-child(2) { animation-delay: 0.2s; }
     .insight-item:nth-child(3) { animation-delay: 0.3s; }
-    
     .insight-item.highlight { border-left-color: var(--accent-green); }
     .insight-item.action { border-left-color: var(--accent-pink); }
-    
-    /* ========================================
-       인스타 링크
-    ======================================== */
     .insta-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      border-radius: 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 13px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      border-radius: 10px; color: white; text-decoration: none;
+      font-weight: 600; font-size: 13px; transition: transform 0.2s, box-shadow 0.2s;
     }
-    
     .insta-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(188, 24, 136, 0.3); }
-    
-    /* ========================================
-       애니메이션
-    ======================================== */
-    @keyframes fadeInLeft {
-      from { opacity: 0; transform: translateX(-15px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-    
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes countUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
     .count-animate { animation: countUp 0.5s ease-out forwards; }
-    
-    /* ========================================
-       태블릿 (768px 이상) - 정보 밀도 증가
-    ======================================== */
     @media (min-width: 768px) {
       .container { padding: 24px; }
-      
-      .header {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
-      }
-      
+      .header { flex-direction: row; justify-content: space-between; text-align: left; }
       .logo { width: 44px; height: 44px; font-size: 15px; }
       .brand-info h1 { font-size: 20px; }
       .brand-info span { font-size: 13px; }
       .user-name { font-size: 14px; }
       .btn-logout { padding: 10px 20px; font-size: 13px; }
-      
       .page-title { font-size: 26px; }
       .page-meta { font-size: 14px; }
-      
       .card { padding: 20px; margin-bottom: 20px; border-radius: 14px; }
       .card-title { font-size: 15px; margin-bottom: 20px; }
       .card-title lottie-player { width: 26px; height: 26px; }
-      
       .card-header { flex-direction: row; justify-content: space-between; align-items: center; }
-      
       .grid-2 { gap: 16px; }
-      
       .stat-box { padding: 18px; flex-direction: row; justify-content: space-between; align-items: center; }
       .stat-label { font-size: 13px; }
       .stat-value { font-size: 20px; }
-      
       .big-metric-box { padding: 20px; }
       .big-number { font-size: 36px; }
       .big-arrow { width: 32px; height: 32px; }
       .big-sub { font-size: 13px; }
-      
       .gender-bar { height: 36px; }
       .gender-male, .gender-female { font-size: 12px; min-width: 65px; }
-      
       .age-label { width: 50px; font-size: 12px; }
       .age-bar-bg { height: 22px; }
       .age-percent { font-size: 13px; }
-      
       .naver-box { padding: 20px; }
       .naver-label { font-size: 14px; }
       .naver-icon { width: 32px; height: 32px; font-size: 16px; }
       .naver-value { font-size: 26px; }
-      
       .period-tab { padding: 8px 14px; font-size: 13px; }
-      
       .chart-box { height: 260px; padding: 16px; }
-      
       .insight-item { font-size: 14px; padding: 14px 0 14px 18px; }
-      
       .insta-link { padding: 16px; font-size: 14px; }
     }
-    
-    /* ========================================
-       PC (1024px 이상) - 최대 정보 밀도
-    ======================================== */
     @media (min-width: 1024px) {
       .container { padding: 48px 32px 80px; }
-      
       .header { margin-bottom: 48px; padding-bottom: 32px; }
       .logo { width: 48px; height: 48px; font-size: 16px; border-radius: 12px; }
       .brand-info h1 { font-size: 22px; }
       .user-name { font-size: 14px; }
       .btn-logout { padding: 10px 24px; }
-      
       .page-header { margin-bottom: 40px; }
       .page-title { font-size: 28px; }
-      
       .card { padding: 28px; margin-bottom: 24px; border-radius: 16px; }
       .card-title { font-size: 16px; margin-bottom: 24px; padding-bottom: 16px; }
       .card-title lottie-player { width: 28px; height: 28px; }
-      
       .grid-2 { gap: 24px; }
-      
       .stat-box { padding: 20px; border-radius: 12px; }
       .stat-label { font-size: 14px; }
       .stat-sub { font-size: 11px; }
       .stat-value { font-size: 24px; }
       .stat-arrow { width: 28px; height: 28px; }
-      .stat-arrow lottie-player { width: 24px; height: 24px; }
-      
       .big-metric-box { padding: 24px; }
       .big-number { font-size: 48px; }
       .big-arrow { width: 36px; height: 36px; }
-      .big-arrow lottie-player { width: 32px; height: 32px; }
       .big-sub { font-size: 14px; }
       .progress-simple { height: 8px; }
-      
       .gender-bar { height: 40px; }
       .gender-male, .gender-female { font-size: 13px; min-width: 70px; }
-      
       .age-row { gap: 12px; margin-bottom: 12px; }
       .age-label { width: 60px; font-size: 13px; }
       .age-bar-bg { height: 24px; }
       .age-percent { width: 45px; font-size: 14px; }
-      
       .naver-box { padding: 24px; border-radius: 12px; }
       .naver-label { font-size: 16px; gap: 12px; }
       .naver-icon { width: 32px; height: 32px; border-radius: 8px; }
       .naver-icon-small { width: 24px; height: 24px; font-size: 12px; }
       .naver-value { font-size: 28px; }
       .naver-arrow { width: 32px; height: 32px; }
-      .naver-arrow lottie-player { width: 28px; height: 28px; }
-      
       .period-tab { padding: 8px 16px; }
-      
       .chart-box { height: 300px; padding: 24px; border-radius: 12px; }
-      
       .insight-item { font-size: 15px; padding: 16px 0 16px 20px; margin-bottom: 12px; }
-      
       .insta-link { border-radius: 12px; }
     }
   </style>
@@ -649,13 +260,10 @@
         <button class="btn-logout" id="logoutBtn">로그아웃</button>
       </div>
     </header>
-
     <div class="page-header">
       <h2 class="page-title" id="clientName">성과 리포트</h2>
       <p class="page-meta" id="period">최근 30일 기준</p>
     </div>
-
-    <!-- 광고 효과 - 2열 그리드 유지 -->
     <div class="card">
       <h3 class="card-title">
         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_kuknoxwl.json" background="transparent" speed="1" loop autoplay></lottie-player>
@@ -663,23 +271,16 @@
       </h3>
       <div class="grid-2" style="margin-bottom: 12px;">
         <div class="stat-box">
-          <div>
-            <span class="stat-label">광고를 본 사람</span>
-            <div class="stat-sub">우리 가게를 알게 된 분들</div>
-          </div>
+          <div><span class="stat-label">광고를 본 사람</span><div class="stat-sub">우리 가게를 알게 된 분들</div></div>
           <div class="stat-value-wrap">
             <span class="stat-value green" id="reach">0</span>
-            <div class="stat-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            </div>
+            <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
           </div>
         </div>
         <div class="big-metric-box">
           <div class="big-number-wrap">
             <span class="big-number" id="impressions">0</span>
-            <div class="big-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            </div>
+            <div class="big-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
           </div>
           <div class="big-sub">총 노출 횟수</div>
           <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
@@ -687,15 +288,10 @@
       </div>
       <div class="grid-2">
         <div class="stat-box">
-          <div>
-            <span class="stat-label">반응한 사람</span>
-            <div class="stat-sub">좋아요, 댓글, 클릭</div>
-          </div>
+          <div><span class="stat-label">반응한 사람</span><div class="stat-sub">좋아요, 댓글, 클릭</div></div>
           <div class="stat-value-wrap">
             <span class="stat-value green" id="engagement">0</span>
-            <div class="stat-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            </div>
+            <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
           </div>
         </div>
         <div class="gender-box">
@@ -707,8 +303,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 연령대 - 좌측 정렬 리스트 -->
     <div class="card">
       <h3 class="card-title">
         <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_v1yudlrx.json" background="transparent" speed="1" loop autoplay></lottie-player>
@@ -723,25 +317,16 @@
         <div class="age-row"><span class="age-label">60대+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
       </div>
     </div>
-
-    <!-- 네이버 유입 -->
     <div class="card">
       <h3 class="card-title"><span class="naver-icon-small">N</span> 네이버플레이스 유입</h3>
       <div class="naver-box">
-        <div class="naver-label">
-          <span class="naver-icon">N</span>
-          <span>내 업체 검색한 사람</span>
-        </div>
+        <div class="naver-label"><span class="naver-icon">N</span><span>내 업체 검색한 사람</span></div>
         <div class="naver-value-wrap">
           <span class="naver-value" id="naverVisit">0</span>
-          <div class="naver-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-          </div>
+          <div class="naver-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
         </div>
       </div>
     </div>
-
-    <!-- 일별 추이 -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title-inline">
@@ -756,17 +341,13 @@
       </div>
       <div class="chart-box"><canvas id="trendChart"></canvas></div>
     </div>
-
-    <!-- 잘된 점 - 1열 스택 허용 -->
     <div class="card">
       <h3 class="card-title">
         <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_touohxv0.json" background="transparent" speed="1" loop autoplay></lottie-player>
-        잘된 점
+        핵심 성과
       </h3>
       <ul class="insight-list" id="highlights"><li class="insight-item highlight">데이터를 불러오는 중...</li></ul>
     </div>
-
-    <!-- 더 좋아지려면 - 1열 스택 허용 -->
     <div class="card">
       <h3 class="card-title">
         <lottie-player src="https://assets8.lottiefiles.com/packages/lf20_swnrn2oy.json" background="transparent" speed="1" loop autoplay></lottie-player>
@@ -774,8 +355,6 @@
       </h3>
       <ul class="insight-list" id="actions"><li class="insight-item action">데이터를 불러오는 중...</li></ul>
     </div>
-
-    <!-- 광고 미리보기 -->
     <div class="card">
       <h3 class="card-title">
         <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_kd5rzej5.json" background="transparent" speed="1" loop autoplay></lottie-player>
@@ -787,8 +366,8 @@
       </a>
     </div>
   </div>
-
-  let userData = null;
+  <script>
+    let userData = null;
     let campaignId = null;
     let userAccountId = null;
 
@@ -802,7 +381,6 @@
       const duration = 1500;
       const startTime = performance.now();
       const targetNum = parseInt(target) || 0;
-      
       function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
@@ -818,56 +396,46 @@
 
     function renderList(id, items, className) {
       const el = document.getElementById(id);
-      if (!items || items.length === 0) { 
-        el.innerHTML = `<li class="insight-item ${className}">아직 분석 데이터가 없습니다.</li>`; 
-        return; 
+      if (!items || items.length === 0) {
+        el.innerHTML = '<li class="insight-item ' + className + '">아직 분석 데이터가 없습니다.</li>';
+        return;
       }
-      el.innerHTML = items.map(item => `<li class="insight-item ${className}">${item}</li>`).join('');
+      el.innerHTML = items.map(function(item) { return '<li class="insight-item ' + className + '">' + item + '</li>'; }).join('');
     }
 
     let chart;
     function renderChart(dailyData) {
       const ctx = document.getElementById("trendChart");
       if (chart) chart.destroy();
-      
       let labels = [], data = [];
       if (dailyData && dailyData.length > 0) {
-        labels = dailyData.map(d => {
+        labels = dailyData.map(function(d) {
           const date = new Date(d.date);
-          return `${date.getMonth() + 1}/${date.getDate()}`;
+          return (date.getMonth() + 1) + '/' + date.getDate();
         });
-        data = dailyData.map(d => d.impressions);
+        data = dailyData.map(function(d) { return d.impressions; });
       } else {
         labels = ['데이터 없음'];
         data = [0];
       }
-      
       chart = new Chart(ctx, {
         type: "line",
-        data: { 
-          labels, 
-          datasets: [{ 
-            label: "노출", 
-            data, 
-            borderColor: "#22c55e", 
-            backgroundColor: "rgba(34, 197, 94, 0.1)", 
-            fill: true, 
-            borderWidth: 2, 
-            tension: 0.4, 
-            pointRadius: 3,
-            pointBackgroundColor: "#22c55e",
-            pointBorderColor: "#fff",
-            pointBorderWidth: 1
-          }] 
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "노출", data: data, borderColor: "#22c55e",
+            backgroundColor: "rgba(34, 197, 94, 0.1)", fill: true,
+            borderWidth: 2, tension: 0.4, pointRadius: 3,
+            pointBackgroundColor: "#22c55e", pointBorderColor: "#fff", pointBorderWidth: 1
+          }]
         },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false, 
-          plugins: { legend: { display: false } }, 
-          scales: { 
-            y: { beginAtZero: true, grid: { color: "#e8e3db" }, ticks: { color: "#8b7355", font: { size: 10 } } }, 
-            x: { grid: { display: false }, ticks: { color: "#8b7355", font: { size: 10 } } } 
-          } 
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: "#e8e3db" }, ticks: { color: "#8b7355", font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: "#8b7355", font: { size: 10 } } }
+          }
         }
       });
     }
@@ -875,18 +443,18 @@
     async function loadMetaData() {
       if (!campaignId || !userAccountId) return null;
       try {
-        const response = await fetch(`/api/report?action=insights&account_id=${userAccountId}`);
+        const response = await fetch('/api/report?action=insights&account_id=' + userAccountId);
         const data = await response.json();
         if (!data.success) return null;
-        const campaign = (data.insights || []).find(item => item.campaignId === campaignId);
+        const campaign = (data.insights || []).find(function(item) { return item.campaignId === campaignId; });
         return campaign || null;
       } catch (error) { return null; }
     }
 
-    async function loadDailyData(days = 7) {
+    async function loadDailyData(days) {
       if (!campaignId) return null;
       try {
-        const response = await fetch(`/api/report?action=daily&campaign_id=${campaignId}&days=${days}`);
+        const response = await fetch('/api/report?action=daily&campaign_id=' + campaignId + '&days=' + days);
         const data = await response.json();
         if (!data.success) return null;
         return data.dailyData || [];
@@ -896,7 +464,7 @@
     async function loadDemographics() {
       if (!campaignId) return null;
       try {
-        const response = await fetch(`/api/report?action=demographics&campaign_id=${campaignId}`);
+        const response = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
         const data = await response.json();
         if (!data.success) return null;
         return data;
@@ -905,30 +473,17 @@
 
     function updateDemographics(demo) {
       if (!demo) return;
-      
-      const maleP = demo.gender?.malePercent || 50;
-      const femaleP = demo.gender?.femalePercent || 50;
+      const maleP = (demo.gender && demo.gender.malePercent) || 50;
+      const femaleP = (demo.gender && demo.gender.femalePercent) || 50;
       document.getElementById('maleBar').style.width = maleP + '%';
-      document.getElementById('maleBar').textContent = `남성 ${maleP}%`;
+      document.getElementById('maleBar').textContent = '남성 ' + maleP + '%';
       document.getElementById('femaleBar').style.width = femaleP + '%';
-      document.getElementById('femaleBar').textContent = `여성 ${femaleP}%`;
-      
-      const ageMap = {
-        '13-17': 'age13',
-        '18-24': 'age18', 
-        '25-34': 'age25', 
-        '35-44': 'age35',
-        '45-54': 'age45', 
-        '55-64': 'age55',
-        '65+': 'age55'
-      };
-      
+      document.getElementById('femaleBar').textContent = '여성 ' + femaleP + '%';
+      const ageMap = { '13-17': 'age13', '18-24': 'age18', '25-34': 'age25', '35-44': 'age35', '45-54': 'age45', '55-64': 'age55', '65+': 'age55' };
       let age55Total = 0;
-      
-      Object.keys(ageMap).forEach(key => {
-        const p = demo.age?.[key]?.percent || 0;
+      Object.keys(ageMap).forEach(function(key) {
+        const p = (demo.age && demo.age[key] && demo.age[key].percent) || 0;
         const targetId = ageMap[key];
-        
         if (key === '55-64' || key === '65+') {
           age55Total += p;
         } else {
@@ -938,16 +493,15 @@
           if (pEl) pEl.textContent = p + '%';
         }
       });
-      
       const bar55 = document.getElementById('age55');
       const pEl55 = document.getElementById('age55p');
       if (bar55) bar55.style.width = age55Total + '%';
       if (pEl55) pEl55.textContent = age55Total + '%';
     }
 
-    document.querySelectorAll('.period-tab').forEach(tab => {
+    document.querySelectorAll('.period-tab').forEach(function(tab) {
       tab.addEventListener('click', async function() {
-        document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.period-tab').forEach(function(t) { t.classList.remove('active'); });
         this.classList.add('active');
         const days = parseInt(this.dataset.days);
         const dailyData = await loadDailyData(days);
@@ -957,7 +511,7 @@
 
     async function boot() {
       const me = await api("/api/me");
-      if (!me?.user) { location.href = "/report/login.html"; return; }
+      if (!me || !me.user) { location.href = "/report/login.html"; return; }
       if (me.user.role === 'admin') { location.href = "/admin/dashboard.html"; return; }
 
       userData = me.user;
@@ -965,42 +519,38 @@
       userAccountId = userData.meta_account_id;
 
       console.log('유저:', userData.name, '광고계정:', userAccountId, '캠페인:', campaignId);
-      
+
       document.getElementById("userName").textContent = userData.name || userData.username;
       document.getElementById("clientName").textContent = (userData.name || userData.username) + '님의 리포트';
       document.getElementById("period").textContent = '최근 30일 기준';
 
       const naverVisitorsExtra = userData.naver_visitors || 0;
-      
       const metaData = await loadMetaData();
       console.log('Meta 데이터:', metaData);
-      
+
       if (metaData) {
-        setTimeout(() => {
+        setTimeout(function() {
           animateCount(document.getElementById("reach"), metaData.reach, '명');
           animateCount(document.getElementById("impressions"), metaData.impressions, '');
           animateCount(document.getElementById("engagement"), metaData.clicks, '명');
         }, 300);
-        
-        setTimeout(() => {
+        setTimeout(function() {
           const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
           document.getElementById("impressionBar").style.width = progressPercent + '%';
         }, 800);
-        
         const landingPageVisits = (metaData.conversions || 0) + naverVisitorsExtra;
-        setTimeout(() => animateCount(document.getElementById("naverVisit"), landingPageVisits, '명'), 500);
+        setTimeout(function() { animateCount(document.getElementById("naverVisit"), landingPageVisits, '명'); }, 500);
       } else {
         animateCount(document.getElementById("naverVisit"), naverVisitorsExtra, '명');
       }
 
       const demo = await loadDemographics();
-      setTimeout(() => updateDemographics(demo), 500);
+      setTimeout(function() { updateDemographics(demo); }, 500);
 
       const instaLink = document.getElementById("instaLink");
-      
       if (userData.instagram_url) {
         if (/^\d+$/.test(userData.instagram_url)) {
-          instaLink.href = `https://www.facebook.com/ads/library/?id=${userData.instagram_url}`;
+          instaLink.href = 'https://www.facebook.com/ads/library/?id=' + userData.instagram_url;
         } else {
           instaLink.href = userData.instagram_url;
         }
@@ -1021,9 +571,12 @@
       renderList("actions", actions, "action");
     }
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => { 
-      await api("/api/logout", { method: "POST" }); 
-      location.href = "/report/login.html"; 
+    document.getElementById("logoutBtn").addEventListener("click", async function() {
+      await api("/api/logout", { method: "POST" });
+      location.href = "/report/login.html";
     });
-    
+
     boot();
+  </script>
+</body>
+</html>
