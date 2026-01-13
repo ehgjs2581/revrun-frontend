@@ -9,32 +9,31 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'GET') return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' });
 
   try {
     const cookies = req.headers.cookie || '';
     const sessionMatch = cookies.match(/session=([^;]+)/);
     const sessionId = sessionMatch ? sessionMatch[1] : null;
 
-    if (!sessionId) return res.status(401).json({ ok: false, error: '로그인이 필요합니다' });
+    if (!sessionId) return res.status(401).json({ success: false, error: '로그인이 필요합니다' });
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, username, name, role, meta_account_id, campaign_id, company, plan, status, naver_visitors, ai_highlights, ai_actions, ai_generated_at, instagram_url')
+      .select('id, username, name, role, meta_account_id, company, plan, status, naver_visitors, ai_highlights, ai_actions, ai_generated_at, instagram_url')
       .eq('id', sessionId)
       .single();
 
-    if (error || !user) return res.status(401).json({ ok: false, error: '유효하지 않은 세션입니다' });
+    if (error || !user) return res.status(401).json({ success: false, error: '유효하지 않은 세션입니다' });
 
     return res.status(200).json({
-      ok: true,
+      success: true,
       user: {
         user_id: user.id,
         username: user.username,
         name: user.name,
         role: user.role,
-        meta_account_id: user.meta_account_id || null,
-        campaign_id: user.campaign_id || null,
+        meta_account_id: user.meta_account_id,
         company: user.company,
         plan: user.plan,
         status: user.status,
@@ -46,6 +45,6 @@ export default async function handler(req, res) {
       }
     });
   } catch (err) {
-    return res.status(500).json({ ok: false, error: '서버 오류가 발생했습니다' });
+    return res.status(500).json({ success: false, error: '서버 오류가 발생했습니다' });
   }
 }
