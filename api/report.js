@@ -60,7 +60,11 @@ export default async function handler(req, res) {
       return await getDailyData(campaign_id, accessToken, res, days);
     }
 
-    return res.status(400).json({ success: false, error: 'Invalid action. Use action=insights&account_id=xxx or action=demographics&campaign_id=xxx' });
+    if (action === 'creative' && campaign_id) {
+      return await getAdCreative(campaign_id, accessToken, res);
+    }
+
+    return res.status(400).json({ success: false, error: 'Invalid action. Use action=insights&account_id=xxx or action=demographics&campaign_id=xxx or action=creative&campaign_id=xxx' });
 
   } catch (error) {
     console.error('Meta API Error:', error);
@@ -182,7 +186,6 @@ async function getDemographics(campaignId, accessToken, res) {
     until: endDate.toISOString().split('T')[0]
   });
 
-  // 연령대 + 성별 데이터 가져오기
   const url = `https://graph.facebook.com/v18.0/${campaignId}/insights?fields=impressions,reach,clicks&breakdowns=age,gender&time_range=${encodeURIComponent(timeRange)}&access_token=${accessToken}`;
 
   const response = await fetch(url);
@@ -192,14 +195,11 @@ async function getDemographics(campaignId, accessToken, res) {
     return res.status(400).json({ success: false, error: data.error.message });
   }
 
-  // 데이터 가공
   const rawData = data.data || [];
   
-  // 성별 합계
   let maleTotal = 0;
   let femaleTotal = 0;
   
-  // 연령대별 합계
   const ageGroups = {
     '13-17': { impressions: 0, reach: 0 },
     '18-24': { impressions: 0, reach: 0 },
@@ -220,21 +220,18 @@ async function getDemographics(campaignId, accessToken, res) {
 
     totalImpressions += impressions;
 
-    // 성별 합계
     if (gender === 'male') {
       maleTotal += impressions;
     } else if (gender === 'female') {
       femaleTotal += impressions;
     }
 
-    // 연령대별 합계
     if (ageGroups[age]) {
       ageGroups[age].impressions += impressions;
       ageGroups[age].reach += reach;
     }
   });
 
-  // 퍼센트 계산
   const genderTotal = maleTotal + femaleTotal;
   const malePercent = genderTotal > 0 ? Math.round((maleTotal / genderTotal) * 100) : 50;
   const femalePercent = genderTotal > 0 ? 100 - malePercent : 50;
@@ -294,4 +291,93 @@ async function getDailyData(campaignId, accessToken, res, days) {
     success: true,
     dailyData: dailyData
   });
+}
+
+async function getAdCreative(campaignId, accessToken, res) {
+  try {
+    // 1. 캠페인에서 광고 ID 가져오기
+    const adsUrl = `https://graph.facebook.com/v18.0/${campaignId}/ads?fields=id,name,status&access_token=${accessToken}`;
+    const adsResponse = await fetch(adsUrl);
+    const adsData = await adsResponse.json();
+
+    if (adsData.error) {
+      return res.status(400).json({ success: false, error: adsData.error.message });
+    }
+
+    if (!adsData.data || adsData.data.length === 0) {
+      return res.status(404).json({ success: false, error: 'No ads found' });
+    }
+
+    // 활성 광고 우선, 없으면 첫번째
+    const activeAd = adsData.data.find(ad => ad.status === 'ACTIVE') || adsData.data[0];
+    const adId = activeAd.id;
+
+    // 2. 광고에서 크리에이티브 정보 가져오기
+    const creativeUrl = `https://graph.facebook.com/v18.0/${adId}?fields=creative{id,thumbnail_url,object_story_spec,asset_feed_spec,effective_object_story_id}&access_token=${accessToken}`;
+    const creativeResponse = await fetch(creativeUrl);
+    const creativeData = await creativeResponse.json();
+
+    if (creativeData.error) {
+      return res.status(400).json({ success: false, error: creativeData.error.message });
+    }
+
+    const creative = creativeData.creative || {};
+    let mediaUrl = null;
+    let mediaType = 'image';
+    let caption = '';
+    let thumbnailUrl = creative.thumbnail_url || null;
+
+    // 3. effective_object_story_id로 실제 게시물 정보 가져오기
+    if (creative.effective_object_story_id) {
+      const storyUrl = `https://graph.facebook.com/v18.0/${creative.effective_object_story_id}?fields=full_picture,message,attachments{media_type,media,url,subattachments}&access_token=${accessToken}`;
+      const storyResponse = await fetch(storyUrl);
+      const storyData = await storyResponse.json();
+
+      if (!storyData.error) {
+        mediaUrl = storyData.full_picture || null;
+        caption = storyData.message || '';
+
+        if (storyData.attachments && storyData.attachments.data) {
+          const attachment = storyData.attachments.data[0];
+          if (attachment.media_type === 'video') {
+            mediaType = 'video';
+            if (attachment.media && attachment.media.source) {
+              mediaUrl = attachment.media.source;
+            }
+          } else if (attachment.media && attachment.media.image) {
+            mediaUrl = attachment.media.image.src || mediaUrl;
+          }
+        }
+      }
+    }
+
+    // 4. object_story_spec에서 추가 정보
+    if (!mediaUrl && creative.object_story_spec) {
+      const spec = creative.object_story_spec;
+      if (spec.video_data) {
+        mediaType = 'video';
+        caption = spec.video_data.message || caption;
+        thumbnailUrl = spec.video_data.image_url || thumbnailUrl;
+      } else if (spec.link_data) {
+        caption = spec.link_data.message || caption;
+        mediaUrl = spec.link_data.picture || mediaUrl;
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      adId: adId,
+      adName: activeAd.name,
+      creative: {
+        mediaUrl: mediaUrl,
+        mediaType: mediaType,
+        thumbnailUrl: thumbnailUrl,
+        caption: caption
+      }
+    });
+
+  } catch (error) {
+    console.error('Creative fetch error:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
 }
