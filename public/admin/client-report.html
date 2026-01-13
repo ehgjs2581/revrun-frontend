@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Client Report - REVRUN Admin</title>
+  <title>REVRUN Report</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -121,19 +121,19 @@
 <body>
   <div class="container">
     <div class="page-header">
-      <h2 class="page-title" id="clientName">Loading...</h2>
-      <p class="page-meta" id="period">Last 30 days</p>
+      <h2 class="page-title" id="clientName">&#47196;&#46377;&#51473;...</h2>
+      <p class="page-meta" id="period">&#52572;&#44540; 30&#51068; &#44592;&#51456;</p>
     </div>
     
-    <div id="loadingArea" class="loading">Loading data...</div>
-    <div id="errorArea" class="error" style="display:none;">Error loading data</div>
+    <div id="loadingArea" class="loading">&#45936;&#51060;&#53552;&#47484; &#48520;&#47084;&#50724;&#45716; &#51473;...</div>
+    <div id="errorArea" class="error" style="display:none;">&#50724;&#47448; &#48156;&#49373;</div>
     
     <div id="reportContent" style="display:none;">
       <div class="card">
-        <h3 class="card-title">Ad Performance</h3>
+        <h3 class="card-title">&#9889; &#44305;&#44256; &#54952;&#44284;</h3>
         <div class="grid-2" style="margin-bottom: 12px;">
           <div class="stat-box">
-            <div><span class="stat-label">Reach</span><div class="stat-sub">People who saw your ad</div></div>
+            <div><span class="stat-label">&#44305;&#44256;&#47484; &#48376; &#49324;&#46988;</span><div class="stat-sub">&#50864;&#47532; &#44032;&#44172;&#47484; &#50508;&#44172; &#46108; &#48516;&#46308;</div></div>
             <div class="stat-value-wrap">
               <span class="stat-value green" id="reach">0</span>
               <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
@@ -144,149 +144,147 @@
               <span class="big-number" id="impressions">0</span>
               <div class="big-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
             </div>
-            <div class="big-sub">Total Impressions</div>
+            <div class="big-sub">&#52509; &#45432;&#52636; &#54943;&#49688;</div>
             <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
           </div>
         </div>
         <div class="grid-2">
           <div class="stat-box">
-            <div><span class="stat-label">Engagement</span><div class="stat-sub">Likes, comments, clicks</div></div>
+            <div><span class="stat-label">&#48152;&#51025;&#54620; &#49324;&#46988;</span><div class="stat-sub">&#51339;&#50500;&#50836;, &#45843;&#44544;, &#53364;&#47533;</div></div>
             <div class="stat-value-wrap">
               <span class="stat-value green" id="engagement">0</span>
               <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
             </div>
           </div>
           <div class="gender-box">
-            <div class="gender-label">Gender</div>
+            <div class="gender-label">&#49457;&#48324; &#48708;&#50984;</div>
             <div class="gender-bar">
-              <div class="gender-male" id="maleBar" style="width: 50%;">Male 50%</div>
-              <div class="gender-female" id="femaleBar" style="width: 50%;">Female 50%</div>
+              <div class="gender-male" id="maleBar" style="width: 50%;">&#45224;&#49457; 50%</div>
+              <div class="gender-female" id="femaleBar" style="width: 50%;">&#50668;&#49457; 50%</div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Age Distribution</h3>
+        <h3 class="card-title">&#128202; &#50672;&#47161;&#45824;&#48324; &#48152;&#51025;</h3>
         <div id="ageChart">
-          <div class="age-row"><span class="age-label">10s</span><div class="age-bar-bg"><div class="age-bar-fill" id="age13" style="width: 0%;"></div></div><span class="age-percent" id="age13p">0%</span></div>
-          <div class="age-row"><span class="age-label">20s</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
-          <div class="age-row"><span class="age-label">30s</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
-          <div class="age-row"><span class="age-label">40s</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
-          <div class="age-row"><span class="age-label">50s</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
-          <div class="age-row"><span class="age-label">60+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
+          <div class="age-row"><span class="age-label">10&#45824;</span><div class="age-bar-bg"><div class="age-bar-fill" id="age13" style="width: 0%;"></div></div><span class="age-percent" id="age13p">0%</span></div>
+          <div class="age-row"><span class="age-label">20&#45824;</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
+          <div class="age-row"><span class="age-label">30&#45824;</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
+          <div class="age-row"><span class="age-label">40&#45824;</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
+          <div class="age-row"><span class="age-label">50&#45824;</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
+          <div class="age-row"><span class="age-label">60&#45824;+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
         </div>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Naver Place Visits</h3>
+        <h3 class="card-title">&#127823; &#45348;&#51060;&#48260;&#54540;&#47112;&#51060;&#49828; &#50976;&#51077;</h3>
         <div class="naver-box">
-          <div class="naver-label"><span class="naver-icon">N</span><span>Visitors</span></div>
+          <div class="naver-label"><span class="naver-icon">N</span><span>&#45236; &#50629;&#52404; &#44160;&#49353;&#54620; &#49324;&#46988;</span></div>
           <div class="naver-value-wrap">
-            <span class="naver-value" id="naverVisit">0</span>
+            <span class="naver-value" id="naverVisit">0&#47749;</span>
             <div class="naver-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Highlights</h3>
-        <ul class="insight-list" id="highlights"><li class="insight-item highlight">No data yet</li></ul>
+        <h3 class="card-title">&#128161; &#51096;&#54620; &#51216;</h3>
+        <ul class="insight-list" id="highlights"><li class="insight-item highlight">&#50500;&#51649; &#48516;&#49437; &#45936;&#51060;&#53552;&#44032; &#50630;&#49845;&#45768;&#45796;.</li></ul>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Recommendations</h3>
-        <ul class="insight-list" id="actions"><li class="insight-item action">No data yet</li></ul>
+        <h3 class="card-title">&#128640; &#45908; &#51339;&#50500;&#51648;&#47140;&#47732;</h3>
+        <ul class="insight-list" id="actions"><li class="insight-item action">&#50500;&#51649; &#48516;&#49437; &#45936;&#51060;&#53552;&#44032; &#50630;&#49845;&#45768;&#45796;.</li></ul>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Ad Preview</h3>
+        <h3 class="card-title">&#128241; &#44305;&#44256; &#48120;&#47532;&#48372;&#44592;</h3>
         <a href="#" class="insta-link" id="instaLink" target="_blank">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          View Ad on Instagram
+          &#51064;&#49828;&#53440;&#44536;&#47016;&#50640;&#49436; &#44305;&#44256; &#48372;&#44592;
         </a>
       </div>
     </div>
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('id');
+    var urlParams = new URLSearchParams(window.location.search);
+    var userId = urlParams.get('id');
 
     async function loadClientData() {
       if (!userId) {
-        showError('No client ID');
+        showError('\uACE0\uAC1D ID\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.');
         return;
       }
 
       try {
-        const userRes = await fetch('/api/users?id=' + userId);
-        const userData = await userRes.json();
+        var userRes = await fetch('/api/users?id=' + userId);
+        var userData = await userRes.json();
         
-        if (!userData.success || !userData.user) {
-          showError('Client not found');
+        if (!userData.success && !userData.ok) {
+          showError('\uACE0\uAC1D \uC815\uBCF4\uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.');
+          return;
+        }
+        if (!userData.user) {
+          showError('\uACE0\uAC1D \uC815\uBCF4\uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.');
           return;
         }
 
-        const client = userData.user;
-        const campaignId = client.campaign_id;
-        const accountId = client.meta_account_id;
+        var client = userData.user;
+        var campaignId = client.campaign_id;
+        var accountId = client.meta_account_id;
 
-        console.log('Client:', client.name, 'Campaign:', campaignId, 'Account:', accountId);
+        document.getElementById('clientName').textContent = (client.name || client.username) + '\uB2D8\uC758 \uB9AC\uD3EC\uD2B8';
 
-        document.getElementById('clientName').textContent = (client.name || client.username) + ' Report';
-        document.getElementById('period').textContent = 'Last 30 days';
-
-        let metaData = null;
+        var metaData = null;
         if (campaignId && accountId) {
           try {
-            const metaRes = await fetch('/api/report?action=insights&account_id=' + accountId);
-            const metaResult = await metaRes.json();
-            console.log('Meta API result:', metaResult);
+            var metaRes = await fetch('/api/report?action=insights&account_id=' + accountId);
+            var metaResult = await metaRes.json();
             if (metaResult.success && metaResult.insights) {
               metaData = metaResult.insights.find(function(c) { return c.campaignId === campaignId; });
-              console.log('Found campaign data:', metaData);
             }
-          } catch (e) { console.error('Meta data error:', e); }
+          } catch (e) { console.error('Meta error:', e); }
         }
 
-        let demoData = null;
+        var demoData = null;
         if (campaignId) {
           try {
-            const demoRes = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
-            const demoResult = await demoRes.json();
-            console.log('Demographics result:', demoResult);
+            var demoRes = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
+            var demoResult = await demoRes.json();
             if (demoResult.success) demoData = demoResult;
-          } catch (e) { console.error('Demographics error:', e); }
+          } catch (e) { console.error('Demo error:', e); }
         }
 
         document.getElementById('loadingArea').style.display = 'none';
         document.getElementById('reportContent').style.display = 'block';
 
         if (metaData) {
-          document.getElementById('reach').textContent = (metaData.reach || 0).toLocaleString();
+          document.getElementById('reach').textContent = (metaData.reach || 0).toLocaleString() + '\uBA85';
           document.getElementById('impressions').textContent = (metaData.impressions || 0).toLocaleString();
-          document.getElementById('engagement').textContent = (metaData.clicks || 0).toLocaleString();
+          document.getElementById('engagement').textContent = (metaData.clicks || 0).toLocaleString() + '\uBA85';
           
           var progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
           document.getElementById('impressionBar').style.width = progressPercent + '%';
 
           var landingPageVisits = (metaData.conversions || 0) + (client.naver_visitors || 0);
-          document.getElementById('naverVisit').textContent = landingPageVisits.toLocaleString();
+          document.getElementById('naverVisit').textContent = landingPageVisits.toLocaleString() + '\uBA85';
         } else {
-          document.getElementById('reach').textContent = '0';
+          document.getElementById('reach').textContent = '0\uBA85';
           document.getElementById('impressions').textContent = '0';
-          document.getElementById('engagement').textContent = '0';
-          document.getElementById('naverVisit').textContent = (client.naver_visitors || 0).toLocaleString();
+          document.getElementById('engagement').textContent = '0\uBA85';
+          document.getElementById('naverVisit').textContent = (client.naver_visitors || 0).toLocaleString() + '\uBA85';
         }
 
         if (demoData) {
           var maleP = (demoData.gender && demoData.gender.malePercent) || 50;
           var femaleP = (demoData.gender && demoData.gender.femalePercent) || 50;
           document.getElementById('maleBar').style.width = maleP + '%';
-          document.getElementById('maleBar').textContent = 'Male ' + maleP + '%';
+          document.getElementById('maleBar').textContent = '\uB0A8\uC131 ' + maleP + '%';
           document.getElementById('femaleBar').style.width = femaleP + '%';
-          document.getElementById('femaleBar').textContent = 'Female ' + femaleP + '%';
+          document.getElementById('femaleBar').textContent = '\uC5EC\uC131 ' + femaleP + '%';
 
           var ageMap = { '13-17': 'age13', '18-24': 'age18', '25-34': 'age25', '35-44': 'age35', '45-54': 'age45', '55-64': 'age55', '65+': 'age55' };
           var age55Total = 0;
@@ -332,7 +330,7 @@
 
       } catch (error) {
         console.error('Error:', error);
-        showError('Error loading data');
+        showError('\uB370\uC774\uD130\uB97C \uBD88\uB7EC\uC624\uB294 \uC911 \uC624\uB958\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4.');
       }
     }
 
