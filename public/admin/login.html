@@ -1,189 +1,394 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - REVRUN</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .login-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 48px 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #8B7355, #6B5A45);
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-        .logo h1 {
-            font-size: 24px;
-            color: #3D3228;
-            font-weight: 700;
-        }
-        .logo span {
-            font-size: 13px;
-            color: #9C8B7A;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #3D3228;
-            margin-bottom: 8px;
-        }
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #E8E0D5;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #8B7355;
-        }
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #8B7355, #6B5A45);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .btn-login:hover {
-            opacity: 0.9;
-        }
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .error-message {
-            background: #FEE2E2;
-            color: #DC2626;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .error-message.show {
-            display: block;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>REVRUN | 로그인</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #faf8f5;
+      --light-cream: #f5f3ef;
+      --warm-beige: #e8e3db;
+      --medium-brown: #8b7355;
+      --dark-brown: #5d4a3a;
+      --deep-brown: #3a2f23;
+    }
+
+    body {
+      font-family: 'Manrope', -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--deep-brown);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 480px;
+      animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-area {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .logo-symbol {
+      width: 90px;
+      height: 64px;
+      margin: 0 auto 24px;
+    }
+
+    .logo-symbol svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .brand-name {
+      font-family: 'Cormorant', serif;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--deep-brown);
+      margin-bottom: 8px;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--medium-brown);
+    }
+
+    /* Login Box */
+    .login-box {
+      background: white;
+      border: 1px solid var(--warm-beige);
+      padding: 56px 48px;
+      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--medium-brown);
+      margin-bottom: 40px;
+      letter-spacing: 0.01em;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 28px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid var(--warm-beige);
+      background: var(--light-cream);
+      color: var(--deep-brown);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'Manrope', sans-serif;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--dark-brown);
+      background: white;
+    }
+
+    .form-input::placeholder {
+      color: var(--medium-brown);
+    }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      background: var(--deep-brown);
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Manrope', sans-serif;
+      margin-top: 12px;
+    }
+
+    .btn-login:hover {
+      background: var(--dark-brown);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(58, 47, 35, 0.2);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Error Message */
+    .error-message {
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(185, 28, 28, 0.06);
+      border: 1px solid rgba(185, 28, 28, 0.15);
+      color: #991b1b;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--warm-beige);
+    }
+
+    .footer-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--medium-brown);
+      letter-spacing: 0.02em;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .login-box {
+        padding: 40px 32px;
+      }
+
+      .login-title {
+        font-size: 20px;
+      }
+
+      .logo-area {
+        margin-bottom: 48px;
+      }
+
+      .brand-name {
+        font-size: 28px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon">RV</div>
-            <h1>REVRUN</h1>
-            <span>Admin Login</span>
-        </div>
-        
-        <div class="error-message" id="errorMessage"></div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label class="form-label">ID</label>
-                <input type="text" class="form-input" id="username" name="username" required placeholder="Enter your ID">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-input" id="password" name="password" required placeholder="Enter your password">
-            </div>
-            <button type="submit" class="btn-login" id="submitBtn">Login</button>
-        </form>
+  <div class="login-container">
+    
+    <div class="logo-area">
+      <div class="logo-symbol">
+        <svg viewBox="0 0 90 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#5d4a3a;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#3a2f23;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="vGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#8b7355;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#5d4a3a;stop-opacity:1" />
+            </linearGradient>
+            <filter id="letterShadow">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+              <feOffset dx="0" dy="2" result="offsetblur"/>
+              <feComponentTransfer>
+                <feFuncA type="linear" slope="0.25"/>
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <g filter="url(#letterShadow)" transform="translate(30, 0)">
+            <path d="M2 12 L14 12 L24 52 L12 52 Z" fill="url(#vGrad)"/>
+            <path d="M26 12 L38 12 L28 52 L16 52 Z" fill="url(#vGrad)"/>
+            <path d="M2 12 L14 12 L14 16 L6 16 Z" fill="#8b7355" opacity="0.3"/>
+          </g>
+          <g filter="url(#letterShadow)">
+            <path d="M6 12 L6 52 L16 52 L16 36 L24 36 L32 52 L44 52 L34 34 C39 32 42 28 42 20 C42 10 36 12 26 12 Z M16 22 L26 22 C30 22 32 23 32 26 C32 29 30 30 26 30 L16 30 Z" fill="url(#rGrad)"/>
+            <path d="M16 22 L26 22 C28 22 29 22.5 29 23.5 L16 23.5 Z" fill="#8b7355" opacity="0.35"/>
+          </g>
+          <line x1="6" y1="56" x2="78" y2="56" stroke="#e8e3db" stroke-width="1.5" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="brand-name">REVRUN</div>
+      <div class="brand-tagline">ADVERTISING ANALYTICS</div>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Logging in...';
-            errorMessage.classList.remove('show');
-            
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    if (data.user.role === 'admin') {
-                        window.location.href = '/admin/dashboard.html';
-                    } else {
-                        window.location.href = '/report/dashboard.html';
-                    }
-                } else {
-                    errorMessage.textContent = data.error || 'Login failed';
-                    errorMessage.classList.add('show');
-                }
-            } catch (error) {
-                errorMessage.textContent = 'Server error. Please try again.';
-                errorMessage.classList.add('show');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
-            }
+    <div class="login-box">
+      <h1 class="login-title">로그인</h1>
+      <p class="login-subtitle">아이디와 비밀번호를 입력해주세요</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="username">아이디</label>
+          <input 
+            type="text" 
+            id="username" 
+            class="form-input" 
+            placeholder="아이디를 입력하세요"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">비밀번호</label>
+          <input 
+            type="password" 
+            id="password" 
+            class="form-input" 
+            placeholder="비밀번호를 입력하세요"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          로그인
+        </button>
+
+        <div class="error-message" id="errorMessage"></div>
+      </form>
+    </div>
+
+    <div class="login-footer">
+      <p class="footer-text">© 2024 REVRUN. All rights reserved.</p>
+    </div>
+
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorMessage = document.getElementById('errorMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        showError('아이디와 비밀번호를 모두 입력해주세요');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = '로그인 중...';
+      errorMessage.classList.remove('show');
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
         });
-        
-        // Check if already logged in
-        async function checkAuth() {
-            try {
-                const res = await fetch('/api/me', { credentials: 'include' });
-                const data = await res.json();
-                if (data.success && data.user) {
-                    if (data.user.role === 'admin') {
-                        window.location.href = '/admin/dashboard.html';
-                    } else {
-                        window.location.href = '/report/dashboard.html';
-                    }
-                }
-            } catch (e) {}
+
+        const data = await res.json();
+
+        if (data.ok) {
+          if (data.user.role === 'admin') {
+           window.location.href = '/admin/users.html';
+          } else {
+            window.location.href = '/report/dashboard.html';
+          }
+        } else {
+          showError(data.error || '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
+          loginBtn.disabled = false;
+          loginBtn.textContent = '로그인';
         }
-        checkAuth();
-    </script>
+      } catch (err) {
+        showError('연결 오류가 발생했습니다. 다시 시도해주세요.');
+        loginBtn.disabled = false;
+        loginBtn.textContent = '로그인';
+      }
+    });
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.classList.add('show');
+    }
+
+    usernameInput.addEventListener('input', () => {
+      errorMessage.classList.remove('show');
+    });
+
+    passwordInput.addEventListener('input', () => {
+      errorMessage.classList.remove('show');
+    });
+  </script>
 </body>
 </html>
