@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>고객 리포트 - REVRUN Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -213,6 +212,7 @@
   </div>
 
   <script>
+    // URL에서 고객 ID 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('id');
 
@@ -223,7 +223,7 @@
       }
 
       try {
-        // 고객 정보 가져오기
+        // 고객 정보 가져오기 (로그인 체크 없이 바로 고객 데이터 로드)
         const userRes = await fetch('/api/users?id=' + userId);
         const userData = await userRes.json();
         
@@ -236,6 +236,8 @@
         const campaignId = client.campaign_id;
         const accountId = client.meta_account_id;
 
+        console.log('고객:', client.name, '캠페인:', campaignId, '계정:', accountId);
+
         document.getElementById('clientName').textContent = (client.name || client.username) + '님의 리포트';
 
         // Meta 데이터 가져오기
@@ -244,8 +246,10 @@
           try {
             const metaRes = await fetch('/api/report?action=insights&account_id=' + accountId);
             const metaResult = await metaRes.json();
+            console.log('Meta API 결과:', metaResult);
             if (metaResult.success && metaResult.insights) {
               metaData = metaResult.insights.find(c => c.campaignId === campaignId);
+              console.log('찾은 캠페인 데이터:', metaData);
             }
           } catch (e) { console.error('Meta 데이터 오류:', e); }
         }
@@ -256,6 +260,7 @@
           try {
             const demoRes = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
             const demoResult = await demoRes.json();
+            console.log('Demographics 결과:', demoResult);
             if (demoResult.success) demoData = demoResult;
           } catch (e) { console.error('Demographics 오류:', e); }
         }
@@ -276,6 +281,9 @@
           const landingPageVisits = (metaData.conversions || 0) + (client.naver_visitors || 0);
           document.getElementById('naverVisit').textContent = landingPageVisits.toLocaleString() + '명';
         } else {
+          document.getElementById('reach').textContent = '0명';
+          document.getElementById('impressions').textContent = '0';
+          document.getElementById('engagement').textContent = '0명';
           document.getElementById('naverVisit').textContent = (client.naver_visitors || 0).toLocaleString() + '명';
         }
 
@@ -344,6 +352,7 @@
       document.getElementById('errorArea').textContent = msg;
     }
 
+    // 페이지 로드시 바로 실행 (로그인 체크 없음!)
     loadClientData();
   </script>
 </body>
