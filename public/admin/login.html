@@ -1,41 +1,189 @@
-if (data.user.role === 'admin') {
-  window.location.href = '/admin/dashboard.html';  // 관리자
-} else {
-  window.location.href = '/report/dashboard.html'; // 고객
-}
-```
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - REVRUN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8B7355, #6B5A45);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .logo h1 {
+            font-size: 24px;
+            color: #3D3228;
+            font-weight: 700;
+        }
+        .logo span {
+            font-size: 13px;
+            color: #9C8B7A;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #3D3228;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #E8E0D5;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #8B7355;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8B7355, #6B5A45);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-login:hover {
+            opacity: 0.9;
+        }
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error-message {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">RV</div>
+            <h1>REVRUN</h1>
+            <span>Admin Login</span>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">ID</label>
+                <input type="text" class="form-input" id="username" name="username" required placeholder="Enter your ID">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit" class="btn-login" id="submitBtn">Login</button>
+        </form>
+    </div>
 
----
-
-## 📋 **사용법:**
-
-### **1. 관리자 계정으로 로그인:**
-- 아이디: `admin`
-- 비밀번호: `dnflwlq132`
-- → 자동으로 `/admin/dashboard.html`로 이동
-
-### **2. 고객 계정으로 로그인:**
-- 아이디: `client1` 또는 `client2`
-- 비밀번호: `dnflwlq132`
-- → 자동으로 `/report/dashboard.html`로 이동
-
----
-
-## 🎯 **결론:**
-
-**로그인 페이지 1개로 끝!**
-
-- ✅ 같은 `login.html` 사용
-- ✅ role 기반으로 자동 분기
-- ✅ 추가 페이지 필요 없음
-
----
-
-## 📦 **최종 파일 구성:**
-```
-public/
-├── report/
-│   ├── login.html         ← 공통 로그인 (관리자/고객 모두)
-│   └── dashboard.html     ← 고객용 대시보드
-└── admin/
-    └── dashboard.html     ← 관리자용 대시보드
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging in...';
+            errorMessage.classList.remove('show');
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.user.role === 'admin') {
+                        window.location.href = '/admin/dashboard.html';
+                    } else {
+                        window.location.href = '/report/dashboard.html';
+                    }
+                } else {
+                    errorMessage.textContent = data.error || 'Login failed';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Server error. Please try again.';
+                errorMessage.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login';
+            }
+        });
+        
+        // Check if already logged in
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/me', { credentials: 'include' });
+                const data = await res.json();
+                if (data.success && data.user) {
+                    if (data.user.role === 'admin') {
+                        window.location.href = '/admin/dashboard.html';
+                    } else {
+                        window.location.href = '/report/dashboard.html';
+                    }
+                }
+            } catch (e) {}
+        }
+        checkAuth();
+    </script>
+</body>
+</html>
