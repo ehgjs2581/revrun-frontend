@@ -170,7 +170,8 @@
 
         function openReport(userId, userName) {
             document.getElementById('modalTitle').textContent = userName + '님의 리포트';
-            document.getElementById('reportFrame').src = `/admin/client-report.html?id=${userId}`;
+            // 캐시 방지를 위해 타임스탬프 추가
+            document.getElementById('reportFrame').src = `/admin/client-report.html?id=${userId}&t=${Date.now()}`;
             document.getElementById('reportModal').classList.add('active');
         }
 
