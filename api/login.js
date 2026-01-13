@@ -48,8 +48,8 @@ export default async function handler(req, res) {
 
     // 세션 쿠키 설정
     res.setHeader('Set-Cookie', [
-      `session=${user.id}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`,
-      `user_role=${user.role}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`
+      `session=${user.id}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`,
+      `user_role=${user.role}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
     ]);
 
     return res.status(200).json({
