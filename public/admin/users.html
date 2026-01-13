@@ -258,7 +258,13 @@
         const limit = 10;
         let allCampaignData = null;
 
-        function logout() { window.location.href = '/api/logout'; }
+        // 로그아웃 함수 수정 - POST 방식으로 변경
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {}
+            window.location.href = '/report/login.html';
+        }
 
         document.addEventListener('DOMContentLoaded', () => { 
             checkSupabaseConnection();
@@ -300,7 +306,7 @@
 
         async function loadCampaignData() {
             try {
-                const response = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
+                const response = await fetch(`/api/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
                 const data = await response.json();
                 if (data.success) allCampaignData = data.insights || [];
             } catch (error) { console.error('Campaign data load error:', error); }
@@ -341,7 +347,6 @@
             tbody.innerHTML = users.map(user => {
                 const hasComment = user.ai_generated_at;
                 const commentDate = hasComment ? new Date(user.ai_generated_at).toLocaleDateString('ko-KR') : '';
-                // campaign_id가 있으면 그걸 표시, 없으면 meta_account_id 표시
                 const displayId = user.campaign_id || user.meta_account_id;
                 return `
                 <tr>
@@ -380,8 +385,6 @@
             const { impressions, reach, clicks, conversions, frequency } = campaign;
             const engagementRate = reach > 0 ? (clicks / reach * 100) : 0;
 
-            // ===== 🎉 잘된 점 =====
-            
             if (impressions >= 10000) {
                 highlights.push(`우리 가게 광고가 ${impressions.toLocaleString()}번이나 노출되었어요! 동네에서 인지도가 확 올라가고 있습니다.`);
             } else if (impressions >= 5000) {
@@ -419,8 +422,6 @@
                 if (reach > 0) highlights.push(`${reach.toLocaleString()}명에게 우리 가게를 소개했어요.`);
             }
 
-            // ===== 💡 더 좋아지려면 =====
-            
             if (impressions < 10000) {
                 improvements.push(`광고 기간이 늘어나면 더 많은 분들에게 우리 가게를 알릴 수 있어요!`);
             }
@@ -441,7 +442,6 @@
 
             const actions = improvements;
 
-            // DB에 저장
             try {
                 const response = await fetch(`${API_BASE}/users?id=${userId}`, {
                     method: 'PUT',

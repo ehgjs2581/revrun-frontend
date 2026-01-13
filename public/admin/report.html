@@ -25,6 +25,8 @@
         .admin-avatar { width: 40px; height: 40px; background: var(--accent-brown); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
         .admin-name { font-size: 14px; font-weight: 600; }
         .admin-role { font-size: 12px; color: var(--text-muted); }
+        .logout-btn { margin-top: 12px; padding: 10px; background: transparent; border: 1px solid var(--border-light); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .logout-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
         .main-content { margin-left: 260px; padding: 32px; }
         .page-header { margin-bottom: 32px; }
         .page-title { font-size: 28px; font-weight: 700; }
@@ -44,7 +46,7 @@
         .no-clients i { font-size: 48px; margin-bottom: 16px; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal { background: var(--bg-card); border-radius: var(--radius-lg); width: 95%; max-width: 1200px; height: 90vh; overflow: hidden; transform: scale(0.95); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .modal { background: var(--bg-card); border-radius: var(--radius-lg); width: 95%; max-width: 900px; height: 90vh; overflow: hidden; transform: scale(0.95); transition: transform 0.3s; display: flex; flex-direction: column; }
         .modal-overlay.active .modal { transform: scale(1); }
         .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; }
@@ -75,6 +77,7 @@
             <div class="admin-avatar">A</div>
             <div><div class="admin-name">Admin</div><div class="admin-role">최고 관리자</div></div>
         </div>
+        <button class="logout-btn" id="logoutBtn"><i class="ri-logout-box-line"></i>로그아웃</button>
     </aside>
 
     <main class="main-content">
@@ -101,16 +104,34 @@
 
     <script>
         const API_BASE = '/api';
-        const AD_ACCOUNT_ID = 'act_543464623056642';
         let allCampaignData = null;
 
-        document.addEventListener('DOMContentLoaded', () => { loadClients(); loadCampaignData(); });
+        document.addEventListener('DOMContentLoaded', () => { 
+            checkAuth();
+            loadClients(); 
+            loadCampaignData(); 
+        });
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/me');
+                const data = await res.json();
+                if (!data.success || !data.user || data.user.role !== 'admin') {
+                    location.href = '/admin/login.html';
+                }
+            } catch (e) {
+                location.href = '/admin/login.html';
+            }
+        }
 
         async function loadCampaignData() {
             try {
-                const res = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
+                const res = await fetch('/api/report?action=accounts');
                 const data = await res.json();
-                if (data.success) allCampaignData = data.insights || [];
+                if (data.success) {
+                    // 각 계정의 캠페인 데이터 로드
+                    allCampaignData = [];
+                }
             } catch (e) { console.error(e); }
         }
 
@@ -131,9 +152,8 @@
                 return;
             }
             container.innerHTML = clients.map(c => {
-                const campaign = allCampaignData?.find(camp => camp.campaignId === c.meta_account_id);
-                const impressions = campaign ? campaign.impressions.toLocaleString() : '-';
-                const hasComment = c.ai_generated_at ? '✓ 코멘트 생성됨' : '코멘트 없음';
+                const hasComment = c.ai_generated_at ? 'AI 코멘트 생성됨' : '코멘트 없음';
+                const hasCampaign = c.campaign_id ? '캠페인 연결됨' : '캠페인 없음';
                 return `
                 <div class="client-card" onclick="openReport('${c.id}', '${escapeHtml(c.name || c.username)}')">
                     <div class="client-avatar">${(c.name || 'U').charAt(0).toUpperCase()}</div>
@@ -141,7 +161,7 @@
                     <div class="client-username">@${escapeHtml(c.username)}</div>
                     <div class="client-meta">
                         <span><span class="status-dot ${c.status === 'active' ? 'active' : ''}"></span>${c.status === 'active' ? '활성' : '비활성'}</span>
-                        <span><i class="ri-eye-line"></i> ${impressions} 노출</span>
+                        <span><i class="ri-advertisement-line"></i> ${hasCampaign}</span>
                         <span><i class="ri-magic-line"></i> ${hasComment}</span>
                     </div>
                 </div>
@@ -161,6 +181,14 @@
 
         document.getElementById('reportModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
+        });
+
+        // 로그아웃 버튼
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {}
+            location.href = '/report/login.html';
         });
 
         function escapeHtml(str) { return str ? String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) : ''; }

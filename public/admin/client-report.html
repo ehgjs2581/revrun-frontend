@@ -3,153 +3,348 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>고객 리포트</title>
+  <title>고객 리포트 - REVRUN Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --cream: #faf8f5; --light-cream: #f5f3ef; --warm-beige: #e8e3db; --medium-brown: #8b7355; --dark-brown: #5d4a3a; --deep-brown: #3a2f23; --accent-green: #5d8a66; --accent-pink: #c4a4a4; }
-    body { font-family: 'Manrope', -apple-system, sans-serif; background: var(--cream); color: var(--deep-brown); line-height: 1.6; padding: 32px; }
-    .card { background: white; border: 1px solid var(--warm-beige); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-    .card-title { font-size: 15px; font-weight: 700; color: var(--deep-brown); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--warm-beige); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .stat-box { background: var(--light-cream); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .stat-label { font-size: 13px; color: var(--dark-brown); font-weight: 500; }
-    .stat-value { font-size: 18px; font-weight: 800; color: var(--accent-green); }
-    .big-metric-box { background: var(--light-cream); border-radius: 10px; padding: 20px; text-align: center; }
-    .big-number { font-size: 36px; font-weight: 800; color: var(--deep-brown); margin-bottom: 6px; }
-    .big-sub { font-size: 13px; color: var(--medium-brown); }
+    :root {
+      --cream: #faf8f5;
+      --light-cream: #f5f3ef;
+      --warm-beige: #e8e3db;
+      --medium-brown: #8b7355;
+      --dark-brown: #5d4a3a;
+      --deep-brown: #3a2f23;
+      --accent-green: #22c55e;
+      --accent-green-light: #dcfce7;
+      --accent-pink: #c4a4a4;
+    }
+    body {
+      font-family: 'Manrope', -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--deep-brown);
+      line-height: 1.6;
+    }
+    .container { width: 100%; max-width: 800px; margin: 0 auto; padding: 16px; }
+    .page-header { text-align: center; margin-bottom: 24px; padding: 16px; background: var(--deep-brown); border-radius: 12px; }
+    .page-title { font-size: 18px; font-weight: 800; color: white; margin-bottom: 4px; }
+    .page-meta { font-size: 12px; color: var(--warm-beige); }
+    .card {
+      background: white; border: 1px solid var(--warm-beige);
+      border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 14px; font-weight: 700; color: var(--deep-brown);
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--warm-beige);
+      display: flex; align-items: center; gap: 8px; text-align: left;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .stat-box {
+      background: var(--light-cream); border-radius: 10px; padding: 14px;
+      display: flex; flex-direction: column; gap: 8px; min-width: 0;
+    }
+    .stat-label { font-size: 12px; color: var(--dark-brown); font-weight: 500; text-align: left; }
+    .stat-sub { font-size: 10px; color: var(--medium-brown); margin-top: 2px; }
+    .stat-value-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
+    .stat-value { font-size: 18px; font-weight: 800; color: var(--deep-brown); word-break: break-word; }
+    .stat-value.green { color: var(--accent-green); }
+    .stat-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; background: var(--accent-green-light);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    .stat-arrow svg { width: 14px; height: 14px; color: var(--accent-green); }
+    .big-metric-box { background: var(--light-cream); border-radius: 10px; padding: 16px; text-align: center; }
+    .big-number-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+    .big-number { font-size: 24px; font-weight: 800; color: var(--deep-brown); word-break: break-word; min-width: 0; }
+    .big-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--accent-green-light);
+      border-radius: 50%; animation: bounce 1s infinite;
+    }
+    .big-arrow svg { width: 18px; height: 18px; color: var(--accent-green); }
+    .big-sub { font-size: 11px; color: var(--medium-brown); }
     .progress-simple { height: 6px; background: var(--warm-beige); border-radius: 3px; margin-top: 12px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--accent-green); border-radius: 3px; }
-    .naver-box { background: var(--light-cream); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .naver-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--dark-brown); }
-    .naver-icon { width: 22px; height: 22px; background: #03c75a; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; }
-    .naver-value { font-size: 16px; font-weight: 800; color: var(--accent-green); }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), #4ade80); border-radius: 3px; transition: width 1.5s ease-out; }
+    .gender-box { background: var(--light-cream); border-radius: 10px; padding: 14px; }
+    .gender-label { font-size: 12px; color: var(--dark-brown); font-weight: 500; margin-bottom: 8px; text-align: left; }
+    .gender-bar { display: flex; height: 32px; border-radius: 6px; overflow: visible; }
+    .gender-male, .gender-female {
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 11px; font-weight: 600; white-space: nowrap;
+      min-width: 55px; transition: width 1s ease-out;
+    }
+    .gender-male { background: var(--dark-brown); border-radius: 6px 0 0 6px; }
+    .gender-female { background: var(--accent-pink); border-radius: 0 6px 6px 0; }
+    .age-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .age-label { width: 45px; font-size: 11px; color: var(--dark-brown); font-weight: 500; text-align: left; }
+    .age-bar-bg { flex: 1; height: 20px; background: var(--warm-beige); border-radius: 4px; overflow: hidden; }
+    .age-bar-fill { height: 100%; background: var(--medium-brown); border-radius: 4px; transition: width 1s ease-out; }
+    .age-percent { width: 35px; text-align: right; font-size: 12px; font-weight: 700; color: var(--deep-brown); }
+    .naver-box {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      border-radius: 10px; padding: 16px; display: grid;
+      grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    }
+    .naver-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--dark-brown); text-align: left; }
+    .naver-icon {
+      width: 28px; height: 28px; background: #03c75a; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 14px; flex-shrink: 0;
+    }
+    .naver-value-wrap { display: flex; align-items: center; gap: 8px; }
+    .naver-value { font-size: 20px; font-weight: 800; color: #16a34a; word-break: break-word; }
+    .naver-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; background: white; border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); animation: bounce 1s infinite;
+    }
+    .naver-arrow svg { width: 16px; height: 16px; color: #16a34a; }
     .insight-list { list-style: none; }
-    .insight-item { padding: 14px 0 14px 16px; border-left: 2px solid var(--warm-beige); margin-bottom: 10px; font-size: 14px; color: var(--dark-brown); line-height: 1.5; }
+    .insight-item {
+      padding: 12px 0 12px 14px; border-left: 2px solid var(--warm-beige);
+      margin-bottom: 8px; font-size: 13px; color: var(--dark-brown);
+      line-height: 1.8; text-align: left; word-break: keep-all;
+    }
     .insight-item.highlight { border-left-color: var(--accent-green); }
     .insight-item.action { border-left-color: var(--accent-pink); }
-    .loading { text-align: center; padding: 60px; color: var(--medium-brown); }
-    .client-info { background: var(--deep-brown); color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    .client-name { font-size: 18px; font-weight: 700; }
-    .client-meta { font-size: 12px; opacity: 0.8; }
+    .insta-link {
+      display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      border-radius: 10px; color: white; text-decoration: none;
+      font-weight: 600; font-size: 13px; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .insta-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(188, 24, 136, 0.3); }
+    .loading { text-align: center; padding: 60px 20px; color: var(--medium-brown); }
+    .error { text-align: center; padding: 40px 20px; color: #dc2626; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
   </style>
 </head>
 <body>
-  <div class="client-info">
-    <div>
-      <div class="client-name" id="clientName">로딩 중...</div>
-      <div class="client-meta">최근 30일 기준</div>
+  <div class="container">
+    <div class="page-header">
+      <h2 class="page-title" id="clientName">고객 리포트</h2>
+      <p class="page-meta" id="period">최근 30일 기준</p>
     </div>
-    <div class="client-meta" id="commentDate"></div>
-  </div>
-
-  <div class="card">
-    <h3 class="card-title">광고 효과</h3>
-    <div class="grid-2" style="margin-bottom: 16px;">
-      <div class="stat-box">
-        <span class="stat-label">광고를 본 사람</span>
-        <span class="stat-value" id="reach">-</span>
+    
+    <div id="loadingArea" class="loading">데이터를 불러오는 중...</div>
+    <div id="errorArea" class="error" style="display:none;">고객 정보를 불러올 수 없습니다.</div>
+    
+    <div id="reportContent" style="display:none;">
+      <div class="card">
+        <h3 class="card-title">⚡ 광고 효과</h3>
+        <div class="grid-2" style="margin-bottom: 12px;">
+          <div class="stat-box">
+            <div><span class="stat-label">광고를 본 사람</span><div class="stat-sub">우리 가게를 알게 된 분들</div></div>
+            <div class="stat-value-wrap">
+              <span class="stat-value green" id="reach">0</span>
+              <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+            </div>
+          </div>
+          <div class="big-metric-box">
+            <div class="big-number-wrap">
+              <span class="big-number" id="impressions">0</span>
+              <div class="big-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+            </div>
+            <div class="big-sub">총 노출 횟수</div>
+            <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="stat-box">
+            <div><span class="stat-label">반응한 사람</span><div class="stat-sub">좋아요, 댓글, 클릭</div></div>
+            <div class="stat-value-wrap">
+              <span class="stat-value green" id="engagement">0</span>
+              <div class="stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+            </div>
+          </div>
+          <div class="gender-box">
+            <div class="gender-label">성별 비율</div>
+            <div class="gender-bar">
+              <div class="gender-male" id="maleBar" style="width: 50%;">남성 50%</div>
+              <div class="gender-female" id="femaleBar" style="width: 50%;">여성 50%</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="big-metric-box">
-        <div class="big-number" id="impressions">-</div>
-        <div class="big-sub">총 노출 / 목표 30,000회</div>
-        <div class="progress-simple"><div class="progress-fill" id="impressionBar" style="width: 0%;"></div></div>
+
+      <div class="card">
+        <h3 class="card-title">📊 연령대별 반응</h3>
+        <div id="ageChart">
+          <div class="age-row"><span class="age-label">10대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age13" style="width: 0%;"></div></div><span class="age-percent" id="age13p">0%</span></div>
+          <div class="age-row"><span class="age-label">20대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age18" style="width: 0%;"></div></div><span class="age-percent" id="age18p">0%</span></div>
+          <div class="age-row"><span class="age-label">30대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age25" style="width: 0%;"></div></div><span class="age-percent" id="age25p">0%</span></div>
+          <div class="age-row"><span class="age-label">40대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age35" style="width: 0%;"></div></div><span class="age-percent" id="age35p">0%</span></div>
+          <div class="age-row"><span class="age-label">50대</span><div class="age-bar-bg"><div class="age-bar-fill" id="age45" style="width: 0%;"></div></div><span class="age-percent" id="age45p">0%</span></div>
+          <div class="age-row"><span class="age-label">60대+</span><div class="age-bar-bg"><div class="age-bar-fill" id="age55" style="width: 0%;"></div></div><span class="age-percent" id="age55p">0%</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">🟢 네이버플레이스 유입</h3>
+        <div class="naver-box">
+          <div class="naver-label"><span class="naver-icon">N</span><span>내 업체 검색한 사람</span></div>
+          <div class="naver-value-wrap">
+            <span class="naver-value" id="naverVisit">0명</span>
+            <div class="naver-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">💡 잘한 점</h3>
+        <ul class="insight-list" id="highlights"><li class="insight-item highlight">아직 분석 데이터가 없습니다.</li></ul>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">🚀 더 좋아지려면</h3>
+        <ul class="insight-list" id="actions"><li class="insight-item action">아직 분석 데이터가 없습니다.</li></ul>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">📱 광고 미리보기</h3>
+        <a href="#" class="insta-link" id="instaLink" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          인스타그램에서 광고 보기
+        </a>
       </div>
     </div>
-    <div class="grid-2">
-      <div class="stat-box">
-        <span class="stat-label">반응한 사람</span>
-        <span class="stat-value" id="engagement">-</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">클릭률 (CTR)</span>
-        <span class="stat-value" id="ctr">-</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3 class="card-title">랜딩페이지 방문</h3>
-    <div class="naver-box">
-      <div class="naver-label"><span class="naver-icon">N</span><span>네이버플레이스 유입</span></div>
-      <span class="naver-value" id="naverVisit">-</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3 class="card-title">✨ 잘된 점</h3>
-    <ul class="insight-list" id="highlights"><li class="insight-item highlight">데이터를 불러오는 중...</li></ul>
-  </div>
-
-  <div class="card">
-    <h3 class="card-title">💡 더 좋아지려면</h3>
-    <ul class="insight-list" id="actions"><li class="insight-item action">데이터를 불러오는 중...</li></ul>
   </div>
 
   <script>
-    const AD_ACCOUNT_ID = 'act_543464623056642';
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
 
-    function formatNumber(num) { return (!num && num !== 0) ? '-' : Number(num).toLocaleString('ko-KR'); }
-
-    function renderList(id, items, className) {
-      const el = document.getElementById(id);
-      if (!items || items.length === 0) { el.innerHTML = `<li class="insight-item ${className}">아직 분석 데이터가 없습니다.</li>`; return; }
-      el.innerHTML = items.map(item => `<li class="insight-item ${className}">${item}</li>`).join('');
-    }
-
-    async function boot() {
-      const params = new URLSearchParams(window.location.search);
-      const userId = params.get('id');
-      if (!userId) { document.body.innerHTML = '<div class="loading">사용자 ID가 필요합니다.</div>'; return; }
+    async function loadClientData() {
+      if (!userId) {
+        showError('고객 ID가 없습니다.');
+        return;
+      }
 
       try {
-        // 사용자 정보 가져오기
-        const userRes = await fetch(`/api/users?id=${userId}`);
+        // 고객 정보 가져오기
+        const userRes = await fetch('/api/users?id=' + userId);
         const userData = await userRes.json();
-        if (!userData.success) throw new Error('User not found');
-        const user = userData.user;
-
-        document.getElementById('clientName').textContent = (user.name || user.username) + '님의 리포트';
-        if (user.ai_generated_at) {
-          document.getElementById('commentDate').textContent = 'AI 코멘트: ' + new Date(user.ai_generated_at).toLocaleDateString('ko-KR');
+        
+        if (!userData.success || !userData.user) {
+          showError('고객 정보를 찾을 수 없습니다.');
+          return;
         }
+
+        const client = userData.user;
+        const campaignId = client.campaign_id;
+        const accountId = client.meta_account_id;
+
+        document.getElementById('clientName').textContent = (client.name || client.username) + '님의 리포트';
 
         // Meta 데이터 가져오기
-        if (user.meta_account_id) {
-          const metaRes = await fetch(`/api/meta/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
-          const metaData = await metaRes.json();
-          if (metaData.success) {
-            const campaign = (metaData.insights || []).find(c => c.campaignId === user.meta_account_id);
-            if (campaign) {
-              document.getElementById('reach').textContent = formatNumber(campaign.reach) + '명';
-              document.getElementById('impressions').textContent = formatNumber(campaign.impressions);
-              document.getElementById('engagement').textContent = formatNumber(campaign.clicks) + '명';
-              document.getElementById('ctr').textContent = (campaign.ctr || 0).toFixed(2) + '%';
-              const progressPercent = Math.min((campaign.impressions / 30000) * 100, 100);
-              document.getElementById('impressionBar').style.width = progressPercent + '%';
-              const landingVisits = (campaign.conversions || 0) + (user.naver_visitors || 0);
-              document.getElementById('naverVisit').textContent = '▲ ' + formatNumber(landingVisits) + '명';
+        let metaData = null;
+        if (campaignId && accountId) {
+          try {
+            const metaRes = await fetch('/api/report?action=insights&account_id=' + accountId);
+            const metaResult = await metaRes.json();
+            if (metaResult.success && metaResult.insights) {
+              metaData = metaResult.insights.find(c => c.campaignId === campaignId);
             }
-          }
-        } else {
-          document.getElementById('naverVisit').textContent = '▲ ' + formatNumber(user.naver_visitors || 0) + '명';
+          } catch (e) { console.error('Meta 데이터 오류:', e); }
         }
 
-        // AI 코멘트 표시
+        // 연령대/성별 데이터 가져오기
+        let demoData = null;
+        if (campaignId) {
+          try {
+            const demoRes = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
+            const demoResult = await demoRes.json();
+            if (demoResult.success) demoData = demoResult;
+          } catch (e) { console.error('Demographics 오류:', e); }
+        }
+
+        // 화면에 표시
+        document.getElementById('loadingArea').style.display = 'none';
+        document.getElementById('reportContent').style.display = 'block';
+
+        // 기본 수치
+        if (metaData) {
+          document.getElementById('reach').textContent = (metaData.reach || 0).toLocaleString() + '명';
+          document.getElementById('impressions').textContent = (metaData.impressions || 0).toLocaleString();
+          document.getElementById('engagement').textContent = (metaData.clicks || 0).toLocaleString() + '명';
+          
+          const progressPercent = Math.min((metaData.impressions / 30000) * 100, 100);
+          document.getElementById('impressionBar').style.width = progressPercent + '%';
+
+          const landingPageVisits = (metaData.conversions || 0) + (client.naver_visitors || 0);
+          document.getElementById('naverVisit').textContent = landingPageVisits.toLocaleString() + '명';
+        } else {
+          document.getElementById('naverVisit').textContent = (client.naver_visitors || 0).toLocaleString() + '명';
+        }
+
+        // 성별/연령대
+        if (demoData) {
+          const maleP = (demoData.gender && demoData.gender.malePercent) || 50;
+          const femaleP = (demoData.gender && demoData.gender.femalePercent) || 50;
+          document.getElementById('maleBar').style.width = maleP + '%';
+          document.getElementById('maleBar').textContent = '남성 ' + maleP + '%';
+          document.getElementById('femaleBar').style.width = femaleP + '%';
+          document.getElementById('femaleBar').textContent = '여성 ' + femaleP + '%';
+
+          const ageMap = { '13-17': 'age13', '18-24': 'age18', '25-34': 'age25', '35-44': 'age35', '45-54': 'age45', '55-64': 'age55', '65+': 'age55' };
+          let age55Total = 0;
+          Object.keys(ageMap).forEach(function(key) {
+            const p = (demoData.age && demoData.age[key] && demoData.age[key].percent) || 0;
+            const targetId = ageMap[key];
+            if (key === '55-64' || key === '65+') {
+              age55Total += p;
+            } else {
+              const bar = document.getElementById(targetId);
+              const pEl = document.getElementById(targetId + 'p');
+              if (bar) bar.style.width = p + '%';
+              if (pEl) pEl.textContent = p + '%';
+            }
+          });
+          document.getElementById('age55').style.width = age55Total + '%';
+          document.getElementById('age55p').textContent = age55Total + '%';
+        }
+
+        // AI 분석
         let highlights = [], actions = [];
         try {
-          if (user.ai_highlights) highlights = JSON.parse(user.ai_highlights);
-          if (user.ai_actions) actions = JSON.parse(user.ai_actions);
+          if (client.ai_highlights) highlights = JSON.parse(client.ai_highlights);
+          if (client.ai_actions) actions = JSON.parse(client.ai_actions);
         } catch (e) {}
-        renderList('highlights', highlights, 'highlight');
-        renderList('actions', actions, 'action');
 
-      } catch (e) {
-        document.body.innerHTML = '<div class="loading">데이터를 불러올 수 없습니다.</div>';
+        if (highlights.length > 0) {
+          document.getElementById('highlights').innerHTML = highlights.map(h => '<li class="insight-item highlight">' + h + '</li>').join('');
+        }
+        if (actions.length > 0) {
+          document.getElementById('actions').innerHTML = actions.map(a => '<li class="insight-item action">' + a + '</li>').join('');
+        }
+
+        // 인스타그램 링크
+        const instaLink = document.getElementById('instaLink');
+        if (client.instagram_url) {
+          if (/^\d+$/.test(client.instagram_url)) {
+            instaLink.href = 'https://www.facebook.com/ads/library/?id=' + client.instagram_url;
+          } else {
+            instaLink.href = client.instagram_url;
+          }
+        } else {
+          instaLink.style.display = 'none';
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        showError('데이터를 불러오는 중 오류가 발생했습니다.');
       }
     }
 
-    boot();
+    function showError(msg) {
+      document.getElementById('loadingArea').style.display = 'none';
+      document.getElementById('errorArea').style.display = 'block';
+      document.getElementById('errorArea').textContent = msg;
+    }
+
+    loadClientData();
   </script>
 </body>
 </html>
