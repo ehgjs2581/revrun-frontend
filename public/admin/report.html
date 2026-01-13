@@ -114,7 +114,7 @@
 
         async function checkAuth() {
             try {
-                const res = await fetch('/api/me');
+                const res = await fetch('/api/me', { credentials: 'include' });
                 const data = await res.json();
                 if (!data.success || !data.user || data.user.role !== 'admin') {
                     location.href = '/admin/login.html';
