@@ -3,6 +3,10 @@
     {
       "path": "/api/meta/refresh-token",
       "schedule": "0 0 1,15 * *"
+    },
+    {
+      "path": "/api/keep-alive",
+      "schedule": "0 9 */3 * *"
     }
   ]
 }
