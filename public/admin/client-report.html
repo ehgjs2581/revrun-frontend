@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>REVRUN Report</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -116,10 +117,48 @@
     .insta-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(188, 24, 136, 0.3); }
     .loading { text-align: center; padding: 60px 20px; color: var(--medium-brown); }
     .error { text-align: center; padding: 40px 20px; color: #dc2626; }
+    .download-bar {
+      display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;
+    }
+    .btn-download {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border: none; border-radius: 8px;
+      font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-download.pdf { background: var(--deep-brown); color: white; }
+    .btn-download.pdf:hover { opacity: 0.85; }
+    .btn-download.jpeg { background: var(--accent-green); color: white; }
+    .btn-download.jpeg:hover { opacity: 0.85; }
+    .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-download svg { flex-shrink: 0; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spin-icon { animation: spin 1s linear infinite; }
+    @media print {
+      body { background: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .download-bar { display: none !important; }
+      .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+      .card { break-inside: avoid; page-break-inside: avoid; border: 1px solid #ddd !important; margin-bottom: 12px !important; }
+      .page-header { margin-bottom: 16px !important; }
+      .insta-link { display: none !important; }
+      .gender-male, .gender-female { transition: none !important; }
+      .age-bar-fill { transition: none !important; }
+      .progress-fill { transition: none !important; }
+      @page { size: A4; margin: 16mm 12mm; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="download-bar">
+      <button class="btn-download pdf" onclick="savePDF()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        PDF 저장
+      </button>
+      <button class="btn-download jpeg" id="jpegBtn" onclick="saveImage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        JPEG 저장
+      </button>
+    </div>
     <div class="page-header">
       <h2 class="page-title" id="clientName">&#47196;&#46377;&#51473;...</h2>
       <p class="page-meta" id="period">&#52572;&#44540; 30&#51068; &#44592;&#51456;</p>
@@ -341,6 +380,50 @@
     }
 
     loadClientData();
+
+    function savePDF() {
+      window.print();
+    }
+
+    async function saveImage() {
+      var btn = document.getElementById('jpegBtn');
+      var originalHTML = btn.innerHTML;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spin-icon"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 저장 중...';
+      btn.disabled = true;
+
+      try {
+        var container = document.querySelector('.container');
+        var downloadBar = document.querySelector('.download-bar');
+        var instaLink = document.querySelector('.insta-link');
+        if (downloadBar) downloadBar.style.display = 'none';
+        if (instaLink) instaLink.style.display = 'none';
+
+        var canvas = await html2canvas(container, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#faf8f5',
+          logging: false,
+          windowWidth: 800
+        });
+
+        if (downloadBar) downloadBar.style.display = '';
+        if (instaLink) instaLink.style.display = '';
+
+        var link = document.createElement('a');
+        var clientName = document.getElementById('clientName').textContent.replace('님의 리포트', '').trim() || 'report';
+        var today = new Date();
+        var dateStr = today.getFullYear() + '' + String(today.getMonth() + 1).padStart(2, '0') + '' + String(today.getDate()).padStart(2, '0');
+        link.download = 'REVRUN_' + clientName + '_' + dateStr + '.jpeg';
+        link.href = canvas.toDataURL('image/jpeg', 0.92);
+        link.click();
+      } catch (err) {
+        console.error('이미지 저장 실패:', err);
+        alert('이미지 저장에 실패했습니다. 다시 시도해주세요.');
+      }
+
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
   </script>
 </body>
 </html>
