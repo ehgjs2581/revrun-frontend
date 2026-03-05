@@ -113,8 +113,40 @@
         .naver-input span { font-size: 11px; color: var(--text-muted); }
         .comment-status { font-size: 10px; color: var(--text-muted); }
         .comment-status.done { color: var(--success); }
+        /* Mobile Bottom Nav */
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); border-top: 1px solid var(--border-light); padding: 8px 0; padding-bottom: max(8px, env(safe-area-inset-bottom)); z-index: 200; }
+        .mobile-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+        .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; text-decoration: none; color: var(--text-muted); font-size: 10px; font-weight: 600; padding: 4px 12px; border-radius: var(--radius-sm); transition: all 0.2s; }
+        .mobile-nav-item i { font-size: 20px; }
+        .mobile-nav-item.active { color: var(--accent-brown-dark); }
+        .mobile-nav-item:hover { color: var(--accent-brown); }
+
         @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } .stats-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 16px; padding-bottom: 80px; }
+            .mobile-nav { display: block; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 16px; }
+            .stat-value { font-size: 24px; }
+            .stat-icon { width: 36px; height: 36px; font-size: 18px; margin-bottom: 10px; }
+            .page-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+            .page-title { font-size: 22px; }
+            .header-actions { width: 100%; display: flex; gap: 8px; flex-wrap: wrap; }
+            .header-actions .btn { flex: 1; min-width: 0; justify-content: center; padding: 10px 12px; font-size: 12px; }
+            .filters-bar { flex-direction: column; gap: 10px; }
+            .search-box { max-width: 100%; min-width: 100%; }
+            .filter-select { width: 100%; }
+            table { min-width: 600px; }
+            th, td { padding: 10px 8px; font-size: 11px; }
+            .user-avatar { width: 28px; height: 28px; font-size: 12px; }
+            .user-info h4 { font-size: 12px; }
+            .modal { max-width: 100%; margin: 10px; border-radius: var(--radius-md); }
+            .modal-body { padding: 16px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-input { padding: 10px 12px; font-size: 13px; }
+            .table-footer { flex-direction: column; gap: 12px; padding: 12px; }
+        }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-spinner { animation: spin 1s linear infinite; }
     </style>
@@ -251,9 +283,18 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-inner">
+            <a href="users.html" class="mobile-nav-item active"><i class="ri-user-line"></i><span>회원</span></a>
+            <a href="report.html" class="mobile-nav-item"><i class="ri-file-chart-line"></i><span>리포트</span></a>
+            <a href="dashboard.html" class="mobile-nav-item"><i class="ri-dashboard-line"></i><span>대시보드</span></a>
+            <a href="inquiries.html" class="mobile-nav-item"><i class="ri-mail-line"></i><span>DB</span></a>
+        </div>
+    </nav>
+
     <script>
         const API_BASE = '/api';
-        const AD_ACCOUNT_ID = 'act_543464623056642';
         let currentPage = 1;
         const limit = 10;
         let allCampaignData = null;
@@ -306,9 +347,32 @@
 
         async function loadCampaignData() {
             try {
-                const response = await fetch(`/api/report?action=insights&account_id=${AD_ACCOUNT_ID}`);
-                const data = await response.json();
-                if (data.success) allCampaignData = data.insights || [];
+                // 1단계: 모든 광고 계정 목록 가져오기
+                const accountsResponse = await fetch(`/api/report?action=accounts`);
+                const accountsData = await accountsResponse.json();
+                if (!accountsData.success || !accountsData.accounts || accountsData.accounts.length === 0) {
+                    console.error('광고 계정을 불러올 수 없습니다.');
+                    return;
+                }
+
+                // 2단계: 모든 계정에서 캠페인 데이터 가져오기
+                const allInsights = [];
+                const fetchPromises = accountsData.accounts.map(async (account) => {
+                    try {
+                        const accountId = account.id.replace('act_', '');
+                        const response = await fetch(`/api/report?action=insights&account_id=${accountId}`);
+                        const data = await response.json();
+                        if (data.success && data.insights) {
+                            allInsights.push(...data.insights);
+                        }
+                    } catch (err) {
+                        console.error(`계정 ${account.id} 데이터 로드 실패:`, err);
+                    }
+                });
+
+                await Promise.all(fetchPromises);
+                allCampaignData = allInsights;
+                console.log(`총 ${allCampaignData.length}개 캠페인 데이터 로드 완료`);
             } catch (error) { console.error('Campaign data load error:', error); }
         }
 
@@ -374,8 +438,41 @@
             if (!campaignId) { showToast('캠페인 ID가 없습니다.', 'error'); return; }
             if (!allCampaignData) { showToast('캠페인 데이터를 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error'); return; }
 
-            const campaign = allCampaignData.find(c => c.campaignId === campaignId);
-            if (!campaign) { showToast('해당 캠페인 데이터를 찾을 수 없습니다.', 'error'); return; }
+            console.log('=== AI 코멘트 디버깅 ===');
+            console.log('찾는 campaignId:', campaignId);
+            console.log('allCampaignData 총 개수:', allCampaignData.length);
+            console.log('allCampaignData의 모든 campaignId:', allCampaignData.map(c => c.campaignId));
+
+            let campaign = allCampaignData.find(c => c.campaignId === campaignId);
+
+            // 폴백: allCampaignData에 없으면, 해당 유저의 광고 계정에서 직접 조회 시도
+            if (!campaign) {
+                console.log('allCampaignData에서 못 찾음. 유저의 광고 계정에서 직접 조회 시도...');
+                try {
+                    // 유저 정보에서 meta_account_id 가져오기
+                    const userResponse = await fetch(`${API_BASE}/users?id=${userId}`);
+                    const userData = await userResponse.json();
+                    if (userData.success && userData.user && userData.user.meta_account_id) {
+                        const accountId = userData.user.meta_account_id;
+                        console.log('유저의 meta_account_id:', accountId);
+                        const insightResponse = await fetch(`/api/report?action=insights&account_id=${accountId}`);
+                        const insightData = await insightResponse.json();
+                        console.log('직접 조회 결과:', insightData);
+                        if (insightData.success && insightData.insights) {
+                            campaign = insightData.insights.find(c => c.campaignId === campaignId);
+                            if (campaign) {
+                                console.log('직접 조회로 캠페인 찾음!', campaign);
+                            } else {
+                                console.log('직접 조회에서도 못 찾음. 조회된 campaignId들:', insightData.insights.map(c => c.campaignId));
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('폴백 조회 실패:', err);
+                }
+            }
+
+            if (!campaign) { showToast('해당 캠페인 데이터를 찾을 수 없습니다. (콘솔 로그 확인)', 'error'); return; }
 
             showToast('AI 코멘트 생성 중...', 'success');
 
