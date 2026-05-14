@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' });
 
-  const { action, account_id, campaign_id, days } = req.query;
+  const { action, account_id, campaign_id, days, since } = req.query;
 
   try {
     const accessToken = await getAccessToken();
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'insights' && account_id) {
-      return await getCampaignInsights(account_id, accessToken, res);
+      return await getCampaignInsights(account_id, accessToken, res, since);
     }
 
     if (action === 'accounts') {
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'demographics' && campaign_id) {
-      return await getDemographics(campaign_id, accessToken, res);
+      return await getDemographics(campaign_id, accessToken, res, since);
     }
 
     if (action === 'daily' && campaign_id) {
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       return await getAdCreative(campaign_id, accessToken, res);
     }
 
-    return res.status(400).json({ success: false, error: 'Invalid action. Use action=insights&account_id=xxx or action=demographics&campaign_id=xxx or action=creative&campaign_id=xxx' });
+    return res.status(400).json({ success: false, error: 'Invalid action.' });
 
   } catch (error) {
     console.error('Meta API Error:', error);
@@ -72,12 +72,12 @@ export default async function handler(req, res) {
   }
 }
 
-async function getCampaignInsights(accountId, accessToken, res) {
+async function getCampaignInsights(accountId, accessToken, res, since) {
   const formattedAccountId = accountId.startsWith('act_') ? accountId : `act_${accountId}`;
 
   const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 30);
+  const startDate = since ? new Date(since) : new Date();
+  if (!since) startDate.setDate(startDate.getDate() - 30);
 
   const timeRange = JSON.stringify({
     since: startDate.toISOString().split('T')[0],
@@ -176,10 +176,10 @@ async function getAdAccounts(accessToken, res) {
   });
 }
 
-async function getDemographics(campaignId, accessToken, res) {
+async function getDemographics(campaignId, accessToken, res, since) {
   const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 30);
+  const startDate = since ? new Date(since) : new Date();
+  if (!since) startDate.setDate(startDate.getDate() - 30);
 
   const timeRange = JSON.stringify({
     since: startDate.toISOString().split('T')[0],
@@ -196,10 +196,10 @@ async function getDemographics(campaignId, accessToken, res) {
   }
 
   const rawData = data.data || [];
-  
+
   let maleTotal = 0;
   let femaleTotal = 0;
-  
+
   const ageGroups = {
     '13-17': { impressions: 0, reach: 0 },
     '18-24': { impressions: 0, reach: 0 },
@@ -260,7 +260,7 @@ async function getDemographics(campaignId, accessToken, res) {
 
 async function getDailyData(campaignId, accessToken, res, days) {
   const numDays = parseInt(days) || 7;
-  
+
   const endDate = new Date();
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - (numDays === 0 ? 30 : numDays));
@@ -295,7 +295,6 @@ async function getDailyData(campaignId, accessToken, res, days) {
 
 async function getAdCreative(campaignId, accessToken, res) {
   try {
-    // 1. 캠페인에서 광고 ID 가져오기
     const adsUrl = `https://graph.facebook.com/v18.0/${campaignId}/ads?fields=id,name,status,creative{id}&access_token=${accessToken}`;
     const adsResponse = await fetch(adsUrl);
     const adsData = await adsResponse.json();
@@ -308,7 +307,6 @@ async function getAdCreative(campaignId, accessToken, res) {
       return res.status(404).json({ success: false, error: 'No ads found' });
     }
 
-    // 활성 광고 우선, 없으면 첫번째
     const activeAd = adsData.data.find(ad => ad.status === 'ACTIVE') || adsData.data[0];
     const adId = activeAd.id;
     const creativeId = activeAd.creative?.id;
@@ -319,7 +317,6 @@ async function getAdCreative(campaignId, accessToken, res) {
     let thumbnailUrl = null;
     let videoUrl = null;
 
-    // 2. 크리에이티브 상세 정보 가져오기
     if (creativeId) {
       const creativeUrl = `https://graph.facebook.com/v18.0/${creativeId}?fields=id,name,thumbnail_url,image_url,object_story_spec,effective_object_story_id,object_type&access_token=${accessToken}`;
       const creativeResponse = await fetch(creativeUrl);
@@ -327,18 +324,15 @@ async function getAdCreative(campaignId, accessToken, res) {
 
       if (!creativeData.error) {
         thumbnailUrl = creativeData.thumbnail_url || creativeData.image_url || null;
-        
-        // object_story_spec에서 정보 추출
+
         if (creativeData.object_story_spec) {
           const spec = creativeData.object_story_spec;
-          
-          // 비디오 광고
+
           if (spec.video_data) {
             mediaType = 'video';
             caption = spec.video_data.message || '';
             thumbnailUrl = spec.video_data.image_url || thumbnailUrl;
-            
-            // video_id로 영상 URL 가져오기
+
             if (spec.video_data.video_id) {
               const videoInfoUrl = `https://graph.facebook.com/v18.0/${spec.video_data.video_id}?fields=source,thumbnails&access_token=${accessToken}`;
               const videoResponse = await fetch(videoInfoUrl);
@@ -348,26 +342,18 @@ async function getAdCreative(campaignId, accessToken, res) {
                 mediaUrl = videoData.source;
               }
             }
-          }
-          // 이미지 광고
-          else if (spec.link_data) {
+          } else if (spec.link_data) {
             caption = spec.link_data.message || '';
             mediaUrl = spec.link_data.image_hash ? null : spec.link_data.picture;
-            
-            // image_hash가 있으면 이미지 URL 가져오기
             if (spec.link_data.image_hash) {
-              // 썸네일 URL 사용
               mediaUrl = thumbnailUrl;
             }
-          }
-          // 포토 광고
-          else if (spec.photo_data) {
+          } else if (spec.photo_data) {
             caption = spec.photo_data.caption || '';
             mediaUrl = spec.photo_data.url || thumbnailUrl;
           }
         }
 
-        // effective_object_story_id로 추가 시도
         if ((!mediaUrl || !caption) && creativeData.effective_object_story_id) {
           const storyUrl = `https://graph.facebook.com/v18.0/${creativeData.effective_object_story_id}?fields=full_picture,message,source,attachments{media_type,media,url}&access_token=${accessToken}`;
           const storyResponse = await fetch(storyUrl);
@@ -376,7 +362,7 @@ async function getAdCreative(campaignId, accessToken, res) {
           if (!storyData.error) {
             if (!mediaUrl) mediaUrl = storyData.full_picture || storyData.source;
             if (!caption) caption = storyData.message || '';
-            
+
             if (storyData.attachments?.data?.[0]) {
               const att = storyData.attachments.data[0];
               if (att.media_type === 'video') {
@@ -390,9 +376,7 @@ async function getAdCreative(campaignId, accessToken, res) {
       }
     }
 
-    // 썸네일이라도 있으면 mediaUrl로 사용
     if (!mediaUrl && thumbnailUrl) {
-      // 썸네일 URL에서 고해상도 버전 요청
       mediaUrl = thumbnailUrl.replace('p64x64', 'p720x720').replace('_q75_', '_q95_');
     }
 
