@@ -109,7 +109,6 @@
       border-radius: 50%; animation: bounce 1s infinite;
     }
     .big-arrow svg { width: 18px; height: 18px; color: var(--accent-green); }
-    .big-sub { font-size: 11px; color: var(--medium-brown); }
     .progress-simple { height: 6px; background: var(--warm-beige); border-radius: 3px; margin-top: 12px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), #4ade80); border-radius: 3px; transition: width 1.5s ease-out; }
     .gender-box { background: var(--light-cream); border-radius: 10px; padding: 14px; }
@@ -387,6 +386,7 @@
     let userData = null;
     let campaignId = null;
     let userAccountId = null;
+    let globalSince = null;
 
     async function api(path, opts = {}) {
       const res = await fetch(path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
@@ -457,10 +457,11 @@
       });
     }
 
-    async function loadMetaData() {
+    async function loadMetaData(since) {
       if (!campaignId || !userAccountId) return null;
       try {
-        const response = await fetch('/api/report?action=insights&account_id=' + userAccountId);
+        const sinceParam = since ? '&since=' + since : '';
+        const response = await fetch('/api/report?action=insights&account_id=' + userAccountId + sinceParam);
         const data = await response.json();
         if (!data.success) return null;
         const campaign = (data.insights || []).find(function(item) { return item.campaignId === campaignId; });
@@ -478,10 +479,11 @@
       } catch (error) { return null; }
     }
 
-    async function loadDemographics() {
+    async function loadDemographics(since) {
       if (!campaignId) return null;
       try {
-        const response = await fetch('/api/report?action=demographics&campaign_id=' + campaignId);
+        const sinceParam = since ? '&since=' + since : '';
+        const response = await fetch('/api/report?action=demographics&campaign_id=' + campaignId + sinceParam);
         const data = await response.json();
         if (!data.success) return null;
         return data;
@@ -535,15 +537,16 @@
       campaignId = userData.campaign_id;
       userAccountId = userData.meta_account_id;
 
-      console.log('유저:', userData.name, '광고계정:', userAccountId, '캠페인:', campaignId);
-
       document.getElementById("userName").textContent = userData.name || userData.username;
       document.getElementById("clientName").textContent = (userData.name || userData.username) + '님의 리포트';
-      document.getElementById("period").textContent = '최근 30일 기준';
+
+      const since = userData.created_at ? userData.created_at.split('T')[0] : null;
+      globalSince = since;
+      const sinceLabel = since ? since.replace(/-/g, '.') : '';
+      document.getElementById("period").textContent = since ? sinceLabel + ' ~ 오늘 기준' : '최근 30일 기준';
 
       const naverVisitorsExtra = userData.naver_visitors || 0;
-      const metaData = await loadMetaData();
-      console.log('Meta 데이터:', metaData);
+      const metaData = await loadMetaData(since);
 
       if (metaData) {
         setTimeout(function() {
@@ -561,7 +564,7 @@
         animateCount(document.getElementById("naverVisit"), naverVisitorsExtra, '명');
       }
 
-      const demo = await loadDemographics();
+      const demo = await loadDemographics(since);
       setTimeout(function() { updateDemographics(demo); }, 500);
 
       const instaLink = document.getElementById("instaLink");
